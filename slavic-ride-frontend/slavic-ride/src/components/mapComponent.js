@@ -10,7 +10,7 @@ function MapComponent () {
             style={{width: '100%', height: '700px'}}
             defaultCenter={position}
             defaultZoom={9}
-            <Map/>
+            />
 
         </APIProvider>
     )
