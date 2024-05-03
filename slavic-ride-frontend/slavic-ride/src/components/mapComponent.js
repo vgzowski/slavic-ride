@@ -49,7 +49,15 @@ function MapComponent() {
                     key={reloadMap}
                     style={{ width: '100%', height: '700px' }}
                     defaultCenter={userLocation ? userLocation : { lat: 0, lng: 0 }}
-                    defaultZoom={15}>
+                    defaultZoom={15}
+                    mapTypeControl={false} 
+                    streetViewControl={false} 
+                    options={{
+                        mapTypeId: 'blank',
+                        mapTypeControl: false,
+                        streetViewControl: false,
+                    }}
+>
 
                     {userLocation && (
                         <Marker
