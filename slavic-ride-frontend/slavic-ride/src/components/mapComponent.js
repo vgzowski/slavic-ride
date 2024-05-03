@@ -8,9 +8,10 @@ function MapComponent () {
         <APIProvider apiKey={apiKey}>
             <Map
             style={{width: '100%', height: '700px'}}
-            center={position}
-            zoom={9}
-            />
+            defaultCenter={position}
+            defaultZoom={9}
+            <Map/>
+
         </APIProvider>
     )
 };
