@@ -1,7 +1,7 @@
 import {useMap, useMapsLibrary} from '@vis.gl/react-google-maps';
 import {useEffect, useState} from 'react';
 
-function Directions () {
+function Directions ({ userLocation }) {
     const map = useMap();
     const routesLibrary = useMapsLibrary("routes");
     const [directionsService, setDirectionsService] = useState();
@@ -20,10 +20,12 @@ function Directions () {
     useEffect(() => {
         if (!directionsService || !directionsRenderer) return;
 
+        console.log("piska");
+
         directionsService.route(
             {
-                origin:"100 Front St, Toronto ON", 
-                destination:"500 College St, Toronto ON", 
+                origin: userLocation, 
+                destination:"Mieszczańska 10 Władysława Mitkowskiego 6 30-337 Kraków Poland",
                 travelMode: routesLibrary.TravelMode.DRIVING,
                 provideRouteAlternatives: true,
             }
@@ -31,7 +33,7 @@ function Directions () {
             directionsRenderer.setDirections(response);
             setRoutes(response.routes);
         });
-    }, [directionsService, directionsRenderer]);
+    }, [directionsService, directionsRenderer, userLocation]);
 
     useEffect(() => {
       if (!directionsRenderer) {
