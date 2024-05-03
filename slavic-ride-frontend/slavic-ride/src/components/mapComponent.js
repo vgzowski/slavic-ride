@@ -1,5 +1,5 @@
-import React from 'react';
-import {APIProvider, Map} from '@vis.gl/react-google-maps';
+import React, { useState, useEffect } from 'react';
+import {APIProvider, Map, Marker} from '@vis.gl/react-google-maps';
 import Directions from './routesComponent.js';
 
 function MapComponent() {
@@ -67,6 +67,8 @@ function MapComponent() {
                             onDragEnd={handleMarkerDragEnd}
                         />
                     )}
+
+                    {userLocation && <Directions userLocation={userLocation} />}
 
                 </Map>
             </APIProvider>
