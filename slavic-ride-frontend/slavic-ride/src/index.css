@@ -11,3 +11,39 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.directions {
+  position: relative;
+  z-index: 1;
+  background-color: #f0f0f0;
+  width: max-content;
+  height: auto;
+  padding: 20px;
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  opacity: 1;
+}
+
+.directions h2 {
+  font-size: 10px;
+}
+
+.directions p {
+  font-size: 5px;
+}
+
+.directions ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.directions button {
+  font-size: 6px;
+  padding: 5px 10px;
+  border-radius: 3px;
+  margin: 5px 0;
+  background-color: #000000;
+  color: white;
+  border: none;
+  cursor: pointer;
+}

@@ -1,49 +1,72 @@
-import { useEffect, useState } from 'react';
-import { useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
+import {useMap, useMapsLibrary} from '@vis.gl/react-google-maps';
+import {useEffect, useState} from 'react';
 
-function Directions() {
-  const map = useMap();
-  const routesLibrary = useMapsLibrary("routes");
+function Directions () {
+    const map = useMap();
+    const routesLibrary = useMapsLibrary("routes");
+    const [directionsService, setDirectionsService] = useState();
+    const [directionsRenderer, setDirectionsRenderer] = useState();
+    const [routes, setRoutes] = useState([]);
+    const [routeIndex, setRouteIndex] = useState(0);
+    const selected = routes[routeIndex];
+    const leg = selected?.legs[0];
 
-  const [directionsService, setDirectionsService] = 
-    useState();
-  
-  const [directionsRenderer, setDirectionsRenderer] = 
-    useState();
+    useEffect(() => {
+        if (!routesLibrary || !map) return;
+        setDirectionsService(new routesLibrary.DirectionsService());
+        setDirectionsRenderer(new routesLibrary.DirectionsRenderer({ map }));
+    }, [routesLibrary, map])
 
-  const [routes, setRoutes] =
-    useState()
+    useEffect(() => {
+        if (!directionsService || !directionsRenderer) return;
 
-  useEffect(() => {
-    if (!routesLibrary || !map) {
-      return;
-    }
+        directionsService.route(
+            {
+                origin:"100 Front St, Toronto ON", 
+                destination:"500 College St, Toronto ON", 
+                travelMode: routesLibrary.TravelMode.DRIVING,
+                provideRouteAlternatives: true,
+            }
+        ).then((response) => {
+            directionsRenderer.setDirections(response);
+            setRoutes(response.routes);
+        });
+    }, [directionsService, directionsRenderer]);
 
-    setDirectionsService(new routesLibrary.DirectionsService());
-    setDirectionsRenderer(new routesLibrary.DirectionsRenderer({ map }));
+    useEffect(() => {
+      if (!directionsRenderer) {
+        return;
+      }
 
-  }, [routesLibrary, map]);
+      directionsRenderer.setRouteIndex(routeIndex);
 
-  useEffect(() => {
+    }, [routeIndex, directionsRenderer])
 
-    if (!directionsService || !directionsRenderer) {
-      return;
-    }
+    if (!leg) return null;
 
-    directionsService.route({
-      origin: "vulica Uryckaha 129, Babruysk, Mogilev Region 213827, Belarus",
-      destination: "vul. Ardžanikidze 46, Babruysk, Mogilev Region 213811, Belarus",
-      travelMode: routesLibrary.TravelMode.DRIVING,
-      provideRouteAlternatives: true
-    }).then((response) => {
-      directionsRenderer.setDirections(response);
-      setRoutes(response.routes);
-    });
+    return (
+        <div className="directions">
+            <h2>{selected.summary}</h2>
+            <p>
+                {leg.start_address?.split(",")[0]} to {leg.end_adress?.split(",")[0]}
+            </p>
+            <p>Distance: {leg.distance?.text}</p>
+            <p>Duration: {leg.duration?.text}</p>
 
-  }, [directionsService, directionsRenderer]);
-
-  console.log(routes);
-  return null;
-}
+            <h2>Other routes</h2>
+            <ul>
+              {
+                routes.map((route, index) => (
+                  <li key={route.summary}>
+                    <button onClick={() => setRouteIndex(index)}>
+                      {route.summary}
+                    </button>
+                  </li>
+                ))
+              }
+            </ul>
+       </div>
+    );
+};
 
 export default Directions;
