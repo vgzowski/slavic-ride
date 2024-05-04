@@ -6,9 +6,10 @@ class MapComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userLocation: null,
+            userLocation: props.userLocation,
+            userDestination: props.userDestination,
             error: null,
-            reloadMap: false
+            reloadMap: false,
         };
         this.apiKey = "AIzaSyCcGid1vTF4zEMmDMWgS5sX3fOxrAtGhDs";
     }
@@ -50,8 +51,18 @@ class MapComponent extends Component {
         console.log("New Marker Position:", newLocation);
     }
 
+    handleUserLocationChange = (source) => {
+        this.setState({ userLocation: source });
+        console.log("Me in MapComponent: " + this.state.userLocation);
+    }
+
+    handleDestinationChange = (destination) => {
+        this.setState({ userDestination: destination });
+        console.log("Me in MapComponent: " + this.state.userDestination);
+    };
+
     render() {
-        const { userLocation, error, reloadMap } = this.state;
+        const { userLocation, error, reloadMap, userDestination } = this.state;
         return (
             <div>
                 <APIProvider apiKey={this.apiKey}>
@@ -76,14 +87,17 @@ class MapComponent extends Component {
                             />
                         )}
 
-                        {userLocation && <Directions userLocation={userLocation} />}
+                        {userLocation && <Directions userLocation={this.props.userLocation} userDestination={this.props.userDestination} />}
                     </Map>
                 </APIProvider>
+                
                 <button onClick={this.handleLocationClick}>Get Current Location</button>
+                <p> {this.props.userLocation} </p>
+                <p> {this.props.userDestination} </p>
                 {error && <p>{error}</p>}
             </div>
         );
     }
-}
+}    
 
 export default MapComponent;
