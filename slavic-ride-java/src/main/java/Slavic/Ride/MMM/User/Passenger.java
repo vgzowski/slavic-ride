@@ -1,7 +1,9 @@
 package Slavic.Ride.MMM.User;
 
-public class Passenger extends User {
+import jakarta.persistence.Table;
 
+@Table(name = "passengers")
+public class Passenger extends User {
     public Passenger(String name, String email, String phone, String id) {
         this.name = name;
         this.email = email;

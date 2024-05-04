@@ -1,12 +1,31 @@
 package Slavic.Ride.MMM.User;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
+
+@Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 abstract public class User {
-    public String name = "";
-    public String email = "";
-    public String phone = "";
-    public String id = "";
-    public int numberOfRatings = 0;
-    public Float totalRating = 0.0f;
+    @Id
+    @UuidGenerator
+    @Column(name = "id", unique = true, updatable = false)
+    protected String id = "";
+    protected String name = "";
+    protected String email = "";
+    protected String phone = "";
+    protected int numberOfRatings = 0;
+    protected Float totalRating = 0.0f;
 
     abstract public String getName();
     abstract public String getEmail();
