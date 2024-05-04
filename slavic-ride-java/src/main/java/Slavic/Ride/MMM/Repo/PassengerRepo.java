@@ -9,6 +9,4 @@ import java.util.Optional;
 @Repository
 public interface PassengerRepo extends JpaRepository<Passenger, String> {
     Optional<Passenger> findPassengerById(String id);
-
-    // implement Location function
 }

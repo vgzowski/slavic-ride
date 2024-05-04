@@ -1,10 +1,13 @@
 package Slavic.Ride.MMM.User;
 
+import Slavic.Ride.MMM.Location;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Table(name = "drivers")
 public class Driver extends User {
     private int carId;
 
@@ -36,9 +39,8 @@ public class Driver extends User {
         return this.totalRating / this.numberOfRatings;
     }
 
-    public int getCarId() {
-        return this.carId;
-    }
+    public Location getLocation() { return this.location; }
+
 
     public void setName(String name) {
         this.name = name;
@@ -55,6 +57,9 @@ public class Driver extends User {
     public void setId(String id) {
         this.id = id;
     }
+
+    public void setLocation(Location location) { this.location = location; }
+
 
     public void addRating(Float rating) {
         if (rating == 0) {

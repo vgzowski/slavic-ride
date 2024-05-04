@@ -1,6 +1,11 @@
 package Slavic.Ride.MMM.User;
 
+import Slavic.Ride.MMM.Location;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Table(name = "passengers")
 public class Passenger extends User {
@@ -38,6 +43,9 @@ public class Passenger extends User {
         return this.totalRating / this.numberOfRatings;
     }
 
+    public Location getLocation() { return this.location; }
+
+
     public void setName(String name) {
         this.name = name;
     }
@@ -53,6 +61,8 @@ public class Passenger extends User {
     public void setId(String id) {
         this.id = id;
     }
+
+    public void setLocation(Location location) { this.location = location; }
 
     public void addRating(Float rating) {
         if (rating == 0) {

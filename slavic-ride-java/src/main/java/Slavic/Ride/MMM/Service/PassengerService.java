@@ -21,6 +21,17 @@ public class PassengerService {
     private final PassengerRepo passengerRepo;
     private final DriverRepo driverRepo;
 
+    public Passenger createPassenger(Passenger passenger) {
+        log.info("Creating passenger: {}", passenger);
+        return passengerRepo.save(passenger);
+    }
+
+    public Passenger getPassenger(String id) {
+        log.info("Getting passenger by ID: {}", id);
+        return passengerRepo.findPassengerById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Passenger not found"));
+    }
+
     public Driver findClosestDriver(String id) {
         log.info("Finding the closest driver to the passenger");
 
