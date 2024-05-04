@@ -56,6 +56,10 @@ class MapComponent extends Component {
         console.log("New Marker Position:", this.userLocationButton);
     }
 
+    orderTaxi = () => {
+        console.log("Taxi has been called");
+    }
+
     render() {
         const { userLocationButton, error, reloadMap } = this.state;
         return (
@@ -90,9 +94,9 @@ class MapComponent extends Component {
                 </APIProvider>
                 
                 <p> {this.props.userLocation} </p>
-                <p> {this.userLocationButton} </p>
+                <p> {JSON.stringify(this.userLocationButton)} </p>
                 <p> {this.props.userDestination} </p>
-                <button onClick={this.handleLocationClick}>Get Current Location</button>
+                <button onClick={this.orderTaxi}>Order Taxi</button>
                 {error && <p>{error}</p>}
             </div>
         );
