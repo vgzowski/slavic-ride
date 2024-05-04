@@ -3,13 +3,15 @@ import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
 import Directions from './routesComponent.js';
 
 class MapComponent extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
-            userLocation: props.userLocation,
+            userLocationButton: null,
+            userLocation : props.userLocation,
             userDestination: props.userDestination,
             error: null,
-            reloadMap: false,
+            reloadMap: true,
         };
         this.apiKey = "AIzaSyCcGid1vTF4zEMmDMWgS5sX3fOxrAtGhDs";
     }
@@ -22,13 +24,16 @@ class MapComponent extends Component {
         }
     }
 
+    componentDidMount () {
+        this.handleLocationClick();
+    }
+
     success = (position) => {
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
         if (!isNaN(latitude) && !isNaN(longitude)) {
             this.setState({
-                userLocation: { lat: latitude, lng: longitude },
-                reloadMap: !this.state.reloadMap
+                userLocationButton: { lat: latitude, lng: longitude },
             });
             console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
         } else {
@@ -47,29 +52,19 @@ class MapComponent extends Component {
             lat: latLng.lat(),
             lng: latLng.lng()
         };
-        this.setState({ userLocation: newLocation });
-        console.log("New Marker Position:", newLocation);
+        this.setState({ userLocationButton: newLocation });
+        console.log("New Marker Position:", this.userLocationButton);
     }
-
-    handleUserLocationChange = (source) => {
-        this.setState({ userLocation: source });
-        console.log("Me in MapComponent: " + this.state.userLocation);
-    }
-
-    handleDestinationChange = (destination) => {
-        this.setState({ userDestination: destination });
-        console.log("Me in MapComponent: " + this.state.userDestination);
-    };
 
     render() {
-        const { userLocation, error, reloadMap, userDestination } = this.state;
+        const { userLocationButton, error, reloadMap } = this.state;
         return (
             <div>
                 <APIProvider apiKey={this.apiKey}>
                     <Map
                         key={reloadMap}
-                        style={{ width: '100%', height: '700px' }}
-                        defaultCenter={userLocation ? userLocation : { lat: 0, lng: 0 }}
+                        style={{ width: '100vw', height: '60vh' }}
+                        defaultCenter={(this.props.userLocation ? this.props.userLocation : userLocationButton) ? (this.props.userLocation ? this.props.userLocation : userLocationButton) : { lat: 0, lng: 0 }}
                         defaultZoom={15}
                         mapTypeControl={false}
                         streetViewControl={false}
@@ -79,21 +74,25 @@ class MapComponent extends Component {
                             streetViewControl: false,
                         }}
                     >
-                        {userLocation && (
+                        {userLocationButton && (
                             <Marker
-                                position={userLocation}
+                                position={userLocationButton}
                                 draggable={true}
                                 onDragEnd={this.handleMarkerDragEnd}
                             />
                         )}
 
-                        {userLocation && <Directions userLocation={this.props.userLocation} userDestination={this.props.userDestination} />}
+                        {(this.props.userLocation || userLocationButton) && this.props.userDestination && 
+                            <Directions 
+                                userLocation={this.props.userLocation ? this.props.userLocation : userLocationButton} 
+                                userDestination={this.props.userDestination} />}
                     </Map>
                 </APIProvider>
                 
-                <button onClick={this.handleLocationClick}>Get Current Location</button>
                 <p> {this.props.userLocation} </p>
+                <p> {this.userLocationButton} </p>
                 <p> {this.props.userDestination} </p>
+                <button onClick={this.handleLocationClick}>Get Current Location</button>
                 {error && <p>{error}</p>}
             </div>
         );

@@ -17,7 +17,7 @@ class UserInterface extends Component {
     handleDestinationChange = (e) => {
         this.setState({ destination: e.target.value });
     }
-
+    
     render () {
         const { source, destination } = this.state;
 
