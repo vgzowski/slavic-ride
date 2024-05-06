@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/drivers")
 @RequiredArgsConstructor
@@ -23,6 +25,12 @@ public class DriverResource {
     public ResponseEntity<Driver> getDriver(@PathVariable String id) {
         Driver driver = driverService.getDriver(id);
         return ResponseEntity.ok(driver);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Driver>> getAllDrivers() {
+        List<Driver> drivers = driverService.getAllDrivers();
+        return ResponseEntity.ok(drivers);
     }
 
     @PutMapping("/{id}/location")

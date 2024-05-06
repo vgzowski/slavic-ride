@@ -11,6 +11,4 @@ import java.util.Optional;
 public interface DriverRepo extends JpaRepository<Driver, String>{
     Optional<Driver> findDriverById(String id);
     List<Driver> findAll();
-
-    Optional<Driver> findClosestDriverToPassenger(String passengerId);
 }

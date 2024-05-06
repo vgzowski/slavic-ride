@@ -2,10 +2,7 @@ package Slavic.Ride.MMM.User;
 
 import Slavic.Ride.MMM.Location;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +10,7 @@ import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
 @Entity
+@Table(name = "users") // Enclose "user" in double quotes
 @Getter
 @Setter
 @AllArgsConstructor

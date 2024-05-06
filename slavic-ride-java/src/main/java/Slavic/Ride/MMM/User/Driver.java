@@ -1,12 +1,19 @@
 package Slavic.Ride.MMM.User;
 
 import Slavic.Ride.MMM.Location;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+//@Setter
+//@Getter
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "drivers")
 public class Driver extends User {
     private int carId;
@@ -39,6 +46,7 @@ public class Driver extends User {
         return this.totalRating / this.numberOfRatings;
     }
 
+    @Embedded
     public Location getLocation() { return this.location; }
 
 
@@ -67,10 +75,6 @@ public class Driver extends User {
         }
         this.totalRating += rating;
         this.numberOfRatings++;
-    }
-
-    public void setCarId(int carId) {
-        this.carId = carId;
     }
 
     public String toString() {

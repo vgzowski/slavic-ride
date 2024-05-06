@@ -1,13 +1,17 @@
 package Slavic.Ride.MMM.User;
 
 import Slavic.Ride.MMM.Location;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Table(name = "passengers")
+@Entity
+@Getter
+@Setter
+
 public class Passenger extends User {
     public Passenger(String name, String email, String phone, String id) {
         this.name = name;
@@ -43,6 +47,7 @@ public class Passenger extends User {
         return this.totalRating / this.numberOfRatings;
     }
 
+    @Embedded
     public Location getLocation() { return this.location; }
 
 

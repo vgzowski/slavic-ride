@@ -32,6 +32,13 @@ public class PassengerService {
                 .orElseThrow(() -> new IllegalArgumentException("Passenger not found"));
     }
 
+    public void updatePassengerLocation(String driverId, Location newLocation) {
+        log.info("Updating passenger location for passenger ID: {}", driverId);
+        Passenger passenger = getPassenger(driverId);
+        passenger.setLocation(newLocation);
+        passengerRepo.save(passenger);
+    }
+
     public Driver findClosestDriver(String id) {
         log.info("Finding the closest driver to the passenger");
 

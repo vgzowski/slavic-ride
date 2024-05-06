@@ -3,11 +3,15 @@ package Slavic.Ride.MMM.Service;
 import Slavic.Ride.MMM.Location;
 import Slavic.Ride.MMM.Repo.DriverRepo;
 import Slavic.Ride.MMM.User.Driver;
-import Slavic.Ride.MMM.User.Passenger;
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -23,12 +27,10 @@ public class DriverService {
                 .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
     }
 
-    // Method to update a driver's location
     public void updateDriverLocation(String driverId, Location newLocation) {
         log.info("Updating driver location for driver ID: {}", driverId);
         Driver driver = findDriverById(driverId);
         driver.setLocation(newLocation);
-        // Save the updated driver entity
         driverRepo.save(driver);
     }
 
@@ -41,6 +43,11 @@ public class DriverService {
         log.info("Getting driver by ID: {}", id);
         return driverRepo.findDriverById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
+    }
+
+    public List<Driver> getAllDrivers() {
+        log.info("Getting all drivers");
+        return driverRepo.findAll();
     }
 
     public void deleteDriver(String id) {
