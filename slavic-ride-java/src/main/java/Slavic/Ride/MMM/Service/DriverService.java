@@ -59,7 +59,7 @@ public class DriverService {
 
     public Driver findClosestDriverByLocation(Location location) {
         log.info("Finding the closest driver to the location");
-        List<Driver> drivers = driverRepo.findAllNotTaken();
+        List<Driver> drivers = driverRepo.findAll(); // HUI
         Driver closestDriver = null;
         double closestDistance = Double.MAX_VALUE;
 
