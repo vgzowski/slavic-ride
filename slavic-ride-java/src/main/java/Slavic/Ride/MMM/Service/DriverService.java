@@ -50,10 +50,31 @@ public class DriverService {
         return driverRepo.findAll();
     }
 
+    public void updateDriverTaken(String driverId, boolean isTaken) {
+        log.info("Updating driver taken status for driver ID: {}", driverId);
+        Driver driver = findDriverById(driverId);
+        driver.setTaken(isTaken);
+        driverRepo.save(driver);
+    }
+
+    public Driver findClosestDriverByLocation(Location location) {
+        log.info("Finding the closest driver to the location");
+        List<Driver> drivers = driverRepo.findAllNotTaken();
+        Driver closestDriver = null;
+        double closestDistance = Double.MAX_VALUE;
+
+        for (Driver driver : drivers) {
+            double distance = Utils.calculateDistance(location, driver.getLocation());
+            if (distance < closestDistance) {
+                closestDriver = driver;
+                closestDistance = distance;
+            }
+        }
+
+        return closestDriver;
+    }
+
     public void deleteDriver(String id) {
         // TODO
     }
-
-
-
 }
