@@ -6,7 +6,7 @@ class UserInterface extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            source: '',
+            source: props.currentLocation || '',
             destination: ''
         };
     }
@@ -19,36 +19,84 @@ class UserInterface extends Component {
         this.setState({ destination: e.target.value });
     }
 
-    orderTaxi = () => {
-        console.log("Taxi has been called");
-        axios.post('/passengers/order-taxi', {
-            source: {
-                latitude: this.state.source.latitude,
-                longitude: this.state.source.longitude
-            },
-            destination: {
-                latitude: this.state.destination.latitude,
-                longitude: this.state.destination.longitude
+    orderTaxi = async () => {
+        const { source, destination } = this.state;
+
+        // Make sure both source and destination are provided
+        if (!source || !destination) {
+            alert("Please provide both source and destination addresses.");
+            return;
+        }
+
+        try {
+            // Get coordinates for source address
+            let sourceCoords = null;
+            if (typeof source == 'object') {
+                sourceCoords = {
+                    latitude: source.latitude,
+                    longitude: source.longitude
+                }
             }
-        })
-        .then(response => {
-            console.log("Taxi ordered successfully:", response.data);
-            const expectedTime = response.data.expectedTime;
-            console.log("Expected time of ride:", expectedTime);
-        })
-        .catch(error => {
-            // Handle error
-            console.error("Error ordering taxi:", error);
-        });
+            else {
+                sourceCoords = await this.getCoordinates(source);
+            }
+            // Get coordinates for destination address
+            const destinationCoords = await this.getCoordinates(destination);
+
+            // Define the request body
+            const requestBody = {
+                source: {
+                    "latitude": sourceCoords.latitude,
+                    "longitude": sourceCoords.longitude
+                },
+                destination: {
+                    "latitude": destinationCoords.latitude,
+                    "longitude": destinationCoords.longitude
+                }
+            };
+
+            // Send POST request to order taxi
+            const response = await axios.post('http://localhost:8080/passengers/order-taxi', requestBody);
+            console.log('Assigned driver ID:', response.data);
+        } catch (error) {
+            console.error('Error ordering taxi:', error);
+        }
     }
+
+    getCoordinates = async (address) => {
+        try {
+            const apiKey = 'AIzaSyCcGid1vTF4zEMmDMWgS5sX3fOxrAtGhDs'; // Replace 'YOUR_API_KEY' with your actual API key
+            const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`);
+            console.log('Response data:', response.data); // Log the response data
     
-    
+            // Check if the response status is OK
+            if (response.data.status === 'OK') {
+                // Access the coordinates from the response data
+                const location = response.data.results[0].geometry.location;
+                return {
+                    latitude: location.lat,
+                    longitude: location.lng
+                };
+            } else {
+                throw new Error('Error fetching coordinates for address: ' + response.data.status);
+            }
+        } catch (error) {
+            console.error('Error fetching coordinates for address:', error);
+            throw new Error('Error fetching coordinates for address');
+        }
+    }
+
+    handleCurrentLocationReceived = (currentLocation) => {
+        this.setState({ source: currentLocation });
+    }
+
+
     render () {
         const { source, destination } = this.state;
 
         return (
             <div>
-                <MapComponent userLocation={source} userDestination={destination} handleLocationClick={this.handleLocationClick} />
+                <MapComponent userLocation={source} userDestination={destination} onCurrentLocationReceived={this.handleCurrentLocationReceived} />
                 <h1>
                     Enter Source and Destination
                 </h1>
@@ -57,7 +105,7 @@ class UserInterface extends Component {
                     <label htmlFor="source">
                         Source Address:
                     </label>
-                    <input type="text" id="source" value={source} onChange={this.handleSourceChange} />
+                    <input type="text" id="source" value={((typeof source == 'object') ? 'Your current location' : source)} onChange={this.handleSourceChange} />
                 </div> 
 
                 <div>
@@ -67,13 +115,8 @@ class UserInterface extends Component {
                     <input type="text" id="destination" value={destination} onChange={this.handleDestinationChange} />
                 </div>         
 
-
-                <p> {this.props.userLocation} </p>
-                <p> {JSON.stringify(this.userLocationButton)} </p>
-                <p> {this.props.userDestination} </p>
                 <button onClick={this.orderTaxi}>Order Taxi</button>
 
-                {/* Assuming handleLocationClick is defined elsewhere */}
                 <button onClick={this.handleLocationClick}>Update Location</button>
             </div>
         );

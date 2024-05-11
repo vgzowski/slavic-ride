@@ -50,14 +50,16 @@ public class PassengerResource {
 
         Double sourceLatitude = source.get("latitude");
         Double sourceLongitude = source.get("longitude");
+
         Double destinationLatitude = destination.get("latitude");
         Double destinationLongitude = destination.get("longitude");
 
-        Location sourceLocation = new Location(sourceLatitude, sourceLongitude);
-        Location destinationLocation = new Location(destinationLatitude, destinationLongitude);
+        // Now you have the source and destination coordinates, you can process the request further
 
-        String assignedDriverId = assignDriverToPassenger(sourceLocation, destinationLocation);
-        return ResponseEntity.ok(assignedDriverId);
+        // For example, you can return a confirmation message
+        return ResponseEntity.ok("Taxi ordered from (" + sourceLatitude + ", " + sourceLongitude + ") to (" +
+                destinationLatitude + ", " + destinationLongitude + ")");
+
     }
 
     private String assignDriverToPassenger(Location location, Location destination) {
