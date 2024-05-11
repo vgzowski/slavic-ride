@@ -13,6 +13,6 @@ public interface DriverRepo extends JpaRepository<Driver, String>{
     Optional<Driver> findDriverById(String id);
     List<Driver> findAll();
 
-    @Query("SELECT d FROM Driver d WHERE d.isTaken = false")
+    @Query("SELECT d FROM Driver d WHERE COALESCE(d.isTaken, false) = false")
     List <Driver> findAllNotTaken();
 }

@@ -17,7 +17,8 @@ import lombok.Setter;
 @Table(name = "drivers")
 public class Driver extends User {
     private int carId;
-    boolean isTaken = false;
+    @Getter
+    Boolean isTaken = false;
 
     public Driver(String name, String email, String phone, String id, int carId) {
         this.name = name;
@@ -45,10 +46,6 @@ public class Driver extends User {
 
     public Float getRating() {
         return this.totalRating / this.numberOfRatings;
-    }
-
-    public boolean getTaken() {
-        return this.isTaken;
     }
 
     @Embedded

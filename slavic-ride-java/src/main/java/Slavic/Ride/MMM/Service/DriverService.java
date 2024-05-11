@@ -63,6 +63,7 @@ public class DriverService {
         Driver closestDriver = null;
         double closestDistance = Double.MAX_VALUE;
 
+        log.info("Size of drivers: {}", drivers.size());
         for (Driver driver : drivers) {
             double distance = Utils.calculateDistance(location, driver.getLocation());
             if (distance < closestDistance) {

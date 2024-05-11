@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/passengers")
@@ -41,9 +43,20 @@ public class PassengerResource {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/orderTaxi")
-    public ResponseEntity<String> orderTaxi(@RequestBody Location location, @RequestBody Location destination) {
-        String assignedDriverId = assignDriverToPassenger(location, destination);
+    @PostMapping("/order-taxi")
+    public ResponseEntity<String> orderTaxi(@RequestBody Map<String, Map<String, Double>> requestBody) {
+        Map<String, Double> source = requestBody.get("source");
+        Map<String, Double> destination = requestBody.get("destination");
+
+        Double sourceLatitude = source.get("latitude");
+        Double sourceLongitude = source.get("longitude");
+        Double destinationLatitude = destination.get("latitude");
+        Double destinationLongitude = destination.get("longitude");
+
+        Location sourceLocation = new Location(sourceLatitude, sourceLongitude);
+        Location destinationLocation = new Location(destinationLatitude, destinationLongitude);
+
+        String assignedDriverId = assignDriverToPassenger(sourceLocation, destinationLocation);
         return ResponseEntity.ok(assignedDriverId);
     }
 
