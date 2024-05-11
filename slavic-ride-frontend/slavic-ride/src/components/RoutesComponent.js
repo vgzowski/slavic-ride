@@ -1,7 +1,8 @@
 import {useMap, useMapsLibrary} from '@vis.gl/react-google-maps';
 import {useEffect, useState} from 'react';
 
-function Directions ({ userLocation }) {
+function Directions (obj) {
+    const {userLocation, userDestination} = obj;
     const map = useMap();
     const routesLibrary = useMapsLibrary("routes");
     const [directionsService, setDirectionsService] = useState();
@@ -20,12 +21,13 @@ function Directions ({ userLocation }) {
     useEffect(() => {
         if (!directionsService || !directionsRenderer) return;
 
-        console.log("piska");
+        console.log("Loc: " + userLocation);
+        console.log("Des: " + userDestination);
 
         directionsService.route(
             {
                 origin: userLocation, 
-                destination:"Mieszczańska 10 Władysława Mitkowskiego 6 30-337 Kraków Poland",
+                destination: userDestination ? userDestination : "Mieszczańska 10 Władysława Mitkowskiego 6 30-337 Kraków Poland",
                 travelMode: routesLibrary.TravelMode.DRIVING,
                 provideRouteAlternatives: true,
             }
@@ -33,7 +35,7 @@ function Directions ({ userLocation }) {
             directionsRenderer.setDirections(response);
             setRoutes(response.routes);
         });
-    }, [directionsService, directionsRenderer, userLocation]);
+    }, [directionsService, directionsRenderer, userLocation, userDestination]);
 
     useEffect(() => {
       if (!directionsRenderer) {

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
-import MapComponent from './components/mapComponent';
-
-function App() {
-    return <MapComponent/>
+import InsideApp from './InsideApp';
+function App () {
+    return (
+        <InsideApp />
+    );
 }
 
 export default App;
