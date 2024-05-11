@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
-import Directions from './routesComponent.js';
+import Directions from './RoutesComponent.js';
 
 class MapComponent extends Component {
 
@@ -17,6 +17,7 @@ class MapComponent extends Component {
     }
 
     handleLocationClick = () => {
+        console.log("hui");
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(this.success, this.handleError);
         } else {
@@ -56,10 +57,6 @@ class MapComponent extends Component {
         console.log("New Marker Position:", this.userLocationButton);
     }
 
-    orderTaxi = () => {
-        console.log("Taxi has been called");
-    }
-
     render() {
         const { userLocationButton, error, reloadMap } = this.state;
         return (
@@ -93,10 +90,6 @@ class MapComponent extends Component {
                     </Map>
                 </APIProvider>
                 
-                <p> {this.props.userLocation} </p>
-                <p> {JSON.stringify(this.userLocationButton)} </p>
-                <p> {this.props.userDestination} </p>
-                <button onClick={this.orderTaxi}>Order Taxi</button>
                 {error && <p>{error}</p>}
             </div>
         );
