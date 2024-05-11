@@ -17,6 +17,7 @@ import lombok.Setter;
 @Table(name = "drivers")
 public class Driver extends User {
     private int carId;
+    private boolean isTaken;
 
     public Driver(String name, String email, String phone, String id, int carId) {
         this.name = name;
@@ -42,6 +43,10 @@ public class Driver extends User {
         return this.id;
     }
 
+    public boolean getTaken() {
+        return this.isTaken;
+    }
+
     public Float getRating() {
         return this.totalRating / this.numberOfRatings;
     }
@@ -64,6 +69,10 @@ public class Driver extends User {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public void setTaken(boolean isTaken) {
+        this.isTaken = isTaken;
     }
 
     public void setLocation(Location location) { this.location = location; }

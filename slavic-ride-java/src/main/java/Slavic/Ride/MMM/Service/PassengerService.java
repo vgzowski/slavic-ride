@@ -45,7 +45,7 @@ public class PassengerService {
         Passenger passenger = passengerRepo.findPassengerById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Passenger not found"));
 
-        List<Driver> drivers = driverRepo.findAll();
+        List<Driver> drivers = driverRepo.findAllNotTaken();
         Driver closestDriver = null;
         double closestDistance = Double.MAX_VALUE;
 
