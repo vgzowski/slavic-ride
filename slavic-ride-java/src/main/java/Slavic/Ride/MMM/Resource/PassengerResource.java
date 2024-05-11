@@ -9,8 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
 
 @RestController
 @RequestMapping("/passengers")
@@ -57,14 +58,21 @@ public class PassengerResource {
         // Now you have the source and destination coordinates, you can process the request further
 
         // For example, you can return a confirmation message
-        return ResponseEntity.ok("Taxi ordered from (" + sourceLatitude + ", " + sourceLongitude + ") to (" +
-                destinationLatitude + ", " + destinationLongitude + ")");
+        return ResponseEntity.ok(assignDriverToPassenger(
+            new Location(sourceLatitude, sourceLongitude),
+            new Location(destinationLatitude, destinationLongitude)
+        ));
 
     }
 
     private String assignDriverToPassenger(Location location, Location destination) {
         Driver closestDriver = driverService.findClosestDriverByLocation(location);
-        return closestDriver.getId();
+
+        String driverId = closestDriver.getId();
+
+        driverService.changeTakenToTrue(driverId);
+
+        return driverId;
     }
 
 

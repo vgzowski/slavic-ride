@@ -75,6 +75,20 @@ public class DriverService {
         return closestDriver;
     }
 
+    public void changeTakenToTrue(String driverId) {
+        Driver driver = driverRepo.findDriverById(driverId)
+                        .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
+        
+        driverRepo.setTakenToTrue(driverId);
+    }
+
+    public void changeTakenToFalse(String driverId) {
+        Driver driver = driverRepo.findDriverById(driverId)
+                        .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
+        
+        driverRepo.setTakenToFalse(driverId);
+    }
+
     public void deleteDriver(String id) {
         // TODO
     }
