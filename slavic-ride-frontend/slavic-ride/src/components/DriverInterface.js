@@ -35,8 +35,8 @@ class DriverInterface extends Component {
                 navigator.geolocation.getCurrentPosition(
                     position => {
                         const location = {
-                            lat: position.coords.lat,
-                            lng: position.coords.lng
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
                         };
                         resolve(location);
                     },
@@ -66,6 +66,7 @@ class DriverInterface extends Component {
                         "id": {
                             "id": driverId
                         }};
+                    console.log('Sending location:', requestBody)
                     await axios.put('http://localhost:8080/drivers/${driverId}/location', requestBody);
                     console.log(`Location successfully sent to server: ${location}, ${driverId}`);
                 }
@@ -80,7 +81,7 @@ class DriverInterface extends Component {
             } catch (error) {
                 console.log('Something went wrong in sending location...');
             }
-        }, 3000);
+        }, 10000);
     }
 
     render () {
