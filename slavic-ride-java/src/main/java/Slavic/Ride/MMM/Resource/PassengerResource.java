@@ -13,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
+import static java.lang.System.exit;
+
+@Slf4j
 @RestController
 @RequestMapping("/passengers")
 @RequiredArgsConstructor
@@ -49,25 +52,32 @@ public class PassengerResource {
         Map<String, Double> source = requestBody.get("source");
         Map<String, Double> destination = requestBody.get("destination");
 
-        Double sourceLatitude = source.get("latitude");
-        Double sourceLongitude = source.get("longitude");
+        System.out.println(source);
+        System.out.println(destination);
 
-        Double destinationLatitude = destination.get("latitude");
-        Double destinationLongitude = destination.get("longitude");
+        Double sourcelat = source.get("lat");
+        Double sourcelng = source.get("lng");
+
+        Double destinationlat = destination.get("lat");
+        Double destinationlng = destination.get("lng");
 
         // Now you have the source and destination coordinates, you can process the request further
 
         // For example, you can return a confirmation message
         return ResponseEntity.ok(assignDriverToPassenger(
-            new Location(sourceLatitude, sourceLongitude),
-            new Location(destinationLatitude, destinationLongitude)
+            new Location(sourcelat, sourcelng),
+            new Location(destinationlat, destinationlng)
         ));
-
     }
 
     private String assignDriverToPassenger(Location location, Location destination) {
+        log.info("Assigning driver to passenger");
+        log.info("Location: {}", location);
+        log.info("Destination: {}", destination);
         Driver closestDriver = driverService.findClosestDriverByLocation(location);
-
+        if (closestDriver == null) {
+            return "No drivers available";
+        }
         String driverId = closestDriver.getId();
 
         driverService.changeTakenToTrue(driverId);

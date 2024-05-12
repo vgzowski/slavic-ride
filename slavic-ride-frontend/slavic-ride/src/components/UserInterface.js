@@ -31,11 +31,14 @@ class UserInterface extends Component {
         try {
             // Get coordinates for source address
             let sourceCoords = null;
+            console.log('source: ', source);
+
             if (typeof source == 'object') {
                 sourceCoords = {
-                    latitude: source.latitude,
-                    longitude: source.longitude
+                    lat: source.lat,
+                    lng: source.lng
                 }
+                console.log('sourceCoords: ', sourceCoords);
             }
             else {
                 sourceCoords = await this.getCoordinates(source);
@@ -46,12 +49,12 @@ class UserInterface extends Component {
             // Define the request body
             const requestBody = {
                 source: {
-                    "latitude": sourceCoords.latitude,
-                    "longitude": sourceCoords.longitude
+                    "lat": sourceCoords.lat,
+                    "lng": sourceCoords.lng
                 },
                 destination: {
-                    "latitude": destinationCoords.latitude,
-                    "longitude": destinationCoords.longitude
+                    "lat": destinationCoords.lat,
+                    "lng": destinationCoords.lng
                 }
             };
 
@@ -74,8 +77,8 @@ class UserInterface extends Component {
                 // Access the coordinates from the response data
                 const location = response.data.results[0].geometry.location;
                 return {
-                    latitude: location.lat,
-                    longitude: location.lng
+                    lat: location.lat,
+                    lng: location.lng
                 };
             } else {
                 throw new Error('Error fetching coordinates for address: ' + response.data.status);

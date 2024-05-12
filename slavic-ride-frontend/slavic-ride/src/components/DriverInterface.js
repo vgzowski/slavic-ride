@@ -35,8 +35,8 @@ class DriverInterface extends Component {
                 navigator.geolocation.getCurrentPosition(
                     position => {
                         const location = {
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude
+                            lat: position.coords.lat,
+                            lng: position.coords.lng
                         };
                         resolve(location);
                     },
@@ -60,8 +60,8 @@ class DriverInterface extends Component {
                 if (location && driverId) {
                     const requestBody = {
                         "location": {
-                            "latitude": location.latitude,
-                            "longitude": location.longitude
+                            "lat": location.lat,
+                            "lng": location.lng
                         },
                         "id": {
                             "id": driverId
