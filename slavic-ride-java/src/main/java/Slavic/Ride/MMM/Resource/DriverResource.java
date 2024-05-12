@@ -6,9 +6,14 @@ import Slavic.Ride.MMM.Location;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.*;
 
 import java.util.List;
+import java.util.Map;
 
+import static java.lang.System.exit;
+
+@Slf4j
 @RestController
 @RequestMapping("/drivers")
 @RequiredArgsConstructor
@@ -34,8 +39,12 @@ public class DriverResource {
     }
 
     @PutMapping("/{id}/location")
-    public ResponseEntity<Void> updateDriverLocation(@PathVariable String id, @RequestBody Location newLocation) {
-        driverService.updateDriverLocation(id, newLocation);
+    public ResponseEntity<Void> updateDriverLocation(@RequestBody Map<String, Map <String, Object>> requestBody) {
+        log.info("Location: {}", requestBody.get("location"));
+        String id = requestBody.containsKey("id") ? (String) requestBody.get("id").get("id") : null;
+        log.info("Driver Id: {}", id);
+        driverService.updateDriverLocation(id, new Location((Double) requestBody.get("location").get("latitude"),
+                                                            (Double) requestBody.get("location").get("longitude")));
         return ResponseEntity.ok().build();
     }
 }

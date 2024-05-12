@@ -37,7 +37,9 @@ class MapComponent extends Component {
                 userLocationButton: { lat: latitude, lng: longitude },
             });
             console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-            this.props.onCurrentLocationReceived({ lat: latitude, lng: longitude }); 
+            if (this.props.onCurrentLocationReceived) {
+                this.props.onCurrentLocationReceived({latitude: latitude, longitude: longitude});
+            }
         } else {
             this.setState({ error: "Invalid coordinates received" });
         }
