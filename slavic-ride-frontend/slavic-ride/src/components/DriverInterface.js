@@ -16,8 +16,8 @@ const DriverInterface = () => {
                 navigator.geolocation.getCurrentPosition(
                     position => {
                         const location = {
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
                         };
                         resolve(location);
                     },
@@ -40,8 +40,8 @@ const DriverInterface = () => {
                 if (location && locationLOL.state.driverId) {
                     const requestBody = {
                         "location": {
-                            "latitude": location.latitude,
-                            "longitude": location.longitude
+                            "lat": location.lat,
+                            "lng": location.lng
                         },
                         "id": {
                             "id": locationLOL.state.driverId
@@ -61,6 +61,7 @@ const DriverInterface = () => {
                 console.log('Something went wrong in sending location...', error);
             }
         }, 5000);
+
     }
     
     return (

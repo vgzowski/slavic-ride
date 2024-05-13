@@ -1,6 +1,8 @@
 package Slavic.Ride.MMM.Resource;
 
+import Slavic.Ride.MMM.Order;
 import Slavic.Ride.MMM.Service.DriverService;
+import Slavic.Ride.MMM.Service.OrderService;
 import Slavic.Ride.MMM.User.Driver;
 import Slavic.Ride.MMM.Location;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import static java.lang.System.exit;
 @RequiredArgsConstructor
 public class DriverResource {
     private final DriverService driverService;
+    private final OrderService orderService;
 
     @PostMapping
     public ResponseEntity<Driver> createDriver(@RequestBody Driver driver) {
@@ -46,5 +49,35 @@ public class DriverResource {
         driverService.updateDriverLocation(id, new Location((Double) requestBody.get("location").get("lat"),
                                                             (Double) requestBody.get("location").get("lng")));
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}/order")
+    public ResponseEntity<Order> getOrder(@PathVariable String id) {
+        boolean isTaken = driverService.getDriver(id).getIsTaken();
+        if (isTaken) {
+            String orderId = driverService.getDriver(id).getOrderId();
+            return ResponseEntity.ok(orderService.findOrderById(orderId));
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{id}/finish-order")
+    public ResponseEntity<Void> finishOrder(@PathVariable String id) {
+        log.info("Finishing order for driver ID: {}", id);
+        String orderId = driverService.getDriver(id).getOrderId();
+        boolean isTaken = driverService.getDriver(id).getIsTaken();
+        if (!isTaken) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            orderService.finishOrder(orderId);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 }

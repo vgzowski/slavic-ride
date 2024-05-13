@@ -33,3 +33,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignore node_modules/
+node_modules/
+
+# Ignore package lock and package.json files
+package-lock.json
+package.json

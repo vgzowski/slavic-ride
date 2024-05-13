@@ -12,6 +12,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Location {
-  private double Latitude;
-  private double Longitude;
+  private double lat;
+  private double lng;
+
+  public String toString() {
+    return "Lat: " + lat + ", Lng: " + lng;
+  }
 }
