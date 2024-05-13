@@ -91,17 +91,17 @@ class MapComponent extends Component {
                             />
                         )}
 
-                        {(this.props.userLocation || userLocationButton) && this.props.userDestination && 
-                            <Directions 
-                                userLocation={this.props.userLocation ? this.props.userLocation : userLocationButton} 
+                        {(this.props.userLocation || userLocationButton) && this.props.userDestination &&
+                            <Directions
+                                userLocation={this.props.userLocation ? this.props.userLocation : userLocationButton}
                                 userDestination={this.props.userDestination} />}
                     </Map>
                 </APIProvider>
-                
+
                 {error && <p>{error}</p>}
             </div>
         );
     }
-}    
+}
 
 export default MapComponent;
