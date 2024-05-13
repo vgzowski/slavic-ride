@@ -59,6 +59,9 @@ class MapComponent extends Component {
             lng: latLng.lng()
         };
         this.setState({ userLocationButton: newLocation });
+        if (this.props.onCurrentLocationReceived) {
+            this.props.onCurrentLocationReceived(newLocation);
+        }
         console.log("New Marker Position:", this.userLocationButton);
     }
 
