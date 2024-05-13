@@ -64,6 +64,7 @@ public class DriverService {
 
         log.info("Size of drivers: {}", drivers.size());
         for (Driver driver : drivers) {
+            System.out.println(driver);
             double distance = Utils.calculateDistance(location, driver.getLocation());
             if (distance < closestDistance) {
                 closestDriver = driver;

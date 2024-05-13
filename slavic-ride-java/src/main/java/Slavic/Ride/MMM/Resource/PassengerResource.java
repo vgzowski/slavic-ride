@@ -52,27 +52,31 @@ public class PassengerResource {
     }
 
     @PostMapping("/order-taxi")
-    public ResponseEntity<String> orderTaxi(@RequestBody Map<String, Map<String, Double>> requestBody) {
-        Map<String, Double> source = requestBody.get("source");
-        Map<String, Double> destination = requestBody.get("destination");
+    public ResponseEntity<String> orderTaxi(@RequestBody Map<String, Map<String, Object>> requestBody) {
+        Map<String, Object> source = requestBody.get("source");
+        Map<String, Object> destination = requestBody.get("destination");
 
-        Double sourcelat = source.get("lat");
-        Double sourcelng = source.get("lng");
+        Double sourcelat = (Double) source.get("lat");
+        Double sourcelng = (Double) source.get("lng");
 
-        Double destinationlat = destination.get("lat");
-        Double destinationlng = destination.get("lng");
+        Double destinationlat = (Double) destination.get("lat");
+        Double destinationlng = (Double) destination.get("lng");
+
+        String id = (String) requestBody.get("id").get("id");
+
+        System.out.println(id);
+        System.out.println(source);
+        System.out.println(destination);
+        
 
         // Now you have the source and destination coordinates, you can process the request further
 
         // For example, you can return a confirmation message
         return ResponseEntity.ok(assignDriverToPassenger(
             new Location(sourcelat, sourcelng),
-            new Location(destinationlat, destinationlng)
+            new Location(destinationlat, destinationlng),
+            id
         ));
-    }
-
-    private String assignDriverToPassenger(Location location, Location destination) {
-        return assignDriverToPassenger(location, destination, "7989a54c-b0de-4a2c-914e-ffaeac2e9415");
     }
 
     private String assignDriverToPassenger(Location location, Location destination, String passengerId) {

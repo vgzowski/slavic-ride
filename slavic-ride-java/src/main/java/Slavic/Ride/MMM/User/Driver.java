@@ -84,6 +84,6 @@ public class Driver extends User {
     }
 
     public String toString() {
-        return "Name: " + this.name + "\nEmail: " + this.email + "\nPhone: " + this.phone + "\nID: " + this.id + "\nRating: " + getRating();
+        return "Name: " + this.name + "\nEmail: " + this.email + "\nPhone: " + this.phone + "\nID: " + this.id + "\nRating: " + getRating() + "\nLocation: " + getLocation();
     }
 }

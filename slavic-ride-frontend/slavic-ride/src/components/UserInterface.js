@@ -79,6 +79,9 @@ const UserInterface = () => {
                 destination: {
                     "lat": destinationCoords.lat,
                     "lng": destinationCoords.lng
+                },
+                id: {
+                    "id": location.state.passengerId
                 }
             };
 
