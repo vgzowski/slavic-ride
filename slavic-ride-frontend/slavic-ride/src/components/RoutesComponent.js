@@ -21,9 +21,6 @@ function Directions (obj) {
     useEffect(() => {
         if (!directionsService || !directionsRenderer) return;
 
-        console.log("Loc: " + userLocation);
-        console.log("Des: " + userDestination);
-
         directionsService.route(
             {
                 origin: userLocation, 

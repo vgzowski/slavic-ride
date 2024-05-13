@@ -1,35 +1,16 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import MapComponent from './MapComponent';
 import axios from "axios";
+import { useLocation } from 'react-router-dom';
 
-class DriverInterface extends Component {
-    constructor (props) {
-        super(props);
-        this.state = {
-            location: null,
-            driverId: 'a5355e18-27db-4aa4-b873-c53d3545f12c'
-        }
-    }
+const DriverInterface = () => {
+    const locationLOL = useLocation();
 
-    componentDidMount() {
-        // if (!this.state.driverId) {
-        //     this.createDriver();
-        // }
-        this.sendLocation();
-    }
+    useEffect(() => {
+        sendLocation();
+    }, []);
 
-    createDriver = async () => {
-        try {
-            const requestBody = {}
-            const response = await axios.post('http://localhost:8080/drivers', requestBody);
-            this.setState({ driverId: response.data.id });
-            console.log('Driver ID:', response.data);
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    getLocation = () => {
+    const getLocation = () => {
         return new Promise((resolve, reject) => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -52,45 +33,41 @@ class DriverInterface extends Component {
         });
     }
 
-    sendLocation = async () => {
+    const sendLocation = async () => {
         setInterval(async () => {
             try {
-                const { driverId } = this.state;
-                const location = await this.getLocation();
-                if (location && driverId) {
+                const location = await getLocation();
+                if (location && locationLOL.state.driverId) {
                     const requestBody = {
                         "location": {
                             "latitude": location.latitude,
                             "longitude": location.longitude
                         },
                         "id": {
-                            "id": driverId
+                            "id": locationLOL.state.driverId
                         }};
-                    await axios.put('http://localhost:8080/drivers/${driverId}/location', requestBody);
-                    console.log(`Location successfully sent to server: ${location}, ${driverId}`);
+                    await axios.put(`http://localhost:8080/drivers/${locationLOL.state.driverId}/location`, requestBody);
+                    console.log(`Location successfully sent to server: ${location}, ${locationLOL.state.driverId}`);
                 }
                 else {
                     if (!location) {
                         console.log('No location');
                     }
-                    if (!driverId) {
+                    if (!locationLOL.state.driverId) {
                         console.log('No driver id');
                     }
                 }
             } catch (error) {
-                console.log('Something went wrong in sending location...');
+                console.log('Something went wrong in sending location...', error);
             }
-        }, 3000);
+        }, 5000);
     }
-
-    render () {
-        return (
-            <div>
-                <MapComponent />
-                
-            </div>
-        );
-    }
+    
+    return (
+        <div>
+            <MapComponent />
+        </div>
+    );
 }
 
 export default DriverInterface;

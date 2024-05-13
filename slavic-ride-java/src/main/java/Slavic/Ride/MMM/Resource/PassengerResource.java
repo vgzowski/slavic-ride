@@ -49,11 +49,11 @@ public class PassengerResource {
         Map<String, Double> source = requestBody.get("source");
         Map<String, Double> destination = requestBody.get("destination");
 
-        Double sourceLatitude = source.get("latitude");
-        Double sourceLongitude = source.get("longitude");
+        Double sourceLatitude = source.get("lat");
+        Double sourceLongitude = source.get("lng");
 
-        Double destinationLatitude = destination.get("latitude");
-        Double destinationLongitude = destination.get("longitude");
+        Double destinationLatitude = destination.get("lat");
+        Double destinationLongitude = destination.get("lng");
 
         // Now you have the source and destination coordinates, you can process the request further
 

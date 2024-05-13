@@ -6,6 +6,7 @@ class MapComponent extends Component {
 
     constructor(props) {
         super(props);
+        console.log("props.userlocation:", props.userLocation)
         this.state = {
             userLocationButton: null,
             userLocation : props.userLocation,
@@ -30,15 +31,17 @@ class MapComponent extends Component {
     }
 
     success = (position) => {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-        if (!isNaN(latitude) && !isNaN(longitude)) {
+        console.log("success")
+        console.log(position);
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        if (!isNaN(lat) && !isNaN(lng)) {
             this.setState({
-                userLocationButton: { lat: latitude, lng: longitude },
+                userLocationButton: { lat: lat, lng: lng },
             });
-            console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+            console.log(`lat: ${lat}, lng: ${lng}`);
             if (this.props.onCurrentLocationReceived) {
-                this.props.onCurrentLocationReceived({latitude: latitude, longitude: longitude});
+                this.props.onCurrentLocationReceived({lat: lat, lng: lng});
             }
         } else {
             this.setState({ error: "Invalid coordinates received" });
@@ -62,6 +65,8 @@ class MapComponent extends Component {
 
     render() {
         const { userLocationButton, error, reloadMap } = this.state;
+        console.log("user location:", this.props.userLocation);
+        console.log("default center:", (this.props.userLocation ? this.props.userLocation : userLocationButton) ? (this.props.userLocation ? this.props.userLocation : userLocationButton) : { lat: 0, lng: 0 })
         return (
             <div>
                 <APIProvider apiKey={this.apiKey}>
@@ -86,17 +91,17 @@ class MapComponent extends Component {
                             />
                         )}
 
-                        {(this.props.userLocation || userLocationButton) && this.props.userDestination && 
-                            <Directions 
-                                userLocation={this.props.userLocation ? this.props.userLocation : userLocationButton} 
+                        {(this.props.userLocation || userLocationButton) && this.props.userDestination &&
+                            <Directions
+                                userLocation={this.props.userLocation ? this.props.userLocation : userLocationButton}
                                 userDestination={this.props.userDestination} />}
                     </Map>
                 </APIProvider>
-                
+
                 {error && <p>{error}</p>}
             </div>
         );
     }
-}    
+}
 
 export default MapComponent;

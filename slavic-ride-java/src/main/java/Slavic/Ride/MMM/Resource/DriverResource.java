@@ -43,8 +43,8 @@ public class DriverResource {
         log.info("Location: {}", requestBody.get("location"));
         String id = requestBody.containsKey("id") ? (String) requestBody.get("id").get("id") : null;
         log.info("Driver Id: {}", id);
-        driverService.updateDriverLocation(id, new Location((Double) requestBody.get("location").get("latitude"),
-                                                            (Double) requestBody.get("location").get("longitude")));
+        driverService.updateDriverLocation(id, new Location((Double) requestBody.get("location").get("lat"),
+                                                            (Double) requestBody.get("location").get("lng")));
         return ResponseEntity.ok().build();
     }
 }
