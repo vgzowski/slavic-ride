@@ -48,4 +48,11 @@ public class PassengerService {
 
         return driverService.findClosestDriverByLocation(passenger.getLocation());
     }
+
+    public void setOrderId(String passengerId, String orderId) {
+        log.info("Setting order ID for passenger ID: {}", passengerId);
+        Passenger passenger = getPassenger(passengerId);
+        passenger.setOrderId(orderId);
+        passengerRepo.save(passenger);
+    }
 }

@@ -26,6 +26,7 @@ abstract public class User {
     protected String phone = "";
     protected int numberOfRatings = 0;
     protected Float totalRating = 0.0f;
+    protected String orderId = "";
     @Embedded
     protected Location location = new Location();
 

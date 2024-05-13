@@ -68,7 +68,7 @@ public class Driver extends User {
         this.id = id;
     }
 
-    public void setTaken(boolean isTaken) {
+    public void setIsTaken(boolean isTaken) {
         this.isTaken = isTaken;
     }
 

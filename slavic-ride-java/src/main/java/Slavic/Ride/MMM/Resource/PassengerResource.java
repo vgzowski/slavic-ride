@@ -2,12 +2,15 @@ package Slavic.Ride.MMM.Resource;
 
 import Slavic.Ride.MMM.Location;
 import Slavic.Ride.MMM.Service.DriverService;
+import Slavic.Ride.MMM.Service.OrderService;
 import Slavic.Ride.MMM.Service.PassengerService;
 import Slavic.Ride.MMM.User.Driver;
 import Slavic.Ride.MMM.User.Passenger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import Slavic.Ride.MMM.Service.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,6 +25,7 @@ import static java.lang.System.exit;
 public class PassengerResource {
     private final PassengerService passengerService;
     private final DriverService driverService;
+    private final OrderService orderService;
 
     @PostMapping
     public ResponseEntity<Passenger> createPassenger(@RequestBody Passenger passenger) {
@@ -52,9 +56,6 @@ public class PassengerResource {
         Map<String, Double> source = requestBody.get("source");
         Map<String, Double> destination = requestBody.get("destination");
 
-        System.out.println(source);
-        System.out.println(destination);
-
         Double sourcelat = source.get("lat");
         Double sourcelng = source.get("lng");
 
@@ -71,6 +72,10 @@ public class PassengerResource {
     }
 
     private String assignDriverToPassenger(Location location, Location destination) {
+        return assignDriverToPassenger(location, destination, "7989a54c-b0de-4a2c-914e-ffaeac2e9415");
+    }
+
+    private String assignDriverToPassenger(Location location, Location destination, String passengerId) {
         log.info("Assigning driver to passenger");
         log.info("Location: {}", location);
         log.info("Destination: {}", destination);
@@ -78,12 +83,12 @@ public class PassengerResource {
         if (closestDriver == null) {
             return "No drivers available";
         }
+
+        log.info("Driver is found with ID: {}", closestDriver.getId());
+
         String driverId = closestDriver.getId();
 
-        driverService.changeTakenToTrue(driverId);
-
+        orderService.createOrder(location, destination, passengerId, driverId);
         return driverId;
     }
-
-
 }
