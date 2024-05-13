@@ -18,7 +18,6 @@ class MapComponent extends Component {
     }
 
     handleLocationClick = () => {
-        console.log("hui");
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(this.success, this.handleError);
         } else {

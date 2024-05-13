@@ -12,10 +12,12 @@ class InsideApp extends Component {
         return (
             <Router>
                 <Routes>
+                    {/* Default route */}
+                    <Route element={<FirstLoginPage />} />
+
                     <Route path="/login" element={<FirstLoginPage />} />
                     <Route path="/login/passenger" element={<PassengerLoginPage />} />
                     <Route path="/login/driver" element={<DriverLoginPage />} />
-
 
                     <Route path="/onlyMap" element={<MapComponent />} />
                     <Route path="/passenger" element={<UserInterface />} />
