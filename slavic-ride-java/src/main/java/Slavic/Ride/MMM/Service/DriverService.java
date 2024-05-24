@@ -34,7 +34,7 @@ public class DriverService {
     }
 
     public Driver createDriver(Driver driver) {
-        log.info("Creating passenger: {}", driver);
+        log.info("Creating driver: {}", driver);
         return driverRepo.save(driver);
     }
 
