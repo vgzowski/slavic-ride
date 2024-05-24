@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "react-router-dom": "^6.23.1"
+    "@stomp/stompjs": "^7.0.0",
+    "react-router-dom": "^6.23.1",
+    "react-toastify": "^10.0.5",
+    "sockjs-client": "^1.6.1"
   }
 }
