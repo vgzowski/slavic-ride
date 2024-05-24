@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import MapComponent from './MapComponent';
 import axios from "axios";
-import { useLocation } from 'react-router-dom';
+import { renderMatches, useLocation } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import connect from './../services/webSocketService.js';
 
 const DriverInterface = () => {
     const locationLOL = useLocation();
+
+    const [source, setSource] = useState('');
+    const [destination, setDestination] = useState('');
 
     useEffect(() => {
         sendLocation();
@@ -63,10 +69,27 @@ const DriverInterface = () => {
         }, 5000);
 
     }
+
+    useEffect(() => {
+        if (locationLOL.state.driverId) {
+            const stompClient = connect(
+                locationLOL.state.driverId,
+                (location_lat, location_lng, destination_lat, destination_lng) => {
+
+                    setSource({lat: location_lat, lng: location_lng});
+                    setDestination({lat: destination_lat, lng: destination_lng});
+            });
+
+            return () => {
+                stompClient.disconnect();
+            };
+        }
+    }, [locationLOL.state.driverId]);
     
     return (
         <div>
-            <MapComponent />
+            <MapComponent userLocation={source} userDestination={destination} />
+            <ToastContainer />
         </div>
     );
 }
