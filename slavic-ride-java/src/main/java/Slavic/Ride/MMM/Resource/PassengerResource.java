@@ -26,6 +26,7 @@ public class PassengerResource {
     private final PassengerService passengerService;
     private final DriverService driverService;
     private final OrderService orderService;
+    private final NotificationResource notificationResource;
 
     @PostMapping
     public ResponseEntity<Passenger> createPassenger(@RequestBody Passenger passenger) {
@@ -91,6 +92,15 @@ public class PassengerResource {
         log.info("Driver is found with ID: {}", closestDriver.getId());
 
         String driverId = closestDriver.getId();
+
+        notificationResource.notifyDriver(driverId,
+            "{" +
+                "\"name\":\"New order\"," +
+                "\"location_lat\":\"" + location.getLat() + "\"," +
+                "\"location_lng\":\"" + location.getLng() + "\"," +
+                "\"destination_lat\":\"" + destination.getLat() + "\"," +
+                "\"destination_lng\":\"" + destination.getLng() + "\"" +
+            "}");
 
         orderService.createOrder(location, destination, passengerId, driverId);
         return driverId;
