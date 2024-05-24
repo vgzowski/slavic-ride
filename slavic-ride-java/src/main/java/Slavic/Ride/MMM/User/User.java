@@ -29,12 +29,17 @@ abstract public class User {
     protected String orderId = "";
     @Embedded
     protected Location location = new Location();
+    protected String username = "";
+    protected String password = "";
 
     abstract public String getName();
     abstract public String getEmail();
     abstract public String getPhone();
     abstract public String getId();
     abstract public Float getRating();
+    abstract public Location getLocation();
+    abstract public String getUsername(String username);
+    abstract public String getPassword(String password);
 
     abstract public void setName(String name);
     abstract public void setEmail(String email);
@@ -42,5 +47,7 @@ abstract public class User {
     abstract public void setId(String id);
     abstract public void addRating(Float rating);
     abstract public void setLocation(Location location);
-
+    abstract public void setOrderId(String orderId);
+    abstract public void setUsername(String username);
+    abstract public void setPassword(String password);
 }

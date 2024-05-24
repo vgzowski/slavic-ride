@@ -16,16 +16,16 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "drivers")
 public class Driver extends User {
-    private int carId;
+    private String carName;
     @Getter
     Boolean isTaken = false;
 
-    public Driver(String name, String email, String phone, String id, int carId) {
+    public Driver(String name, String email, String phone, String id, String carName) {
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.id = id;
-        this.carId = carId;
+        this.carName = carName;
     }
 
     public String getName() {
@@ -44,12 +44,62 @@ public class Driver extends User {
         return this.id;
     }
 
+    public String getCarName() {
+        return this.carName;
+    }
+
     public Float getRating() {
         return this.totalRating / this.numberOfRatings;
     }
 
+    public void setCarName(String carName) {
+        this.carName = carName;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getOrderId() {
+        return this.orderId;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setIsTaken(Boolean isTaken) {
+        this.isTaken = isTaken;
+    }
+
+    public Boolean getIsTaken() {
+        return this.isTaken;
+    }
+
     @Embedded
     public Location getLocation() { return this.location; }
+
+    @Override
+    public String getUsername(String username) {
+        return this.username;
+    }
+
+    @Override
+    public String getPassword(String password) {
+        return this.password;
+    }
 
 
     public void setName(String name) {

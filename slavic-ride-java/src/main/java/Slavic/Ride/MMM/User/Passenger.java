@@ -50,6 +50,16 @@ public class Passenger extends User {
     @Embedded
     public Location getLocation() { return this.location; }
 
+    @Override
+    public String getUsername(String username) {
+        return this.username;
+    }
+
+    @Override
+    public String getPassword(String password) {
+        return this.password;
+    }
+
 
     public void setName(String name) {
         this.name = name;
@@ -69,6 +79,30 @@ public class Passenger extends User {
 
     public void setLocation(Location location) { this.location = location; }
 
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getOrderId() {
+        return this.orderId;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
     public void addRating(Float rating) {
         if (rating == 0) {
             return;
@@ -76,6 +110,7 @@ public class Passenger extends User {
         this.totalRating += rating;
         this.numberOfRatings++;
     }
+
 
     public String toString() {
         return "Name: " + this.name + "\nEmail: " + this.email + "\nPhone: " + this.phone + "\nID: " + this.id + "\nRating: " + getRating();
