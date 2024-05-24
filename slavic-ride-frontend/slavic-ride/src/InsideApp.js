@@ -4,20 +4,17 @@ import MapComponent from './components/MapComponent';
 import UserInterface from './components/UserInterface';
 import DriverInterface from './components/DriverInterface';
 import FirstLoginPage from './components/FirstLoginPage';
-import PassengerLoginPage from './components/PassengerLoginPage';
-import DriverLoginPage from './components/DriverLoginPage';
+import LoginPage from "./components/LoginPage";
+import SignupPage from "./components/SignupPage";
 
 class InsideApp extends Component {
     render() {
         return (
             <Router>
                 <Routes>
-                    {/* Default route */}
-                    <Route element={<FirstLoginPage />} />
-
-                    <Route path="/login" element={<FirstLoginPage />} />
-                    <Route path="/login/passenger" element={<PassengerLoginPage />} />
-                    <Route path="/login/driver" element={<DriverLoginPage />} />
+                    <Route path="/" element={<FirstLoginPage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/signup" element={<SignupPage />} />
 
                     <Route path="/onlyMap" element={<MapComponent />} />
                     <Route path="/passenger" element={<UserInterface />} />
