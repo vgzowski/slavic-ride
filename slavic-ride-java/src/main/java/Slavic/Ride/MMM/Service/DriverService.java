@@ -3,15 +3,14 @@ package Slavic.Ride.MMM.Service;
 import Slavic.Ride.MMM.Location;
 import Slavic.Ride.MMM.Repo.DriverRepo;
 import Slavic.Ride.MMM.User.Driver;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import jakarta.transaction.Transactional;
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -19,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DriverService {
     private final DriverRepo driverRepo;
-    // Method to retrieve a driver by their ID
+
     public Driver findDriverById(String id) {
         log.info("Finding driver by ID: {}", id);
         return driverRepo.findDriverById(id)
@@ -78,14 +77,14 @@ public class DriverService {
     public void changeTakenToTrue(String driverId) {
         List<Driver> listDrives = driverRepo.findAll();
         Driver driver = driverRepo.findDriverById(driverId)
-                        .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
         driver.setIsTaken(true);
         driverRepo.save(driver);
     }
 
     public void changeTakenToFalse(String driverId) {
         Driver driver = driverRepo.findDriverById(driverId)
-                        .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
         driver.setIsTaken(false);
         log.info("Setting driver taken status to false for driver ID: {}", driverId);
         driverRepo.save(driver);
@@ -94,9 +93,18 @@ public class DriverService {
     public void setOrderId(String driverId, String orderId) {
         log.info("Setting order ID for driver ID: {}", driverId);
         Driver driver = driverRepo.findDriverById(driverId)
-                        .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
         driver.setOrderId(orderId);
         driverRepo.save(driver);
+    }
+
+    public boolean existsByEmailOrPhoneOrUsername(String email, String phone, String username) {
+        return driverRepo.existsByEmail(email) || driverRepo.existsByPhone(phone) || driverRepo.existsByUsername(username);
+    }
+
+    public Optional<Driver> findByUsername(String username) {
+        log.info("Finding driver by username: {}", username);
+        return driverRepo.findByUsername(username);
     }
 
     public void deleteDriver(String id) {

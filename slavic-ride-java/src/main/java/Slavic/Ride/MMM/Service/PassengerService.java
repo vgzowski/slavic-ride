@@ -2,17 +2,16 @@ package Slavic.Ride.MMM.Service;
 
 import Slavic.Ride.MMM.Repo.DriverRepo;
 import Slavic.Ride.MMM.Repo.PassengerRepo;
-import Slavic.Ride.MMM.Service.DriverService;
 import Slavic.Ride.MMM.User.Driver;
 import Slavic.Ride.MMM.User.Passenger;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import Slavic.Ride.MMM.Location;
 
-import java.util.*;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -54,5 +53,14 @@ public class PassengerService {
         Passenger passenger = getPassenger(passengerId);
         passenger.setOrderId(orderId);
         passengerRepo.save(passenger);
+    }
+
+    public boolean existsByEmailOrPhoneOrUsername(String email, String phone, String username) {
+        return passengerRepo.existsByEmail(email) || passengerRepo.existsByPhone(phone) || passengerRepo.existsByUsername(username);
+    }
+
+    public Optional<Passenger> findByUsername(String username) {
+        log.info("Finding passenger by username: {}", username);
+        return passengerRepo.findByUsername(username);
     }
 }

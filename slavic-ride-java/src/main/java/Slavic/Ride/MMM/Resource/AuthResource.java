@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 import java.util.UUID;
 
 import java.util.Map;
@@ -22,15 +24,15 @@ public class AuthResource {
     private final PassengerService passengerService;
 
     @GetMapping("/generateId")
-    public ResponseEntity <?> generate () {
+    public ResponseEntity<?> generate() {
         System.out.println("id has been generated");
         return ResponseEntity.ok(UUID.randomUUID().toString());
     }
 
     @PostMapping("/signup")
-    public ResponseEntity <?> signup (@RequestBody Map<String, Object> user) {
+    public ResponseEntity<?> signup(@RequestBody Map<String, Object> user) {
         System.out.println(user.get("car"));
-        if (user.get("car") != "") {
+        if (!user.get("car").equals("")) {
             Driver driver = driverService.createDriver(new Driver(
                     (String) user.get("name"),
                     (String) user.get("email"),
@@ -51,6 +53,31 @@ public class AuthResource {
             passenger.setUsername((String) user.get("username"));
             passenger.setPassword((String) user.get("password"));
             return ResponseEntity.ok(passengerService.createPassenger(passenger));
+        }
+    }
+
+    @PostMapping("/checkUserExists")
+    public ResponseEntity<Map<String, Boolean>> checkUserExists(@RequestBody Map<String, String> user) {
+        boolean exists = driverService.existsByEmailOrPhoneOrUsername(user.get("email"), user.get("phone"), user.get("username")) ||
+                passengerService.existsByEmailOrPhoneOrUsername(user.get("email"), user.get("phone"), user.get("username"));
+        return ResponseEntity.ok(Map.of("exists", exists));
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<Map<String, Object>> login(@RequestParam String username) {
+        System.out.println("username: " + username);
+
+        Optional<Driver> driverOpt = driverService.findByUsername(username);
+        Optional <Passenger> passengerOpt = passengerService.findByUsername(username);
+
+        if (driverOpt.isPresent() || passengerOpt.isPresent()) {
+            Optional <? extends User> opt = driverOpt.isPresent() ? driverOpt : passengerOpt;
+            return ResponseEntity.ok(Map.of("success", true,
+                                            "role", driverOpt.isPresent() ? "driver" : "passenger",
+                                            "id", opt.get().getId(),
+                                            "passwordFromBack", opt.get().getPassword()));
+        } else {
+            return ResponseEntity.ok(Map.of("success", false));
         }
     }
 }

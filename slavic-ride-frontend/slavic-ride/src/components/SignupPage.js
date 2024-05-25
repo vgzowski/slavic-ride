@@ -30,17 +30,31 @@ const SignupPage = () => {
         fetchId();
     }, [id]);
 
+    const checkUserExists = async () => {
+        try {
+            const response = await axios.post('http://localhost:8080/auth/checkUserExists', {
+                email, phone, username
+            });
+            return response.data.exists;
+        } catch (error) {
+            console.error('Error checking user existence:', error);
+            return false;
+        }
+    };
+
     const handleSubmit = async () => {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const userExists = await checkUserExists();
+        if (userExists) {
+            alert('User with this username, email, or phone number already exists');
+            return;
+        }
+
+        const hashedPassword = await bcrypt.hash(password, await bcrypt.genSalt(10));
         try {
             const requestBody = {
-                name: name,
-                email: email,
-                phone: phone,
-                id: id,
+                name, email, phone, id,
                 car: role ? car : '', // Only include car if role is true
-                username: username,
-                password: hashedPassword,
+                username, password: hashedPassword,
             };
             console.log('Request body:', requestBody);
             const response = await axios.post('http://localhost:8080/auth/signup', requestBody);

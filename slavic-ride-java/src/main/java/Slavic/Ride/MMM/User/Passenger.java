@@ -50,16 +50,6 @@ public class Passenger extends User {
     @Embedded
     public Location getLocation() { return this.location; }
 
-    @Override
-    public String getUsername(String username) {
-        return this.username;
-    }
-
-    @Override
-    public String getPassword(String password) {
-        return this.password;
-    }
-
 
     public void setName(String name) {
         this.name = name;

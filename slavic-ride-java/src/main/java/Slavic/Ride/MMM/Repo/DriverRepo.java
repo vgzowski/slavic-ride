@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DriverRepo extends JpaRepository<Driver, String>{
+public interface DriverRepo extends JpaRepository<Driver, String> {
     Optional<Driver> findDriverById(String id);
     List<Driver> findAll();
 
@@ -26,5 +26,11 @@ public interface DriverRepo extends JpaRepository<Driver, String>{
     void setTakenToFalse(String id);
 
     @Query("SELECT d FROM Driver d WHERE COALESCE(d.isTaken, false) = false")
-    List <Driver> findAllNotTaken();
+    List<Driver> findAllNotTaken();
+
+    boolean existsByEmail(String email);
+    boolean existsByPhone(String phone);
+    boolean existsByUsername(String username);
+
+    Optional<Driver> findByUsername(String username);
 }

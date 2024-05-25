@@ -38,8 +38,8 @@ abstract public class User {
     abstract public String getId();
     abstract public Float getRating();
     abstract public Location getLocation();
-    abstract public String getUsername(String username);
-    abstract public String getPassword(String password);
+    abstract public String getUsername();
+    abstract public String getPassword();
 
     abstract public void setName(String name);
     abstract public void setEmail(String email);
