@@ -34,7 +34,9 @@ public class DriverService {
 
     public Driver createDriver(Driver driver) {
         log.info("Creating driver: {}", driver);
-        return driverRepo.save(driver);
+        var x = driverRepo.save(driver);
+        log.info("Driver created: {}", x.getId());
+        return x;
     }
 
     public Driver getDriver(String id) {

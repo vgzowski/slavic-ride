@@ -14,26 +14,11 @@ const SignupPage = () => {
     const [role, setRole] = useState(false);
     const navigate = useNavigate();
 
-    const generateId = async () => {
-        const response = await axios.get('http://localhost:8080/auth/generateId');
-        return response.data;
-    }
-
-    useEffect(() => {
-        const fetchId = async () => {
-            if (id === '') {
-                const newId = await generateId();
-                setId(newId);
-                console.log(newId);
-            }
-        };
-        fetchId();
-    }, [id]);
-
     const checkUserExists = async () => {
         try {
             const response = await axios.post('http://localhost:8080/auth/checkUserExists', {
-                email, phone, username
+                // email, phone,
+                username
             });
             return response.data.exists;
         } catch (error) {
@@ -52,37 +37,47 @@ const SignupPage = () => {
         const hashedPassword = await bcrypt.hash(password, await bcrypt.genSalt(10));
         try {
             const requestBody = {
-                name, email, phone, id,
+                name, email, phone,
                 car: role ? car : '', // Only include car if role is true
                 username, password: hashedPassword,
             };
             console.log('Request body:', requestBody);
             const response = await axios.post('http://localhost:8080/auth/signup', requestBody);
-            alert('Signup successful');
-            if (role) {
-                navigate('/driver', { state: { driverId: id } });
-            } else {
-                navigate('/passenger', { state: { passengerId: id } });
-            }
+            console.log('Signup response:', response.data);
+            console.log('id before setId:', id);
+            console.log('response id', response.data.id);
+            setId(response.data.id);
         } catch (error) {
             console.error('Error signing up:', error);
             alert('Error signing up');
         }
     };
 
+    useEffect(() => {
+        if (id) {
+            console.log('Updated id:', id);
+            alert('Signup successful');
+            if (role) {
+                navigate('/driver', { state: { driverId: id } });
+            } else {
+                navigate('/passenger', { state: { passengerId: id } });
+            }
+        }
+    }, [id, role, navigate]);
+
     return (
         <div>
-            <label>Name:</label>
-            <input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} />
-            <br />
+            {/*<label>Name:</label>*/}
+            {/*<input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} />*/}
+            {/*<br />*/}
 
-            <label>Email:</label>
-            <input type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <br />
+            {/*<label>Email:</label>*/}
+            {/*<input type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} />*/}
+            {/*<br />*/}
 
-            <label>Phone Number:</label>
-            <input type="tel" name="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
-            <br />
+            {/*<label>Phone Number:</label>*/}
+            {/*<input type="tel" name="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />*/}
+            {/*<br />*/}
 
             <label>Username:</label>
             <input type="text" name="username" value={username} onChange={(e) => setUsername(e.target.value)} />

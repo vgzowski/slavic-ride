@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import MapComponent from './MapComponent';
 import axios from "axios";
-import { renderMatches, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import connect from './../services/webSocketService.js';
 
 const DriverInterface = () => {
     const locationLOL = useLocation();
+    console.log('locationLOL:', locationLOL);
 
     const [source, setSource] = useState('');
     const [destination, setDestination] = useState('');
@@ -43,7 +44,7 @@ const DriverInterface = () => {
         setInterval(async () => {
             try {
                 const location = await getLocation();
-                if (location && locationLOL.state.driverId) {
+                if (location && locationLOL && locationLOL.state && locationLOL.state.driverId) {
                     const requestBody = {
                         "location": {
                             "lat": location.lat,
@@ -54,12 +55,11 @@ const DriverInterface = () => {
                         }};
                     await axios.put(`http://localhost:8080/drivers/${locationLOL.state.driverId}/location`, requestBody);
                     console.log(`Location successfully sent to server: ${location}, ${locationLOL.state.driverId}`);
-                }
-                else {
+                } else {
                     if (!location) {
                         console.log('No location');
                     }
-                    if (!locationLOL.state.driverId) {
+                    if (!locationLOL || !locationLOL.state || !locationLOL.state.driverId) {
                         console.log('No driver id');
                     }
                 }
@@ -67,29 +67,28 @@ const DriverInterface = () => {
                 console.log('Something went wrong in sending location...', error);
             }
         }, 5000);
-
     }
 
+
     useEffect(() => {
-        if (locationLOL.state.driverId) {
+        if (locationLOL && locationLOL.state && locationLOL.state.driverId) {
             const stompClient = connect(
                 locationLOL.state.driverId,
                 (location_lat, location_lng, destination_lat, destination_lng) => {
-
                     setSource({lat: location_lat, lng: location_lng});
                     setDestination({lat: destination_lat, lng: destination_lng});
-            });
+                });
 
             return () => {
                 stompClient.disconnect();
             };
         }
-    }, [locationLOL.state.driverId]);
-    
+    }, [locationLOL]);
+
     return (
         <div>
             <MapComponent userLocation={source} userDestination={destination} />
-            <ToastContainer />
+            {/*<ToastContainer />*/}
         </div>
     );
 }
