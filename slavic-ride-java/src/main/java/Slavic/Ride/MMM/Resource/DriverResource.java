@@ -78,6 +78,5 @@ public class DriverResource {
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.notFound().build();
         }
-
     }
 }

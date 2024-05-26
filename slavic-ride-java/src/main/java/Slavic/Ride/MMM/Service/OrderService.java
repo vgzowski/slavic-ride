@@ -48,6 +48,9 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
 //        orderRepo.delete(order);
 
+        driverService.setOrderId(order.getDriverId(), "");
+        passengerService.setOrderId(order.getPassengerId(), "");
+
         driverService.changeTakenToFalse(order.getDriverId());
     }
 }

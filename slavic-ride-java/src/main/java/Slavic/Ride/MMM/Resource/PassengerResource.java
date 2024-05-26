@@ -60,6 +60,9 @@ public class PassengerResource {
         Double sourcelat = (Double) source.get("lat");
         Double sourcelng = (Double) source.get("lng");
 
+        log.info(sourcelat.toString());
+        log.info(sourcelng.toString());
+
         Double destinationlat = (Double) destination.get("lat");
         Double destinationlng = (Double) destination.get("lng");
 
@@ -93,6 +96,8 @@ public class PassengerResource {
 
         String driverId = closestDriver.getId();
 
+        orderService.createOrder(location, destination, passengerId, driverId);
+
         notificationResource.notifyDriver(driverId,
             "{" +
                 "\"name\":\"New order\"," +
@@ -101,8 +106,6 @@ public class PassengerResource {
                 "\"destination_lat\":\"" + destination.getLat() + "\"," +
                 "\"destination_lng\":\"" + destination.getLng() + "\"" +
             "}");
-
-        orderService.createOrder(location, destination, passengerId, driverId);
         return driverId;
     }
 }

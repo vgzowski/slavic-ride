@@ -17,6 +17,11 @@ public interface DriverRepo extends JpaRepository<Driver, String> {
 
     @Modifying
     @Transactional
+    @Query("DELETE FROM Driver")
+    void deleteAll();
+
+    @Modifying
+    @Transactional
     @Query("UPDATE Driver d SET d.isTaken = true WHERE d.id = ?1")
     void setTakenToTrue(String id);
 

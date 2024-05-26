@@ -78,18 +78,29 @@ const DriverInterface = () => {
 
 
     useEffect(() => {
-        if (locationLOL && locationLOL.state && locationLOL.state.driverId) {
-            const stompClient = connect(
-                locationLOL.state.driverId,
-                (location_lat, location_lng, destination_lat, destination_lng) => {
-                    setSource({lat: location_lat, lng: location_lng});
-                    setDestination({lat: destination_lat, lng: destination_lng});
-                });
+        const fetchData = async () => {
+            if (locationLOL && locationLOL.state && locationLOL.state.driverId) {
+                const locationD = await getLocation();
+                const stompClient = connect(
+                    locationLOL.state.driverId,
+                    (location_lat, location_lng, destination_lat, destination_lng) => {
+                        // console.log("sdfjksdfj");
+                        // console.log(locationD);
+                        // console.log(location_lat);
+                        // console.log(location_lng);
 
-            return () => {
-                stompClient.disconnect();
-            };
+                        setSource(locationD);
+                        setDestination({lat: location_lat, lng: location_lng});
+                    });
+
+                return () => {
+                    stompClient.disconnect();
+                };
+            }
         }
+
+        fetchData();
+
     }, [locationLOL.state.driverId]);
 
     const handleLogout = () => {
@@ -97,12 +108,40 @@ const DriverInterface = () => {
         localStorage.removeItem('driverId'); // Clear driverId from localStorage, if used
         navigate("/"); // Navigate to the login page
     }
-    
+
+    const handleTakePassenger = async () => {
+        const response = await axios.get(`http://localhost:8080/drivers/${locationLOL.state.driverId}/order`);
+
+        console.log(response.data.orderId);
+        console.log(response.data.driverId);
+        console.log(response.data.passengerId);
+        console.log(response.data.destination);
+
+        const cur_location = await getLocation();
+
+        setSource(cur_location);
+        setDestination(response.data.destination);
+    }
+    const handleFinishOrder = async () => {
+        const response = await axios.get(`http://localhost:8080/drivers/${locationLOL.state.driverId}/order`);
+
+        console.log(response.data.orderId);
+        console.log(response.data.driverId);
+        console.log(response.data.passengerId);
+        console.log(response.data.destination);
+
+        setSource(null);
+        setDestination(null);
+
+        await axios.put(`http://localhost:8080/drivers/${locationLOL.state.driverId}/finish-order`);
+    }
     
     return (
         <div>
             <MapComponent userLocation={source} userDestination={destination} />
             <button onClick = {handleLogout}>Log out</button>
+            <button onClick = {handleTakePassenger}>Passenger taken</button>
+            <button onClick = {handleFinishOrder}>Finish order</button>
             <ToastContainer />
         </div>
     );
