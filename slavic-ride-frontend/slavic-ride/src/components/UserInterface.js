@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MapComponent from './MapComponent';
 import axios from 'axios';
 import { useLocation } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const UserInterface = () => {
     const location = useLocation();
     const [source, setSource] = useState('');
     const [destination, setDestination] = useState('');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!location.state || location.state.passengerId == null) {
+            navigate("/");
+        }
+    }, [location])
 
     const handleSourceChange = (e) => {
         setSource(e.target.value);
@@ -100,6 +108,10 @@ const UserInterface = () => {
         setSource(currentLocation);
     }
 
+    const handleLogout = () => {
+        navigate("/");
+    }
+
     return (
         <div>
             <MapComponent userLocation={source} userDestination={destination} onCurrentLocationReceived={handleCurrentLocationReceived} />
@@ -122,6 +134,7 @@ const UserInterface = () => {
             </div>
 
             <button onClick={orderTaxi}>Order Taxi</button>
+            <button onClick = {handleLogout}>log out</button>
         </div>
     );
 }

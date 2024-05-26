@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import MapComponent from './MapComponent';
 import axios from "axios";
-import { renderMatches, useLocation } from 'react-router-dom';
+import { Navigate, renderMatches, useLocation, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import connect from './../services/webSocketService.js';
@@ -12,8 +12,13 @@ const DriverInterface = () => {
     const [source, setSource] = useState('');
     const [destination, setDestination] = useState('');
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         sendLocation();
+        return () => {
+            clearInterval(interval);
+        }
     }, []);
 
     const getLocation = () => {
@@ -39,8 +44,10 @@ const DriverInterface = () => {
         });
     }
 
+    let interval;
+
     const sendLocation = async () => {
-        setInterval(async () => {
+        interval = setInterval(async () => {
             try {
                 const location = await getLocation();
                 if (location && locationLOL.state.driverId) {
@@ -85,10 +92,18 @@ const DriverInterface = () => {
             };
         }
     }, [locationLOL.state.driverId]);
+
+    const handleLogout = () => {
+        // Clear any stored state related to the driver
+        localStorage.removeItem('driverId'); // Clear driverId from localStorage, if used
+        navigate("/"); // Navigate to the login page
+    }
+    
     
     return (
         <div>
             <MapComponent userLocation={source} userDestination={destination} />
+            <button onClick = {handleLogout}>Log out</button>
             <ToastContainer />
         </div>
     );
