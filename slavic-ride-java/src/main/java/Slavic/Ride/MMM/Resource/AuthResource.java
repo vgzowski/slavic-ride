@@ -15,6 +15,8 @@ import java.util.UUID;
 
 import java.util.Map;
 
+import static java.lang.System.exit;
+
 @Slf4j
 @RestController
 @RequestMapping("/auth")
@@ -23,11 +25,13 @@ public class AuthResource {
     private final DriverService driverService;
     private final PassengerService passengerService;
 
-    @GetMapping("/generateId")
+    // Currently useless method
+    /*@GetMapping("/generateId")
     public ResponseEntity<?> generate() {
-        System.out.println("id has been generated");
-        return ResponseEntity.ok(UUID.randomUUID().toString());
-    }
+        String newId = UUID.randomUUID().toString();
+        log.info("Generating id " + newId);
+        return ResponseEntity.ok(newId);
+    }*/
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody Map<String, Object> user) {
