@@ -5,11 +5,8 @@ const connect = (driverId, onMessageReceived) => {
     const socket = new SockJS('http://localhost:8080/ws');
     const stompClient = Stomp.over(socket);
 
-    console.log("hui");
-
     stompClient.connect({}, () => {
         stompClient.subscribe(`/topic/driver/${driverId}`, (message) => {
-            console.log("hui tebe w rot");
             console.log(message.body);
 
             const {

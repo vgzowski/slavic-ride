@@ -12,7 +12,7 @@ class MapComponent extends Component {
             userLocation : props.userLocation,
             userDestination: props.userDestination,
             error: null,
-            reloadMap: true,
+            reloadMap: true
         };
         this.apiKey = "AIzaSyCcGid1vTF4zEMmDMWgS5sX3fOxrAtGhDs";
     }
@@ -23,6 +23,12 @@ class MapComponent extends Component {
         } else {
             this.setState({ error: "Geolocation not supported" });
         }
+    }
+
+    componentDidUpdate () {
+        console.log('Map updated');
+        console.log(this.props.userLocation);
+        console.log(this.props.userDestination);
     }
 
     componentDidMount () {
@@ -93,10 +99,9 @@ class MapComponent extends Component {
                             />
                         )}
 
-                        {(this.props.userLocation || userLocationButton) && this.props.userDestination &&
-                            <Directions
-                                userLocation={this.props.userLocation ? this.props.userLocation : userLocationButton}
-                                userDestination={this.props.userDestination} />}
+                        <Directions
+                            userLocation={this.props.userLocation ? this.props.userLocation : userLocationButton}
+                            userDestination={this.props.userDestination} />
                     </Map>
                 </APIProvider>
 
