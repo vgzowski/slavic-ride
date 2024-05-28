@@ -114,6 +114,13 @@ public class Driver extends User {
 
     public void setLocation(Location location) { this.location = location; }
 
+    public void setActiveSessions(int activeSessions) {
+        this.activeSessions = activeSessions;
+    }
+
+    public int getActiveSessions() {
+        return this.activeSessions;
+    }
 
     public void addRating(Float rating) {
         if (rating == 0) {

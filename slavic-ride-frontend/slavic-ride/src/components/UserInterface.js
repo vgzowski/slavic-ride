@@ -108,8 +108,12 @@ const UserInterface = () => {
         setSource(currentLocation);
     }
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         navigate("/");
+        const response = await axios.put('http://localhost:8080/auth/deactivate', {
+            "id": location.state.passengerId,
+            "username": location.state.username
+        });
     }
 
     return (

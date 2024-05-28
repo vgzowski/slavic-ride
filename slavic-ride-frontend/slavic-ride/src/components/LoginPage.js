@@ -22,10 +22,15 @@ const LoginPage = () => {
                     return;
                 }
                 alert('Login successful');
+                const responseActivator = await axios.put('http://localhost:8080/auth/activate', {
+                    "id": id,
+                    "username": username
+                });
+                console.log('Response activator data:', responseActivator.data);
                 if (role === 'driver') {
-                    navigate('/driver', { state: { driverId: id } });
+                    navigate('/driver', { state: { driverId: id, username: username } });
                 } else {
-                    navigate('/passenger', { state: { passengerId: id } });
+                    navigate('/passenger', { state: { passengerId: id, username: username } });
                 }
             } else {
                 alert('Invalid username or password');

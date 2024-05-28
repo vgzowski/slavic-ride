@@ -31,6 +31,8 @@ abstract public class User {
     protected Location location = new Location();
     protected String username = "";
     protected String password = "";
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    protected int activeSessions = 0;
 
     abstract public String getName();
     abstract public String getEmail();
@@ -40,6 +42,7 @@ abstract public class User {
     abstract public Location getLocation();
     abstract public String getUsername();
     abstract public String getPassword();
+    abstract public int getActiveSessions();
 
     abstract public void setName(String name);
     abstract public void setEmail(String email);
@@ -50,4 +53,5 @@ abstract public class User {
     abstract public void setOrderId(String orderId);
     abstract public void setUsername(String username);
     abstract public void setPassword(String password);
+    abstract public void setActiveSessions(int activeSessions);
 }

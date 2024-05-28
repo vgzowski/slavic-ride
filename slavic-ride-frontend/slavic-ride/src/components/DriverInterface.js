@@ -103,10 +103,14 @@ const DriverInterface = () => {
 
     }, [locationLOL.state.driverId]);
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         // Clear any stored state related to the driver
         localStorage.removeItem('driverId'); // Clear driverId from localStorage, if used
         navigate("/"); // Navigate to the login page
+        const response = await axios.put(`http://localhost:8080/auth/deactivate`, {
+            "id": locationLOL.state.driverId,
+            "username": locationLOL.state.username
+        });
     }
 
     const handleTakePassenger = async () => {

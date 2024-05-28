@@ -66,6 +66,7 @@ public class DriverService {
         log.info("Size of drivers: {}", drivers.size());
         for (Driver driver : drivers) {
             System.out.println(driver);
+            if (driver.getActiveSessions() == 0) continue;
             double distance = Utils.calculateDistance(location, driver.getLocation());
             if (distance < closestDistance) {
                 closestDriver = driver;
@@ -107,6 +108,20 @@ public class DriverService {
     public Optional<Driver> findByUsername(String username) {
         log.info("Finding driver by username: {}", username);
         return driverRepo.findByUsername(username);
+    }
+
+    public boolean addActive (String username) {
+        Driver driver = driverRepo.findByUsername(username).orElse(null);
+        if (driver != null) {
+            driver.setActiveSessions(driver.getActiveSessions() + 1);
+            driverRepo.save(driver);
+            return true;
+        }
+        return false;
+    }
+
+    public void saveDriver(Driver driver) {
+        driverRepo.save(driver);
     }
 
     public void deleteDriver(String id) {
