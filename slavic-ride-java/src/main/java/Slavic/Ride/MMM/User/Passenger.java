@@ -93,6 +93,14 @@ public class Passenger extends User {
         return this.password;
     }
 
+    public int getActiveSessions () {
+        return this.activeSessions;
+    }
+
+    public void setActiveSessions (int activeSessions) {
+        this.activeSessions = activeSessions;
+    }
+
     public void addRating(Float rating) {
         if (rating == 0) {
             return;
@@ -100,7 +108,6 @@ public class Passenger extends User {
         this.totalRating += rating;
         this.numberOfRatings++;
     }
-
 
     public String toString() {
         return "Name: " + this.name + "\nEmail: " + this.email + "\nPhone: " + this.phone + "\nID: " + this.id + "\nRating: " + getRating();

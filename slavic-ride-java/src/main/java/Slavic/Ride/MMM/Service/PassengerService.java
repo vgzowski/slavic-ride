@@ -19,7 +19,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PassengerService {
     private final PassengerRepo passengerRepo;
-    private final DriverRepo driverRepo;
     private final DriverService driverService;
 
     public Passenger createPassenger(Passenger passenger) {
@@ -62,5 +61,19 @@ public class PassengerService {
     public Optional<Passenger> findByUsername(String username) {
         log.info("Finding passenger by username: {}", username);
         return passengerRepo.findByUsername(username);
+    }
+
+    public boolean addActive (String username) {
+        Passenger passenger = passengerRepo.findByUsername(username).orElse(null);
+        if (passenger != null) {
+            passenger.setActiveSessions(passenger.getActiveSessions() + 1);
+            passengerRepo.save(passenger);
+            return true;
+        }
+        return false;
+    }
+
+    public void savePassenger(Passenger passenger) {
+        passengerRepo.save(passenger);
     }
 }

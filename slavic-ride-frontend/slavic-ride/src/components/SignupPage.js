@@ -43,6 +43,11 @@ const SignupPage = () => {
             };
             console.log('Request body:', requestBody);
             const response = await axios.post('http://localhost:8080/auth/signup', requestBody);
+            const responseActivator = await axios.put('http://localhost:8080/auth/activate', {
+                "id": response.data.id,
+                "username": username
+            });
+            console.log('Response activator data:', responseActivator.data);
             console.log('Signup response:', response.data);
             console.log('id before setId:', id);
             console.log('response id', response.data.id);
@@ -58,9 +63,9 @@ const SignupPage = () => {
             console.log('Updated id:', id);
             alert('Signup successful');
             if (role) {
-                navigate('/driver', { state: { driverId: id } });
+                navigate('/driver', { state: { driverId: id, username: username } });
             } else {
-                navigate('/passenger', { state: { passengerId: id } });
+                navigate('/passenger', { state: { passengerId: id, username: username } });
             }
         }
     }, [id, role, navigate]);

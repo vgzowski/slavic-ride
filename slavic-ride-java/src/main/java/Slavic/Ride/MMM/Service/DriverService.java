@@ -114,6 +114,20 @@ public class DriverService {
         return driverRepo.findByUsername(username);
     }
 
+    public boolean addActive (String username) {
+        Driver driver = driverRepo.findByUsername(username).orElse(null);
+        if (driver != null) {
+            driver.setActiveSessions(driver.getActiveSessions() + 1);
+            driverRepo.save(driver);
+            return true;
+        }
+        return false;
+    }
+
+    public void saveDriver(Driver driver) {
+        driverRepo.save(driver);
+    }
+
     public void deleteDriver(String id) {
         // TODO
     }

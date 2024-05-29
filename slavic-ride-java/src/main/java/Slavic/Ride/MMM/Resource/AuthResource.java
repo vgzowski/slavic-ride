@@ -35,7 +35,6 @@ public class AuthResource {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody Map<String, Object> user) {
-        System.out.println(user.get("car"));
         if (!user.get("car").equals("")) {
             Driver driver = driverService.createDriver(new Driver(
                     (String) user.get("name"),
@@ -69,9 +68,7 @@ public class AuthResource {
 
     @GetMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestParam String username) {
-        System.out.println("username: " + username);
-
-        Optional<Driver> driverOpt = driverService.findByUsername(username);
+        Optional <Driver> driverOpt = driverService.findByUsername(username);
         Optional <Passenger> passengerOpt = passengerService.findByUsername(username);
 
         if (driverOpt.isPresent() || passengerOpt.isPresent()) {
@@ -81,6 +78,68 @@ public class AuthResource {
                                             "id", opt.get().getId(),
                                             "passwordFromBack", opt.get().getPassword()));
         } else {
+            return ResponseEntity.ok(Map.of("success", false));
+        }
+    }
+
+    @PutMapping("/activate")
+    public ResponseEntity <Map <String, Object>> activator (@RequestBody Map <String, Object> body) {
+        log.info("Activating user with id " + body.get("id"));
+        String username = body.get("username").toString();
+        Optional <Driver> driverOpt = driverService.findByUsername(username);
+        Optional <Passenger> passengerOpt = passengerService.findByUsername(username);
+        if (driverOpt.isPresent()) {
+            if (driverService.addActive(username)) {
+                return ResponseEntity.ok(Map.of("success", true,
+                                                "numberOfSessions", driverOpt.get().getActiveSessions()));
+            }
+            else {
+                return ResponseEntity.ok(Map.of("success", false));
+            }
+        }
+        else if (passengerOpt.isPresent()) {
+            if (passengerService.addActive(username)) {
+                return ResponseEntity.ok(Map.of("success", true,
+                                                "numberOfSessions", passengerOpt.get().getActiveSessions()));
+            }
+            else {
+                return ResponseEntity.ok(Map.of("success", false));
+            }
+        }
+        else {
+            return ResponseEntity.ok(Map.of("success", false));
+        }
+    }
+
+    @PutMapping("/deactivate")
+    public ResponseEntity <Map <String, Object>> deactivator (@RequestBody Map <String, Object> body) {
+        log.info("Deactivating user with id " + body.get("id"));
+        String username = body.get("username").toString();
+        Optional <Driver> driverOpt = driverService.findByUsername(username);
+        Optional <Passenger> passengerOpt = passengerService.findByUsername(username);
+        if (driverOpt.isPresent()) {
+            if (driverOpt.get().getActiveSessions() > 0) {
+                driverOpt.get().setActiveSessions(driverOpt.get().getActiveSessions() - 1);
+                driverService.saveDriver(driverOpt.get());
+                return ResponseEntity.ok(Map.of("success", true,
+                                                "numberOfSessions", driverOpt.get().getActiveSessions()));
+            }
+            else {
+                return ResponseEntity.ok(Map.of("success", false));
+            }
+        }
+        else if (passengerOpt.isPresent()) {
+            if (passengerOpt.get().getActiveSessions() > 0) {
+                passengerOpt.get().setActiveSessions(passengerOpt.get().getActiveSessions() - 1);
+                passengerService.savePassenger(passengerOpt.get());
+                return ResponseEntity.ok(Map.of("success", true,
+                                                "numberOfSessions", passengerOpt.get().getActiveSessions()));
+            }
+            else {
+                return ResponseEntity.ok(Map.of("success", false));
+            }
+        }
+        else {
             return ResponseEntity.ok(Map.of("success", false));
         }
     }
