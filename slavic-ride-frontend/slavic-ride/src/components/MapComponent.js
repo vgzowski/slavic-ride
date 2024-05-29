@@ -3,18 +3,27 @@ import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
 import Directions from './RoutesComponent.js';
 
 class MapComponent extends Component {
-
     constructor(props) {
         super(props);
         console.log("props.userlocation:", props.userLocation)
         this.state = {
             userLocationButton: null,
-            userLocation : props.userLocation,
+            userLocation: props.userLocation,
             userDestination: props.userDestination,
             error: null,
             reloadMap: true
         };
         this.apiKey = "AIzaSyCcGid1vTF4zEMmDMWgS5sX3fOxrAtGhDs";
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.userLocation !== prevState.userLocation) {
+            return {
+                userLocation: nextProps.userLocation,
+                userLocationButton: nextProps.userLocation
+            };
+        }
+        return null;
     }
 
     handleLocationClick = () => {
@@ -25,13 +34,16 @@ class MapComponent extends Component {
         }
     }
 
-    componentDidUpdate () {
-        console.log('Map updated');
-        console.log(this.props.userLocation);
-        console.log(this.props.userDestination);
+    componentDidUpdate(prevProps) {
+        if (prevProps.userLocation !== this.props.userLocation) {
+            this.setState({
+                userLocation: this.props.userLocation,
+                userLocationButton: this.props.userLocation
+            });
+        }
     }
 
-    componentDidMount () {
+    componentDidMount() {
         this.handleLocationClick();
     }
 
@@ -46,7 +58,7 @@ class MapComponent extends Component {
             });
             console.log(`lat: ${lat}, lng: ${lng}`);
             if (this.props.onCurrentLocationReceived) {
-                this.props.onCurrentLocationReceived({lat: lat, lng: lng});
+                this.props.onCurrentLocationReceived({ lat: lat, lng: lng });
             }
         } else {
             this.setState({ error: "Invalid coordinates received" });
@@ -68,7 +80,7 @@ class MapComponent extends Component {
         if (this.props.onCurrentLocationReceived) {
             this.props.onCurrentLocationReceived(newLocation);
         }
-        console.log("New Marker Position:", this.userLocationButton);
+        console.log("New Marker Position:", newLocation);
     }
 
     render() {

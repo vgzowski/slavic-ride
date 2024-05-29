@@ -3,6 +3,7 @@ import MapComponent from './MapComponent';
 import axios from 'axios';
 import { useLocation } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
+import AutocompleteInput from "./AutocompleteInput";
 
 const UserInterface = () => {
     const location = useLocation();
@@ -14,15 +15,31 @@ const UserInterface = () => {
         if (!location.state || location.state.passengerId == null) {
             navigate("/");
         }
-    }, [location])
+    }, [location]);
 
     const handleSourceChange = (e) => {
         setSource(e.target.value);
-    }
+    };
 
     const handleDestinationChange = (e) => {
         setDestination(e.target.value);
-    }
+    };
+
+    const handleSourceSelect = (place) => {
+        setSource({
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng(),
+            address: place.formatted_address,
+        });
+    };
+
+    const handleDestinationSelect = (place) => {
+        setDestination({
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng(),
+            address: place.formatted_address,
+        });
+    };
 
     const getCoordinates = async (address) => {
         try {
@@ -45,14 +62,12 @@ const UserInterface = () => {
             console.error('Error fetching coordinates for address:', error);
             throw new Error('Error fetching coordinates for address');
         }
-    }
-
+    };
 
     const orderTaxi = async () => {
         console.log('Ordering taxi');
         console.log('source: ', source);
         console.log('destination: ', destination);
-        // const { passengerId } = location.state.passengerId;
 
         // Make sure both source and destination are provided
         if (!source || !destination) {
@@ -65,18 +80,36 @@ const UserInterface = () => {
             let sourceCoords = null;
             console.log('source: ', source);
 
-            if (typeof source == 'object') {
+            if (source.lat != null && source.lng != null) {
                 sourceCoords = {
                     lat: source.lat,
                     lng: source.lng
                 }
                 console.log('sourceCoords: ', sourceCoords);
+            } else if (source.address != null) {
+                sourceCoords = await getCoordinates(source.address);
+            } else {
+                console.log("Something went wrong with passenger coords (source): ", source);
+                throw new Error('Error fetching coordinates for address');
             }
-            else {
-                sourceCoords = await getCoordinates(source);
-            }
+
+
             // Get coordinates for destination address
-            const destinationCoords = await getCoordinates(destination);
+            let destinationCoords = null;
+            console.log('destination: ', destination);
+
+            if (destination.lat != null && destination.lng != null) {
+                destinationCoords = {
+                    lat: destination.lat,
+                    lng: destination.lng
+                }
+                console.log('destinationCoords: ', sourceCoords);
+            } else if (destination.address != null) {
+                destinationCoords = await getCoordinates(destination.address);
+            } else {
+                console.log("Something went wrong with passenger coords (destination): ", destination);
+                throw new Error('Error fetching coordinates for address');
+            }
 
             // Define the request body
             const requestBody = {
@@ -98,23 +131,22 @@ const UserInterface = () => {
             // Send POST request to order taxi
             const response = await axios.post('http://localhost:8080/passengers/order-taxi', requestBody);
             console.log('Assigned driver ID:', response.data);
-            // console.log("passengerId: ", passengerId);
         } catch (error) {
             console.error('Error ordering taxi:', error);
         }
-    }
+    };
 
     const handleCurrentLocationReceived = (currentLocation) => {
         setSource(currentLocation);
-    }
+    };
 
     const handleLogout = async () => {
         navigate("/");
-        const response = await axios.put('http://localhost:8080/auth/deactivate', {
+        await axios.put('http://localhost:8080/auth/deactivate', {
             "id": location.state.passengerId,
             "username": location.state.username
         });
-    }
+    };
 
     return (
         <div>
@@ -127,18 +159,28 @@ const UserInterface = () => {
                 <label htmlFor="source">
                     Source Address:
                 </label>
-                <input type="text" id="source" value={(typeof source === 'object') ? 'Your current location' : source} onChange={handleSourceChange} />
+                <AutocompleteInput
+                    id="source"
+                    value={(typeof source === 'object') ? source.address : source}
+                    onChange={handleSourceChange}
+                    onSelect={handleSourceSelect}
+                />
             </div>
 
             <div>
                 <label htmlFor="destination">
                     Destination Address:
                 </label>
-                <input type="text" id="destination" value={destination} onChange={handleDestinationChange} />
+                <AutocompleteInput
+                    id="destination"
+                    value={(typeof destination === 'object') ? destination.address : destination}
+                    onChange={handleDestinationChange}
+                    onSelect={handleDestinationSelect}
+                />
             </div>
 
             <button onClick={orderTaxi}>Order Taxi</button>
-            <button onClick = {handleLogout}>log out</button>
+            <button onClick={handleLogout}>Log out</button>
         </div>
     );
 }
