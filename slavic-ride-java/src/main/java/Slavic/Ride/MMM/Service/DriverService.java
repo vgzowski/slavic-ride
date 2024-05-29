@@ -20,13 +20,13 @@ public class DriverService {
     private final DriverRepo driverRepo;
 
     public Driver findDriverById(String id) {
-        log.info("Finding driver by ID: {}", id);
+//        log.info("Finding driver by ID: {}", id);
         return driverRepo.findDriverById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
     }
 
     public void updateDriverLocation(String driverId, Location newLocation) {
-        log.info("Updating driver location for driver ID: {}", driverId);
+//        log.info("Updating driver location for driver ID: {}", driverId);
         Driver driver = findDriverById(driverId);
         driver.setLocation(newLocation);
         driverRepo.save(driver);
@@ -40,7 +40,7 @@ public class DriverService {
     }
 
     public Driver getDriver(String id) {
-        log.info("Getting driver by ID: {}", id);
+//        log.info("Getting driver by ID: {}", id);
         return driverRepo.findDriverById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
     }
@@ -48,6 +48,11 @@ public class DriverService {
     public List<Driver> getAllDrivers() {
         log.info("Getting all drivers");
         return driverRepo.findAll();
+    }
+
+    public List<Driver> getAllNotTakenDrivers() {
+        log.info("Getting all drivers");
+        return driverRepo.findAllNotTaken();
     }
 
     public void updateDriverTaken(String driverId, boolean isTaken) {
@@ -63,9 +68,9 @@ public class DriverService {
         Driver closestDriver = null;
         double closestDistance = Double.MAX_VALUE;
 
-        log.info("Size of drivers: {}", drivers.size());
+//        log.info("Size of drivers: {}", drivers.size());
         for (Driver driver : drivers) {
-            System.out.println(driver);
+//            System.out.println(driver);
             double distance = Utils.calculateDistance(location, driver.getLocation());
             if (distance < closestDistance) {
                 closestDriver = driver;

@@ -43,9 +43,9 @@ public class DriverResource {
 
     @PutMapping("/{id}/location")
     public ResponseEntity<Void> updateDriverLocation(@RequestBody Map<String, Map <String, Object>> requestBody) {
-        log.info("Location: {}", requestBody.get("location"));
+//        log.info("Location: {}", requestBody.get("location"));
         String id = requestBody.containsKey("id") ? (String) requestBody.get("id").get("id") : null;
-        log.info("Driver Id: {}", id);
+//        log.info("Driver Id: {}", id);
         driverService.updateDriverLocation(id, new Location((Double) requestBody.get("location").get("lat"),
                                                             (Double) requestBody.get("location").get("lng")));
         return ResponseEntity.ok().build();

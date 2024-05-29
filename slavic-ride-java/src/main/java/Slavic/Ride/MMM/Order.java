@@ -34,4 +34,5 @@ public class Order {
     Location destination;
     String passengerId;
     String driverId;
+    Boolean isFinished = false;
 }

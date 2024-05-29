@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import MapComponent from './MapComponent';
 import axios from "axios";
-import { Navigate, renderMatches, useLocation, useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 import connect from './../services/webSocketService.js';
+import RideRequestMenu from './RideRequestMenu'; // Import the RideRequestMenu component
 
 const DriverInterface = () => {
     const locationLOL = useLocation();
@@ -12,6 +11,7 @@ const DriverInterface = () => {
 
     const [source, setSource] = useState('');
     const [destination, setDestination] = useState('');
+    const [showMenu, setShowMenu] = useState(false); // State to control menu visibility
 
     const navigate = useNavigate();
 
@@ -76,7 +76,6 @@ const DriverInterface = () => {
         }, 5000);
     }
 
-
     useEffect(() => {
         const fetchData = async () => {
             if (locationLOL && locationLOL.state && locationLOL.state.driverId) {
@@ -84,13 +83,9 @@ const DriverInterface = () => {
                 const stompClient = connect(
                     locationLOL.state.driverId,
                     (location_lat, location_lng, destination_lat, destination_lng) => {
-                        // console.log("sdfjksdfj");
-                        // console.log(locationD);
-                        // console.log(location_lat);
-                        // console.log(location_lng);
-
                         setSource(locationD);
                         setDestination({lat: location_lat, lng: location_lng});
+                        setShowMenu(true); // Show the menu when ride is requested
                     });
 
                 return () => {
@@ -122,6 +117,7 @@ const DriverInterface = () => {
         setSource(cur_location);
         setDestination(response.data.destination);
     }
+
     const handleFinishOrder = async () => {
         const response = await axios.get(`http://localhost:8080/drivers/${locationLOL.state.driverId}/order`);
 
@@ -135,14 +131,42 @@ const DriverInterface = () => {
 
         await axios.put(`http://localhost:8080/drivers/${locationLOL.state.driverId}/finish-order`);
     }
-    
+
+    const handleAcceptRide = async () => {
+        // Handle accepting the ride
+        setShowMenu(false); // Hide the menu after accepting the ride
+        // Send acceptance to the backend
+        console.log("driver accepted the ride");
+        await axios.post(`http://localhost:8080/notifications/driver-response`, {
+            driverId: locationLOL.state.driverId,
+            accepted: true
+        });
+    }
+
+    const handleRejectRide = async () => {
+        // Handle rejecting the ride
+        setShowMenu(false); // Hide the menu after rejecting the ride
+        // Send rejection to the backend
+        console.log("driver rejected the ride");
+        await axios.post(`http://localhost:8080/notifications/driver-response`, {
+            driverId: locationLOL.state.driverId,
+            accepted: false
+        });
+    }
+
     return (
         <div>
             <MapComponent userLocation={source} userDestination={destination} />
-            <button onClick = {handleLogout}>Log out</button>
-            <button onClick = {handleTakePassenger}>Passenger taken</button>
-            <button onClick = {handleFinishOrder}>Finish order</button>
-            <ToastContainer />
+            {showMenu && (
+                <RideRequestMenu
+                    onAccept={handleAcceptRide}
+                    onReject={handleRejectRide}
+                />
+            )}
+            <button onClick={handleLogout}>Log out</button>
+            <button onClick={handleTakePassenger}>Passenger taken</button>
+            <button onClick={handleFinishOrder}>Finish order</button>
+            {/*<ToastContainer />*/}
         </div>
     );
 }

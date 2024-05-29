@@ -32,6 +32,7 @@ public class OrderService {
         order.setDestination(destination);
         order.setPassengerId(passengerId);
         order.setDriverId(driverId);
+        order.setIsFinished(false);
         orderRepo.save(order);
         log.info("Creating order, orderId: {}", order.getOrderId());
 
@@ -46,7 +47,7 @@ public class OrderService {
         log.info("Finishing order, orderId: {}", orderId);
         Order order = orderRepo.findOrderByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
-//        orderRepo.delete(order);
+        orderRepo.delete(order);
 
         driverService.setOrderId(order.getDriverId(), "");
         passengerService.setOrderId(order.getPassengerId(), "");
