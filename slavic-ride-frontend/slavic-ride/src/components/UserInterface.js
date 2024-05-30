@@ -86,11 +86,11 @@ const UserInterface = () => {
                     lng: source.lng
                 }
                 console.log('sourceCoords: ', sourceCoords);
-            } else if (source.address != null) {
-                sourceCoords = await getCoordinates(source.address);
+            } else if (source != null) {
+                sourceCoords = await getCoordinates(source);
             } else {
                 console.log("Something went wrong with passenger coords (source): ", source);
-                throw new Error('Error fetching coordinates for address');
+                throw new Error('1Error fetching coordinates for address');
             }
 
 
@@ -104,11 +104,11 @@ const UserInterface = () => {
                     lng: destination.lng
                 }
                 console.log('destinationCoords: ', sourceCoords);
-            } else if (destination.address != null) {
-                destinationCoords = await getCoordinates(destination.address);
+            } else if (destination != null) {
+                destinationCoords = await getCoordinates(destination);
             } else {
                 console.log("Something went wrong with passenger coords (destination): ", destination);
-                throw new Error('Error fetching coordinates for address');
+                throw new Error('2Error fetching coordinates for address');
             }
 
             // Define the request body
