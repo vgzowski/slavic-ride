@@ -43,9 +43,9 @@ public class DriverResource {
 
     @PutMapping("/{id}/location")
     public ResponseEntity<Void> updateDriverLocation(@RequestBody Map<String, Map <String, Object>> requestBody) {
-        log.info("Location: {}", requestBody.get("location"));
+//        log.info("Location: {}", requestBody.get("location"));
         String id = requestBody.containsKey("id") ? (String) requestBody.get("id").get("id") : null;
-        log.info("Driver Id: {}", id);
+//        log.info("Driver Id: {}", id);
         driverService.updateDriverLocation(id, new Location((Double) requestBody.get("location").get("lat"),
                                                             (Double) requestBody.get("location").get("lng")));
         return ResponseEntity.ok().build();
@@ -53,15 +53,27 @@ public class DriverResource {
 
     @GetMapping("/{id}/order")
     public ResponseEntity<Order> getOrder(@PathVariable String id) {
-        boolean isTaken = driverService.getDriver(id).getIsTaken();
-        if (isTaken) {
-            String orderId = driverService.getDriver(id).getOrderId();
-            return ResponseEntity.ok(orderService.findOrderById(orderId));
-        }
-        else {
+        Driver driver = driverService.getDriver(id);
+        log.info("Driver ID: {}", id);
+        log.info("Driver IsTaken: {}", driver.getIsTaken());
+
+        if (driver.getIsTaken()) {
+            String orderId = driver.getOrderId();
+            log.info("Order ID: {}", orderId);
+            Order order = orderService.findOrderById(orderId);
+
+            if (order != null) {
+                return ResponseEntity.ok(order);
+            } else {
+                log.warn("Order not found for Order ID: {}", orderId);
+                return ResponseEntity.notFound().build();
+            }
+        } else {
+            log.warn("Driver {} does not have an active order.", id);
             return ResponseEntity.notFound().build();
         }
     }
+
 
     @PutMapping("/{id}/finish-order")
     public ResponseEntity<Void> finishOrder(@PathVariable String id) {

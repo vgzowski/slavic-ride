@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MapComponent from './MapComponent';
 import axios from "axios";
-import { Navigate, renderMatches, useLocation, useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 import connect from './../services/webSocketService.js';
+import RideRequestMenu from './RideRequestMenu';
 
 const DriverInterface = () => {
-    const locationLOL = useLocation();
-    console.log('locationLOL:', locationLOL);
+    const location_properties = useLocation();
+    console.log('location_properties:', location_properties);
 
-    const [source, setSource] = useState('');
-    const [destination, setDestination] = useState('');
-
+    const [source, setSource] = useState(null);
+    const [destination, setDestination] = useState(null);
+    const [showMenu, setShowMenu] = useState(false); // State to control menu visibility
+    const [route, setRoute] = useState(null); // State to hold the route information
     const navigate = useNavigate();
+
+    // Use ref to ensure WebSocket connection is managed properly
+    const stompClientRef = useRef(null);
 
     useEffect(() => {
         sendLocation();
@@ -51,22 +54,23 @@ const DriverInterface = () => {
         interval = setInterval(async () => {
             try {
                 const location = await getLocation();
-                if (location && locationLOL && locationLOL.state && locationLOL.state.driverId) {
+                if (location && location_properties && location_properties.state && location_properties.state.driverId) {
                     const requestBody = {
                         "location": {
                             "lat": location.lat,
                             "lng": location.lng
                         },
                         "id": {
-                            "id": locationLOL.state.driverId
-                        }};
-                    await axios.put(`http://localhost:8080/drivers/${locationLOL.state.driverId}/location`, requestBody);
-                    console.log(`Location successfully sent to server: ${location}, ${locationLOL.state.driverId}`);
+                            "id": location_properties.state.driverId
+                        }
+                    };
+                    await axios.put(`http://localhost:8080/drivers/${location_properties.state.driverId}/location`, requestBody);
+                    console.log(`Location successfully sent to server: ${location}, ${location_properties.state.driverId}`);
                 } else {
                     if (!location) {
                         console.log('No location');
                     }
-                    if (!locationLOL || !locationLOL.state || !locationLOL.state.driverId) {
+                    if (!location_properties || !location_properties.state || !location_properties.state.driverId) {
                         console.log('No driver id');
                     }
                 }
@@ -76,77 +80,104 @@ const DriverInterface = () => {
         }, 5000);
     }
 
-
     useEffect(() => {
         const fetchData = async () => {
-            if (locationLOL && locationLOL.state && locationLOL.state.driverId) {
-                const locationD = await getLocation();
-                const stompClient = connect(
-                    locationLOL.state.driverId,
-                    (location_lat, location_lng, destination_lat, destination_lng) => {
-                        // console.log("sdfjksdfj");
-                        // console.log(locationD);
-                        // console.log(location_lat);
-                        // console.log(location_lng);
-
-                        setSource(locationD);
-                        setDestination({lat: location_lat, lng: location_lng});
-                    });
-
-                return () => {
-                    stompClient.disconnect();
-                };
+            if (location_properties && location_properties.state && location_properties.state.driverId) {
+                if (!stompClientRef.current) {
+                    const locationD = await getLocation();
+                    stompClientRef.current = connect(
+                        location_properties.state.driverId,
+                        (location_lat, location_lng, destination_lat, destination_lng) => {
+                            setShowMenu(true); // Show the menu when ride is requested
+                        },
+                        (location_lat, location_lng, destination_lat, destination_lng) => {
+                            setSource(locationD);
+                            setDestination({lat: location_lat, lng: location_lng});
+                            // setRoute({
+                            //     source: { lat: parseFloat(location_lat), lng: parseFloat(location_lng) },
+                            //     destination: { lat: parseFloat(destination_lat), lng: parseFloat(destination_lng) }
+                            // });
+                        }
+                    );
+                }
             }
         }
 
         fetchData();
 
-    }, [locationLOL.state.driverId]);
+        // Cleanup function to disconnect the WebSocket when the component unmounts
+        return () => {
+            if (stompClientRef.current) {
+                stompClientRef.current.disconnect();
+                stompClientRef.current = null;
+            }
+        };
+
+    }, [location_properties.state.driverId]);
 
     const handleLogout = async () => {
         // Clear any stored state related to the driver
         localStorage.removeItem('driverId'); // Clear driverId from localStorage, if used
         navigate("/"); // Navigate to the login page
-        const response = await axios.put(`http://localhost:8080/auth/deactivate`, {
-            "id": locationLOL.state.driverId,
-            "username": locationLOL.state.username
+        await axios.put(`http://localhost:8080/auth/deactivate`, {
+            "id": location_properties.state.driverId,
+            "username": location_properties.state.username
         });
     }
 
     const handleTakePassenger = async () => {
-        const response = await axios.get(`http://localhost:8080/drivers/${locationLOL.state.driverId}/order`);
-
-        console.log(response.data.orderId);
-        console.log(response.data.driverId);
-        console.log(response.data.passengerId);
-        console.log(response.data.destination);
+        const response = await axios.get(`http://localhost:8080/drivers/${location_properties.state.driverId}/order`);
 
         const cur_location = await getLocation();
-
         setSource(cur_location);
         setDestination(response.data.destination);
     }
-    const handleFinishOrder = async () => {
-        const response = await axios.get(`http://localhost:8080/drivers/${locationLOL.state.driverId}/order`);
 
-        console.log(response.data.orderId);
-        console.log(response.data.driverId);
-        console.log(response.data.passengerId);
-        console.log(response.data.destination);
+    const handleFinishOrder = async () => {
+        const response = await axios.get(`http://localhost:8080/drivers/${location_properties.state.driverId}/order`);
 
         setSource(null);
         setDestination(null);
 
-        await axios.put(`http://localhost:8080/drivers/${locationLOL.state.driverId}/finish-order`);
+        await axios.put(`http://localhost:8080/drivers/${location_properties.state.driverId}/finish-order`);
     }
-    
+
+    const handleAcceptRide = async () => {
+        try {
+            setShowMenu(false); // Hide the menu after accepting the ride
+            await axios.post(`http://localhost:8080/notifications/driver-response`, {
+
+                driverId: location_properties.state.driverId,
+                accepted: true
+            });
+            console.log('The driver accepted the ride.');
+        } catch (error) {
+            console.error('Error accepting ride:', error);
+        }
+    }
+
+
+    const handleRejectRide = async () => {
+        setShowMenu(false); // Hide the menu after rejecting the ride
+        await axios.post(`http://localhost:8080/notifications/driver-response`, {
+            driverId: location_properties.state.driverId,
+            accepted: false
+        });
+        console.log('The driver rejected the ride.')
+    }
+
     return (
         <div>
-            <MapComponent userLocation={source} userDestination={destination} />
-            <button onClick = {handleLogout}>Log out</button>
-            <button onClick = {handleTakePassenger}>Passenger taken</button>
-            <button onClick = {handleFinishOrder}>Finish order</button>
-            <ToastContainer />
+            <MapComponent userLocation={source} userDestination={destination} route={route} />
+            {showMenu && (
+                <RideRequestMenu
+                    onAccept={handleAcceptRide}
+                    onReject={handleRejectRide}
+                />
+            )}
+            <button onClick={handleLogout}>Log out</button>
+            <button onClick={handleTakePassenger}>Passenger taken</button>
+            <button onClick={handleFinishOrder}>Finish order</button>
         </div>
     );
 }
