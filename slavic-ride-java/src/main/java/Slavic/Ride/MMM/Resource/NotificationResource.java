@@ -26,6 +26,19 @@ public class NotificationResource {
         this.messagingTemplate = messagingTemplate;
     }
 
+
+    @PostMapping("/driver-response")
+    public void handleDriverResponse(@RequestBody Map<String, Object> response) {
+        log.info("Received driver response: {}", response);
+        String driverId = (String) response.get("driverId");
+        boolean accepted = (Boolean) response.get("accepted");
+        driverResponses.put(driverId, accepted);
+        CountDownLatch latch = driverLatches.remove(driverId);
+        if (latch != null) {
+            latch.countDown();
+        }
+    }
+
     public boolean requestDriverConfirmation(String driverId, Location location, Location destination) {
         CountDownLatch latch = new CountDownLatch(1);
         driverLatches.put(driverId, latch);
@@ -52,18 +65,17 @@ public class NotificationResource {
         }
     }
 
-    @PostMapping("/driver-response")
-    public void handleDriverResponse(@RequestBody Map<String, Object> response) {
-        String driverId = (String) response.get("driverId");
-        boolean accepted = (Boolean) response.get("accepted");
-        driverResponses.put(driverId, accepted);
-        CountDownLatch latch = driverLatches.remove(driverId);
-        if (latch != null) {
-            latch.countDown();
-        }
+
+    public void notifyDriverOfRoute(String driverId, Location location, Location destination) {
+        log.info("Notifying driver {} of route", driverId);
+        messagingTemplate.convertAndSend("/topic/driver-route/" + driverId,  // Change the topic address
+                "{" +
+                        "\"name\":\"New order\"," +
+                        "\"location_lat\":\"" + location.getLat() + "\"," +
+                        "\"location_lng\":\"" + location.getLng() + "\"," +
+                        "\"destination_lat\":\"" + destination.getLat() + "\"," +
+                        "\"destination_lng\":\"" + destination.getLng() + "\"" +
+                        "}");
     }
 
-    public void notifyDriver(String driverId, String message) {
-        messagingTemplate.convertAndSend("/topic/driver/" + driverId, message);
-    }
 }
