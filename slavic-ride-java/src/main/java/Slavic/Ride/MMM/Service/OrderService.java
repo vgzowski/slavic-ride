@@ -18,15 +18,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepo orderRepo;
-    private final DriverService driverService;
-    private final PassengerService passengerService;
 
     public Order findOrderById(String orderId) {
         return orderRepo.findOrderByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
     }
 
-    public void createOrder(Location source, Location destination, String passengerId, String driverId) {
+    public Order createOrder(Location source, Location destination, String passengerId, String driverId) {
         Order order = new Order();
         order.setSource(source);
         order.setDestination(destination);
@@ -35,12 +33,7 @@ public class OrderService {
         order.setIsFinished(false);
         orderRepo.save(order);
         log.info("Creating order, orderId: {}", order.getOrderId());
-
-        driverService.changeTakenToTrue(driverId);
-
-        driverService.setOrderId(driverId, order.getOrderId());
-
-        passengerService.setOrderId(passengerId, order.getOrderId());
+        return order;
     }
 
     public void finishOrder(String orderId) {
@@ -48,10 +41,5 @@ public class OrderService {
         Order order = orderRepo.findOrderByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
         orderRepo.delete(order);
-
-        driverService.setOrderId(order.getDriverId(), "");
-        passengerService.setOrderId(order.getPassengerId(), "");
-
-        driverService.changeTakenToFalse(order.getDriverId());
     }
 }

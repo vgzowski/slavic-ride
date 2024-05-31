@@ -51,15 +51,8 @@ public class DriverService {
     }
 
     public List<Driver> getAllNotTakenDrivers() {
-        log.info("Getting all drivers");
+        log.info("Getting all free drivers");
         return driverRepo.findAllNotTaken();
-    }
-
-    public void updateDriverTaken(String driverId, boolean isTaken) {
-        log.info("Updating driver taken status for driver ID: {}", driverId);
-        Driver driver = findDriverById(driverId);
-        driver.setIsTaken(isTaken);
-        driverRepo.save(driver);
     }
 
     public Driver findClosestDriverByLocation(Location location) {
@@ -68,9 +61,7 @@ public class DriverService {
         Driver closestDriver = null;
         double closestDistance = Double.MAX_VALUE;
 
-//        log.info("Size of drivers: {}", drivers.size());
         for (Driver driver : drivers) {
-//            System.out.println(driver);
             double distance = Utils.calculateDistance(location, driver.getLocation());
             if (distance < closestDistance) {
                 closestDriver = driver;
@@ -81,20 +72,28 @@ public class DriverService {
         return closestDriver;
     }
 
-    public void changeTakenToTrue(String driverId) {
-        List<Driver> listDrives = driverRepo.findAll();
-        Driver driver = driverRepo.findDriverById(driverId)
-                .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
-        driver.setIsTaken(true);
+    public void setIsTaken(String driverId, boolean isTaken) {
+        log.info("Setting driver taken status for driver ID: {}", driverId);
+        Driver driver = findDriverById(driverId);
+        driver.setIsTaken(isTaken);
         driverRepo.save(driver);
     }
 
-    public void changeTakenToFalse(String driverId) {
-        Driver driver = driverRepo.findDriverById(driverId)
-                .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
-        driver.setIsTaken(false);
-        log.info("Setting driver taken status to false for driver ID: {}", driverId);
+    public boolean getIsTaken(String driverId) {
+        log.info("Checking if driver is taken for driver ID: {}", driverId);
+        return findDriverById(driverId).getIsTaken();
+    }
+
+    public void setIsDeciding(String driverId, boolean isDeciding) {
+        log.info("Updating driver deciding status for driver ID: {}", driverId);
+        Driver driver = findDriverById(driverId);
+        driver.setIsDeciding(isDeciding);
         driverRepo.save(driver);
+    }
+
+    public boolean getIsDeciding(String driverId) {
+        log.info("Checking if driver is deciding for driver ID: {}", driverId);
+        return findDriverById(driverId).getIsDeciding();
     }
 
     public void setOrderId(String driverId, String orderId) {

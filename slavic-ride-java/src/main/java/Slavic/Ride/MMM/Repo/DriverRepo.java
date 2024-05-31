@@ -20,15 +20,6 @@ public interface DriverRepo extends JpaRepository<Driver, String> {
     @Query("DELETE FROM Driver")
     void deleteAll();
 
-    @Modifying
-    @Transactional
-    @Query("UPDATE Driver d SET d.isTaken = true WHERE d.id = ?1")
-    void setTakenToTrue(String id);
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE Driver d SET d.isTaken = false WHERE d.id = ?1")
-    void setTakenToFalse(String id);
 
     @Query("SELECT d FROM Driver d WHERE COALESCE(d.isTaken, false) = false")
     List<Driver> findAllNotTaken();
