@@ -24,15 +24,15 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static java.lang.System.exit;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 @Slf4j
 @RestController
 @RequestMapping("/passengers")
 @RequiredArgsConstructor
 public class PassengerResource {
     private final PassengerService passengerService;
-    private final DriverService driverService;
-    private final OrderService orderService;
-    private final NotificationResource notificationResource;
     private final Lock lock = new ReentrantLock();
 
     @PostMapping
@@ -70,46 +70,13 @@ public class PassengerResource {
         String passengerId = (String) requestBody.get("id").get("id");
 
         try {
-            return assignDriverToPassenger(new Location(sourcelat, sourcelng), new Location(destinationlat, destinationlng), passengerId);
+            lock.lock();
+            return passengerService.assignDriverToPassenger(new Location(sourcelat, sourcelng), new Location(destinationlat, destinationlng), passengerId);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Interrupted while assigning driver");
-        }
-    }
-
-    private ResponseEntity<String> assignDriverToPassenger(Location location, Location destination, String passengerId) throws InterruptedException {
-        log.info("Assigning driver to passenger");
-
-        List<Driver> driversList = driverService.getAllNotTakenDrivers();
-        int ptr = 0;
-        while (true) {
-            if (ptr == driversList.size()) {
-                return ResponseEntity.ok("No drivers available");
-            }
-
-            Driver chosenDriver = driversList.get(ptr);
-            if (chosenDriver == null) {
-                return ResponseEntity.ok("No drivers available");
-            }
-
-            log.info("Driver is found with ID: {}", chosenDriver.getId());
-            String driverId = chosenDriver.getId();
-
-            lock.lock();
-            try {
-                boolean driverAccepted = notificationResource.requestDriverConfirmation(driverId, location, destination);
-                if (driverAccepted) {
-                    log.info("Driver with ID: {} accepted the ride", driverId);
-                    orderService.createOrder(location, destination, passengerId, driverId);
-                    notificationResource.notifyDriverOfRoute(driverId, location, destination);
-                    return ResponseEntity.ok(driverId);
-                } else {
-                    log.info("Driver with ID: {} rejected the ride", driverId);
-                    ptr++;
-                }
-            } finally {
-                lock.unlock();
-            }
+        } finally {
+            lock.unlock();
         }
     }
 }

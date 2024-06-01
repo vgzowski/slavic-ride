@@ -17,8 +17,13 @@ import lombok.Setter;
 @Table(name = "drivers")
 public class Driver extends User {
     private String carName;
+
     @Getter
     Boolean isTaken = false;
+
+    @Getter
+    @Setter
+    Boolean isDeciding = false;
 
     public Driver(String name, String email, String phone, String id, String carName) {
         this.name = name;
@@ -80,12 +85,20 @@ public class Driver extends User {
         return this.password;
     }
 
+    public Boolean getIsTaken() {
+        return this.isTaken;
+    }
+
     public void setIsTaken(Boolean isTaken) {
         this.isTaken = isTaken;
     }
 
-    public Boolean getIsTaken() {
-        return this.isTaken;
+    public Boolean getIsDeciding() {
+        return this.isDeciding;
+    }
+
+    public void setIsDeciding(Boolean isDeciding) {
+        this.isDeciding = isDeciding;
     }
 
     @Embedded
@@ -131,6 +144,6 @@ public class Driver extends User {
     }
 
     public String toString() {
-        return "Name: " + this.name + "\nEmail: " + this.email + "\nPhone: " + this.phone + "\nID: " + this.id + "\nRating: " + getRating() + "\nLocation: " + getLocation();
+        return "Username: " + this.username + ", id: " + this.id + "\n";
     }
 }

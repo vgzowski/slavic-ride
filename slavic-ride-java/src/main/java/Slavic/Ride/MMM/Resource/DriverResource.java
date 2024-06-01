@@ -3,6 +3,7 @@ package Slavic.Ride.MMM.Resource;
 import Slavic.Ride.MMM.Order;
 import Slavic.Ride.MMM.Service.DriverService;
 import Slavic.Ride.MMM.Service.OrderService;
+import Slavic.Ride.MMM.Service.PassengerService;
 import Slavic.Ride.MMM.User.Driver;
 import Slavic.Ride.MMM.Location;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import static java.lang.System.exit;
 @RequiredArgsConstructor
 public class DriverResource {
     private final DriverService driverService;
+    private final PassengerService passengerService;
     private final OrderService orderService;
 
     @PostMapping
@@ -85,7 +87,16 @@ public class DriverResource {
         }
 
         try {
-            orderService.finishOrder(orderId);
+
+            //Finishing the order
+            {
+                Order order = orderService.findOrderById(orderId);
+                orderService.finishOrder(orderId);
+                driverService.setOrderId(order.getDriverId(), "");
+                passengerService.setOrderId(order.getPassengerId(), "");
+                driverService.setIsTaken(order.getDriverId(), false);
+            }
+
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.notFound().build();

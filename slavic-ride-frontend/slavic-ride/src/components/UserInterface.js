@@ -9,13 +9,14 @@ const UserInterface = () => {
     const location = useLocation();
     const [source, setSource] = useState('');
     const [destination, setDestination] = useState('');
+    const [lookingForDriver, setLookingForDriver] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!location.state || location.state.passengerId == null) {
             navigate("/");
         }
-    }, [location]);
+    }, [location, navigate]);
 
     const handleSourceChange = (e) => {
         setSource(e.target.value);
@@ -76,6 +77,8 @@ const UserInterface = () => {
         }
 
         try {
+            setLookingForDriver(true); // Show the "looking for driver" message
+
             // Get coordinates for source address
             let sourceCoords = null;
             console.log('source: ', source);
@@ -90,9 +93,8 @@ const UserInterface = () => {
                 sourceCoords = await getCoordinates(source);
             } else {
                 console.log("Something went wrong with passenger coords (source): ", source);
-                throw new Error('1Error fetching coordinates for address');
+                throw new Error('Error fetching coordinates for address');
             }
-
 
             // Get coordinates for destination address
             let destinationCoords = null;
@@ -103,26 +105,26 @@ const UserInterface = () => {
                     lat: destination.lat,
                     lng: destination.lng
                 }
-                console.log('destinationCoords: ', sourceCoords);
+                console.log('destinationCoords: ', destinationCoords);
             } else if (destination != null) {
                 destinationCoords = await getCoordinates(destination);
             } else {
                 console.log("Something went wrong with passenger coords (destination): ", destination);
-                throw new Error('2Error fetching coordinates for address');
+                throw new Error('Error fetching coordinates for address');
             }
 
             // Define the request body
             const requestBody = {
                 source: {
-                    "lat": sourceCoords.lat,
-                    "lng": sourceCoords.lng
+                    lat: sourceCoords.lat,
+                    lng: sourceCoords.lng
                 },
                 destination: {
-                    "lat": destinationCoords.lat,
-                    "lng": destinationCoords.lng
+                    lat: destinationCoords.lat,
+                    lng: destinationCoords.lng
                 },
                 id: {
-                    "id": location.state.passengerId
+                    id: location.state.passengerId
                 }
             };
 
@@ -131,8 +133,11 @@ const UserInterface = () => {
             // Send POST request to order taxi
             const response = await axios.post('http://localhost:8080/passengers/order-taxi', requestBody);
             console.log('Assigned driver ID:', response.data);
+
+            setLookingForDriver(false); // Hide the "looking for driver" message when the driver is assigned
         } catch (error) {
             console.error('Error ordering taxi:', error);
+            setLookingForDriver(false); // Hide the "looking for driver" message in case of an error
         }
     };
 
@@ -143,8 +148,8 @@ const UserInterface = () => {
     const handleLogout = async () => {
         navigate("/");
         await axios.put('http://localhost:8080/auth/deactivate', {
-            "id": location.state.passengerId,
-            "username": location.state.username
+            id: location.state.passengerId,
+            username: location.state.username
         });
     };
 
@@ -181,6 +186,8 @@ const UserInterface = () => {
 
             <button onClick={orderTaxi}>Order Taxi</button>
             <button onClick={handleLogout}>Log out</button>
+
+            {lookingForDriver && <p>We are looking for a driver...</p>}
         </div>
     );
 }
