@@ -24,12 +24,16 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static java.lang.System.exit;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 @Slf4j
 @RestController
 @RequestMapping("/passengers")
 @RequiredArgsConstructor
 public class PassengerResource {
     private final PassengerService passengerService;
+    private final Lock lock = new ReentrantLock();
 
     @PostMapping
     public ResponseEntity<Passenger> createPassenger(@RequestBody Passenger passenger) {
@@ -66,10 +70,13 @@ public class PassengerResource {
         String passengerId = (String) requestBody.get("id").get("id");
 
         try {
+            lock.lock();
             return passengerService.assignDriverToPassenger(new Location(sourcelat, sourcelng), new Location(destinationlat, destinationlng), passengerId);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Interrupted while assigning driver");
+        } finally {
+            lock.unlock();
         }
     }
 }

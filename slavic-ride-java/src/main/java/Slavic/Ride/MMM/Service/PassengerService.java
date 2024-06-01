@@ -16,8 +16,6 @@ import Slavic.Ride.MMM.Location;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @Slf4j
@@ -28,7 +26,6 @@ public class PassengerService {
     private final DriverService driverService;
     private final OrderService orderService;
     private final NotificationResource notificationResource;
-    private final Lock lock = new ReentrantLock();
 
     public Passenger createPassenger(Passenger passenger) {
         log.info("Creating passenger: {}", passenger);
@@ -89,57 +86,55 @@ public class PassengerService {
     public ResponseEntity<String> assignDriverToPassenger(Location location, Location destination, String passengerId) throws InterruptedException {
         log.info("Assigning driver to passenger");
 
-        try {
-            lock.lock();
-            List<Driver> driversList = driverService.getAllNotTakenDrivers();
-            int ptr = 0;
-            while (true) {
-                if (ptr == driversList.size()) {
-                    return ResponseEntity.ok("No drivers available");
-                }
-
-                Driver chosenDriver = driversList.get(ptr);
-                if (chosenDriver == null) {
-                    return ResponseEntity.ok("No drivers available");
-                }
-
-                log.info("Driver is found with ID: {}", chosenDriver.getId());
-                String driverId = chosenDriver.getId();
-                boolean driverAccepted = false;
-
-                // Check if the driver is still available and not deciding
-                if (driverService.getIsTaken(driverId) || driverService.getIsDeciding(driverId)) {
-                    ptr++;
-                    continue;
-                }
-
-                // Mark the driver as deciding
-                driverService.setIsDeciding(driverId, true);
-
-                driverAccepted = notificationResource.requestDriverConfirmation(driverId, location, destination);
-
-                driverService.setIsDeciding(driverId, false);
-
-                if (driverAccepted) {
-                    log.info("Driver with ID: {} accepted the ride", driverId);
-
-                    //Creating order
-                    {
-                        Order order = orderService.createOrder(location, destination, passengerId, driverId);
-                        driverService.setIsTaken(driverId, true);
-                        driverService.setOrderId(driverId, order.getOrderId());
-                        setOrderId(passengerId, order.getOrderId());
-                    }
-
-                    notificationResource.notifyDriverOfRoute(driverId, location, destination);
-                    return ResponseEntity.ok(driverId);
-                } else {
-                    log.info("Driver with ID: {} rejected the ride", driverId);
-                    ptr++;
-                }
+        List<Driver> driversList = driverService.getAllNotTakenDrivers();
+        for (Driver driver : driversList) {
+            log.info(driver.getId() + " " + driver.getIsTaken() + " " + driver.getIsDeciding());
+        }
+        int ptr = 0;
+        while (true) {
+            if (ptr == driversList.size()) {
+                return ResponseEntity.ok("No drivers available");
             }
-        } finally {
-            lock.unlock();
+
+            Driver chosenDriver = driversList.get(ptr);
+            if (chosenDriver == null) {
+                return ResponseEntity.ok("No drivers available");
+            }
+
+            log.info("Driver is found with ID: {}", chosenDriver.getId());
+            String driverId = chosenDriver.getId();
+            boolean driverAccepted = false;
+
+            // Check if the driver is still available and not deciding
+            if (driverService.getIsTaken(driverId) || driverService.getIsDeciding(driverId)) {
+                ptr++;
+                continue;
+            }
+
+            // Mark the driver as deciding
+            driverService.setIsDeciding(driverId, true);
+
+            driverAccepted = notificationResource.requestDriverConfirmation(driverId, location, destination);
+
+            driverService.setIsDeciding(driverId, false);
+
+            if (driverAccepted) {
+                log.info("Driver with ID: {} accepted the ride", driverId);
+
+                //Creating order
+                {
+                    Order order = orderService.createOrder(location, destination, passengerId, driverId);
+                    driverService.setIsTaken(driverId, true);
+                    driverService.setOrderId(driverId, order.getOrderId());
+                    setOrderId(passengerId, order.getOrderId());
+                }
+
+                notificationResource.notifyDriverOfRoute(driverId, location, destination);
+                return ResponseEntity.ok(driverId);
+            } else {
+                log.info("Driver with ID: {} rejected the ride", driverId);
+                ptr++;
+            }
         }
     }
 }
