@@ -40,6 +40,7 @@ const connect = (driverId, onMessageReceived, onRouteNotification) => {
         });
 
         stompClient.subscribe(`/topic/driver-route/${driverId}`, (message) => {
+            console.log('Route notification');
             console.log(message.body);
 
             const {

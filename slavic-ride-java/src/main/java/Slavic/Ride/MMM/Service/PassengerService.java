@@ -92,6 +92,7 @@ public class PassengerService {
         try {
             lock.lock();
             List<Driver> driversList = driverService.getAllNotTakenDrivers();
+            log.info("Free Drivers list: {}", driversList);
             int ptr = 0;
             while (true) {
                 if (ptr == driversList.size()) {
