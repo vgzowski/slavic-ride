@@ -13,6 +13,9 @@ const DriverInterface = () => {
     const [destination, setDestination] = useState(null);
     const [showMenu, setShowMenu] = useState(false); // State to control menu visibility
     const [route, setRoute] = useState(null); // State to hold the route information
+    const [passengerTaken, setPassengerTaken] = useState(false);
+    const [hasOrderState, setHasOrderState] = useState(false);
+
     const navigate = useNavigate();
 
     // Use ref to ensure WebSocket connection is managed properly
@@ -131,6 +134,9 @@ const DriverInterface = () => {
         const cur_location = await getLocation();
         setSource(cur_location);
         setDestination(response.data.destination);
+        setPassengerTaken(true);
+
+        await fetchOrder(); // Ensure fetchOrder is awaited
     }
 
     const handleFinishOrder = async () => {
@@ -138,24 +144,27 @@ const DriverInterface = () => {
 
         setSource(null);
         setDestination(null);
+        setPassengerTaken(false);
 
         await axios.put(`http://localhost:8080/drivers/${location_properties.state.driverId}/finish-order`);
+
+        await fetchOrder(); // Ensure fetchOrder is awaited
     }
 
     const handleAcceptRide = async () => {
         try {
             setShowMenu(false); // Hide the menu after accepting the ride
             await axios.post(`http://localhost:8080/notifications/driver-response`, {
-
                 driverId: location_properties.state.driverId,
                 accepted: true
             });
             console.log('The driver accepted the ride.');
         } catch (error) {
             console.error('Error accepting ride:', error);
+        } finally {
+            await fetchOrder(); // Ensure fetchOrder is awaited
         }
     }
-
 
     const handleRejectRide = async () => {
         setShowMenu(false); // Hide the menu after rejecting the ride
@@ -163,8 +172,35 @@ const DriverInterface = () => {
             driverId: location_properties.state.driverId,
             accepted: false
         });
+        await fetchOrder(); // Ensure fetchOrder is awaited
         console.log('The driver rejected the ride.')
     }
+
+    const hasOrder = async () => {
+        console.log("Passenger taken for ", location_properties.state.driverId, ": ", passengerTaken);
+        try {
+            const response = await axios.get(`http://localhost:8080/drivers/${location_properties.state.driverId}/get-order`);
+            console.log("huihuihui:", response, response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching order:", error);
+            return false;
+        }
+    }
+
+    const fetchOrder = async () => {
+        const orderStatus = await hasOrder();
+        console.log("Order status fetched:", orderStatus); // Debug log
+        setHasOrderState(orderStatus);
+    };
+
+    useEffect(() => {
+        fetchOrder();
+    }, [location_properties.state.driverId]);
+
+    useEffect(() => {
+        console.log("hasOrderState changed:", hasOrderState); // Debug log
+    }, [hasOrderState]);
 
     return (
         <div>
@@ -176,8 +212,8 @@ const DriverInterface = () => {
                 />
             )}
             <button onClick={handleLogout}>Log out</button>
-            <button onClick={handleTakePassenger}>Passenger taken</button>
-            <button onClick={handleFinishOrder}>Finish order</button>
+            {(hasOrderState === true) && (passengerTaken === false) && <button onClick={handleTakePassenger}>Passenger taken</button>}
+            {(hasOrderState === true) && (passengerTaken === true) && <button onClick={handleFinishOrder}>Finish order</button>}
         </div>
     );
 }

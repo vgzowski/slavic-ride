@@ -50,7 +50,7 @@ public class DriverResource {
     }
 
     @GetMapping("/{id}/order")
-    public ResponseEntity<Order> getOrder(@PathVariable String id) {
+    public ResponseEntity<Order> getOrderRealOrder(@PathVariable String id) {
         Driver driver = driverService.getDriver(id);
         String orderId = driver.getOrderId();
         Order order = orderService.findOrderById(orderId);
@@ -62,6 +62,22 @@ public class DriverResource {
         }
     }
 
+    @GetMapping("/{id}/get-order")
+    public ResponseEntity<Boolean> getOrder(@PathVariable String id) {
+        try {
+            Driver driver = driverService.getDriver(id);
+            String orderId = driver.getOrderId();
+            Order order = orderService.findOrderById(orderId);
+            if (order != null) {
+                return ResponseEntity.ok(true);
+            } else {
+                log.warn("Order not found for Order ID: {}", orderId);
+                return ResponseEntity.ok(false);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.ok(false);
+        }
+    }
 
     @PutMapping("/{id}/finish-order")
     public ResponseEntity<Void> finishOrder(@PathVariable String id) {
