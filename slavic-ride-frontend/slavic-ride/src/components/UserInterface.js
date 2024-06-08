@@ -10,6 +10,7 @@ const UserInterface = () => {
     const [source, setSource] = useState('');
     const [destination, setDestination] = useState('');
     const [lookingForDriver, setLookingForDriver] = useState(false);
+    const [rideType, setRideType] = useState('usual'); // State to store the user's chosen ride type
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -42,6 +43,10 @@ const UserInterface = () => {
         });
     };
 
+    const handleRideTypeSelect = (type) => {
+        setRideType(type);
+    };
+
     const getCoordinates = async (address) => {
         try {
             const apiKey = 'AIzaSyCcGid1vTF4zEMmDMWgS5sX3fOxrAtGhDs';
@@ -69,7 +74,7 @@ const UserInterface = () => {
         console.log('Ordering taxi');
         console.log('source: ', source);
         console.log('destination: ', destination);
-
+        console.log('rideType: ', rideType);
         // Make sure both source and destination are provided
         if (!source || !destination) {
             alert("Please provide both source and destination addresses.");
@@ -126,6 +131,9 @@ const UserInterface = () => {
                 },
                 id: {
                     id: location.state.passengerId
+                },
+                rideType: {
+                    rideType: rideType
                 }
             };
 
@@ -246,6 +254,22 @@ const UserInterface = () => {
                     onChange={handleDestinationChange}
                     onSelect={handleDestinationSelect}
                 />
+            </div>
+
+            <div>
+                {/* Apply different styles based on the chosen ride type */}
+                <button
+                    onClick={() => handleRideTypeSelect('usual')}
+                    style={{ marginRight: '10px', backgroundColor: rideType === 'usual' ? 'lightblue' : 'white' }}
+                >
+                    Usual
+                </button>
+                <button
+                    onClick={() => handleRideTypeSelect('premium')}
+                    style={{ backgroundColor: rideType === 'premium' ? 'lightblue' : 'white' }}
+                >
+                    Premium
+                </button>
             </div>
 
             <button onClick={orderTaxi}>Order Taxi</button>

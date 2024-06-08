@@ -83,10 +83,11 @@ public class PassengerService {
         passengerRepo.save(passenger);
     }
 
-    public ResponseEntity<String> assignDriverToPassenger(Location pickUpPoint, Location dropOffPoint, String passengerId) throws InterruptedException {
+    public ResponseEntity<String> assignDriverToPassenger(Location pickUpPoint, Location dropOffPoint,
+                                                          String passengerId, String rideType) throws InterruptedException {
         log.info("Assigning driver to passenger");
 
-        List<Driver> driversList = driverService.getAllDrivers();
+        List<Driver> driversList = driverService.getAllDrivers(rideType);
         for (Driver driver : driversList) {
             log.info(driver.getId() + " " + driverService.isDriverAvailable(driver.getId()));
         }

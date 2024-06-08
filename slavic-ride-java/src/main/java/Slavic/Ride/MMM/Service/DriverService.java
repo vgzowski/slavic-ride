@@ -61,6 +61,10 @@ public class DriverService {
         return driverRepo.findAll();
     }
 
+    public List<Driver> getAllDrivers(String rideType) {
+        return driverRepo.findAllWithType(rideType);
+    }
+
     public Driver findClosestDriverByLocation(Location location) {
 //        log.info("Finding the closest driver to the location");
         List<Driver> drivers = driverRepo.findAll();
