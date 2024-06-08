@@ -8,7 +8,7 @@ import AutocompleteInput from "./AutocompleteInput";
 const UserInterface = () => {
     const location = useLocation();
     const [source, setSource] = useState('');
-    const [destination, setDestination] = useState('');
+    const [destination, setDestination] = useState('warsaw');
     const [lookingForDriver, setLookingForDriver] = useState(false);
     const navigate = useNavigate();
 

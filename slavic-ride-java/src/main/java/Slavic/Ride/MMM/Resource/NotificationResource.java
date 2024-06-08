@@ -57,6 +57,10 @@ public class NotificationResource {
                 return driverResponses.remove(driverId);
             } else {
                 driverLatches.remove(driverId);
+                messagingTemplate.convertAndSend(
+                    "/topic/driver/time-exceed/" + driverId,
+                    "{" + "\"name\": " + "\"time-exceeded\"" + "}"
+                );
                 return false;  // Timeout, driver didn't respond
             }
         } catch (InterruptedException e) {

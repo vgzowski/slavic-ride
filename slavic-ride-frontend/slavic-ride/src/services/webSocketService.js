@@ -1,7 +1,7 @@
 import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
-const connect = (driverId, onMessageReceived, onRouteNotification) => {
+const connect = (driverId, onMessageReceived, onRouteNotification, onTimeExceeding) => {
     const socket = new SockJS('http://localhost:8080/ws');
     const stompClient = Stomp.over(socket);
 
@@ -36,6 +36,18 @@ const connect = (driverId, onMessageReceived, onRouteNotification) => {
                     parseFloat(destination_lat),
                     parseFloat(destination_lng)
                 );
+            }
+        });
+
+        stompClient.subscribe(`/topic/driver/time-exceed/${driverId}`, (message) => {
+            console.log(message);
+
+            const {
+                name
+            } = JSON.parse(message.body);
+
+            if (name === 'time-exceeded') {
+                onTimeExceeding();
             }
         });
 

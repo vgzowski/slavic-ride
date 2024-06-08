@@ -100,6 +100,9 @@ const DriverInterface = () => {
                             //     source: { lat: parseFloat(location_lat), lng: parseFloat(location_lng) },
                             //     destination: { lat: parseFloat(destination_lat), lng: parseFloat(destination_lng) }
                             // });
+                        },
+                        () => {
+                            setShowMenu(false);
                         }
                     );
                 }
