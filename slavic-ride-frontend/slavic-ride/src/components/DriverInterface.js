@@ -157,17 +157,22 @@ const DriverInterface = () => {
     const handleAcceptRide = async () => {
         try {
             setShowMenu(false); // Hide the menu after accepting the ride
-            await axios.post(`http://localhost:8080/notifications/driver-response`, {
+            const response = await axios.post(`http://localhost:8080/notifications/driver-response`, {
                 driverId: location_properties.state.driverId,
                 accepted: true
             });
-            console.log('The driver accepted the ride.');
+            console.log('The driver accepted the ride:', response);
         } catch (error) {
             console.error('Error accepting ride:', error);
         } finally {
-            await fetchOrder(); // Ensure fetchOrder is awaited
+            try {
+                await fetchOrder(); // Ensure fetchOrder is awaited
+                console.log('Order status updated.');
+            } catch (error) {
+                console.error('Error fetching order status:', error);
+            }
         }
-    }
+    };    
 
     const handleRejectRide = async () => {
         setShowMenu(false); // Hide the menu after rejecting the ride
@@ -191,9 +196,19 @@ const DriverInterface = () => {
         }
     }
 
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
     const fetchOrder = async () => {
-        const orderStatus = await hasOrder();
-        console.log("Order status fetched:", orderStatus); // Debug log
+        let orderStatus = await hasOrder();
+        let retries = 5; // Number of retries
+        const delayTime = 50; // Delay time in milliseconds
+    
+        while (!orderStatus && retries > 0) {
+            await delay(delayTime);
+            orderStatus = await hasOrder();
+            retries--;
+        }
+    
         setHasOrderState(orderStatus);
     };
 
@@ -215,6 +230,7 @@ const DriverInterface = () => {
                 />
             )}
             <button onClick={handleLogout}>Log out</button>
+            <button onClick={fetchOrder}>Update</button>
             {(hasOrderState === true) && (passengerTaken === false) && <button onClick={handleTakePassenger}>Passenger taken</button>}
             {(hasOrderState === true) && (passengerTaken === true) && <button onClick={handleFinishOrder}>Finish order</button>}
         </div>
