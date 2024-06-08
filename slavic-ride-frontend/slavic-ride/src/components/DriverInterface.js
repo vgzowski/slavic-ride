@@ -188,7 +188,7 @@ const DriverInterface = () => {
         console.log("Passenger taken for ", location_properties.state.driverId, ": ", passengerTaken);
         try {
             const response = await axios.get(`http://localhost:8080/drivers/${location_properties.state.driverId}/get-order`);
-            console.log("huihuihui:", response, response.data);
+            console.log(response, response.data);
             return response.data;
         } catch (error) {
             console.error("Error fetching order:", error);
