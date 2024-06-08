@@ -11,10 +11,17 @@ function Directions({ userLocation, userDestination }) {
     const selected = routes[routeIndex];
     const leg = selected?.legs[0];
 
+    console.log('IAM ALIVE I CAN SEE');
+    console.log('userLocation:', userLocation);
+    console.log('userDestination:', userDestination);
+
     useEffect(() => {
         if (!routesLibrary || !map) return;
         const ds = new routesLibrary.DirectionsService();
-        const dr = new routesLibrary.DirectionsRenderer({ map });
+        const dr = new routesLibrary.DirectionsRenderer({
+            map,
+            suppressMarkers: true,
+        });
         setDirectionsService(ds);
         setDirectionsRenderer(dr);
     }, [routesLibrary, map]);
@@ -75,7 +82,6 @@ function Directions({ userLocation, userDestination }) {
             </ul>
         </div>
     );
-};
+}
 
 export default Directions;
-  

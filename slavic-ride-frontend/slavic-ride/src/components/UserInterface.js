@@ -142,8 +142,38 @@ const UserInterface = () => {
         }
     };
 
-    const handleCurrentLocationReceived = (currentLocation) => {
-        setSource(currentLocation);
+    const fetchAddress = async (coords) => {
+        try {
+            const response = await fetch(
+                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.lat},${coords.lng}&key=AIzaSyCcGid1vTF4zEMmDMWgS5sX3fOxrAtGhDs`
+            );
+            const data = await response.json();
+            return data.results[0].formatted_address;
+        } catch (error) {
+            console.error('Error fetching address:', error);
+            return null;
+        }
+    }
+
+    const handleCurrentLocationReceived = async (currentLocation) => {
+        const fetched = await fetchAddress(currentLocation);
+
+        setSource({
+            lat: currentLocation.lat,
+            lng: currentLocation.lng,
+            address: fetched
+        });
+    };
+
+    const handleCurrentLocationReceivedDestination = async (currentLocation) => {
+        const fetched = await fetchAddress(currentLocation);
+
+        setDestination({
+            lat: currentLocation.lat,
+            lng: currentLocation.lng,
+            address: fetched,
+        });
+
     };
 
     const handleLogout = async () => {
@@ -154,9 +184,16 @@ const UserInterface = () => {
         });
     };
 
+    console.log('destination: ', destination);
+
     return (
         <div>
-            <MapComponent userLocation={source} userDestination={destination} onCurrentLocationReceived={handleCurrentLocationReceived} />
+            <MapComponent
+                userLocation={source}
+                userDestination={destination}
+                onCurrentLocationReceived={handleCurrentLocationReceived}
+                onCurrentLocationReceivedDestination={handleCurrentLocationReceivedDestination}
+            />
             <h1>
                 Enter Source and Destination
             </h1>

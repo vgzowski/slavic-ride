@@ -7,7 +7,6 @@ import Directions from './RoutesComponent.js';
 class MapComponent extends Component {
     constructor(props) {
         super(props);
-        console.log("props.userlocation:", props.userLocation)
         this.state = {
             userLocationButton: null,
             userLocation: props.userLocation,
@@ -41,6 +40,11 @@ class MapComponent extends Component {
             this.setState({
                 userLocation: this.props.userLocation,
                 userLocationButton: this.props.userLocation
+            });
+        }
+        if (prevProps.userDestination !== this.props.userDestination) {
+            this.setState({
+                userDestination: this.props.userDestination
             });
         }
     }
@@ -82,7 +86,18 @@ class MapComponent extends Component {
         if (this.props.onCurrentLocationReceived) {
             this.props.onCurrentLocationReceived(newLocation);
         }
-        console.log("New Marker Position:", newLocation);
+    }
+
+    handleMarkerDestinationDragEnd = (event) => {
+        const { latLng } = event;
+        const newLocation = {
+            lat: latLng.lat(),
+            lng: latLng.lng()
+        };
+        this.setState({ userDestination: newLocation });
+        if (this.props.onCurrentLocationReceivedDestination) {
+            this.props.onCurrentLocationReceivedDestination(newLocation);
+        }
     }
 
     render() {
@@ -92,8 +107,8 @@ class MapComponent extends Component {
 
         const blueCircleWithBorderIcon = {
             url: 'data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="blue" stroke="white" stroke-width="2"/></svg>',
-            scaledSize: new google.maps.Size(24, 24), // Adjust the size as needed
-            anchor: new google.maps.Point(12, 12) // Adjust the anchor as needed
+            scaledSize: new google.maps.Size(24, 24),
+            anchor: new google.maps.Point(12, 12)
         };
 
         return (
@@ -121,9 +136,18 @@ class MapComponent extends Component {
                             />
                         )}
 
+                        {this.state.userDestination && (
+                            <Marker
+                                position={this.state.userDestination}
+                                draggable={true}
+                                onDragEnd={this.handleMarkerDestinationDragEnd}
+                            />
+                        )}
+
                         <Directions
                             userLocation={this.props.userLocation ? this.props.userLocation : userLocationButton}
-                            userDestination={this.props.userDestination} />
+                            userDestination={this.props.userDestination}
+                        />
                     </Map>
                 </APIProvider>
 
