@@ -63,10 +63,13 @@ public class PassengerResource {
     public ResponseEntity<String> orderTaxi(@RequestBody Map<String, Map<String, Object>> requestBody) {
         Map<String, Object> source = requestBody.get("source");
         Map<String, Object> destination = requestBody.get("destination");
+
         Double sourcelat = (Double) source.get("lat");
         Double sourcelng = (Double) source.get("lng");
+
         Double destinationlat = (Double) destination.get("lat");
         Double destinationlng = (Double) destination.get("lng");
+
         String passengerId = (String) requestBody.get("id").get("id");
 
         try {

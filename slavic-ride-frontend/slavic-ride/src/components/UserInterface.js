@@ -77,7 +77,6 @@ const UserInterface = () => {
         }
 
         try {
-            setLookingForDriver(true); // Show the "looking for driver" message
 
             // Get coordinates for source address
             let sourceCoords = null;
@@ -96,6 +95,7 @@ const UserInterface = () => {
                 throw new Error('Error fetching coordinates for address');
             }
 
+
             // Get coordinates for destination address
             let destinationCoords = null;
             console.log('destination: ', destination);
@@ -113,6 +113,8 @@ const UserInterface = () => {
                 throw new Error('Error fetching coordinates for address');
             }
 
+            setLookingForDriver(true);
+
             // Define the request body
             const requestBody = {
                 source: {
@@ -129,7 +131,6 @@ const UserInterface = () => {
             };
 
             console.log('Request body:', requestBody);
-
             // Send POST request to order taxi
             const response = await axios.post('http://localhost:8080/passengers/order-taxi', requestBody);
             console.log('Assigned driver ID:', response.data);

@@ -7,11 +7,10 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-@Table(name = "passengers")
+//@Table(name = "passengers")
 @Entity
 @Getter
 @Setter
-
 public class Passenger extends User {
     public Passenger(String name, String email, String phone, String id) {
         this.name = name;
@@ -27,80 +26,18 @@ public class Passenger extends User {
         this.id = "";
     }
 
-    public String getName() {
-        return this.name;
+//    @Embedded
+    public Location getLocation() {
+        return new Location();
+        //        return this.location;
     }
-
-    public String getEmail() {
-        return this.email;
-    }
-
-    public String getPhone() {
-        return this.phone;
-    }
-
-    public String getId() {
-        return this.id;
+    public void setLocation(Location location) {
+//        this.location = location;
     }
 
     public Float getRating() {
         return this.totalRating / this.numberOfRatings;
     }
-
-    @Embedded
-    public Location getLocation() { return this.location; }
-
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setLocation(Location location) { this.location = location; }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
-
-    public String getOrderId() {
-        return this.orderId;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public int getActiveSessions () {
-        return this.activeSessions;
-    }
-
-    public void setActiveSessions (int activeSessions) {
-        this.activeSessions = activeSessions;
-    }
-
     public void addRating(Float rating) {
         if (rating == 0) {
             return;

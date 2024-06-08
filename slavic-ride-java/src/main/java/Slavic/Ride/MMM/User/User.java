@@ -21,37 +21,22 @@ abstract public class User {
     @UuidGenerator
     @Column(name = "id", unique = true, updatable = false)
     protected String id = "";
+
     protected String name = "";
     protected String email = "";
     protected String phone = "";
     protected int numberOfRatings = 0;
     protected Float totalRating = 0.0f;
     protected String orderId = "";
-    @Embedded
-    protected Location location = new Location();
     protected String username = "";
     protected String password = "";
     @Column(nullable = false, columnDefinition = "integer default 0")
     protected int activeSessions = 0;
 
-    abstract public String getName();
-    abstract public String getEmail();
-    abstract public String getPhone();
-    abstract public String getId();
-    abstract public Float getRating();
-    abstract public Location getLocation();
-    abstract public String getUsername();
-    abstract public String getPassword();
-    abstract public int getActiveSessions();
+//    @Embedded
+//    protected Location location = new Location();
+//    abstract public Location getLocation();
+//    abstract public void setLocation(Location location);
 
-    abstract public void setName(String name);
-    abstract public void setEmail(String email);
-    abstract public void setPhone(String phone);
-    abstract public void setId(String id);
     abstract public void addRating(Float rating);
-    abstract public void setLocation(Location location);
-    abstract public void setOrderId(String orderId);
-    abstract public void setUsername(String username);
-    abstract public void setPassword(String password);
-    abstract public void setActiveSessions(int activeSessions);
 }
