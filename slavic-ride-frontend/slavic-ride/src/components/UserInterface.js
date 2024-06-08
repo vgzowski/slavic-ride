@@ -77,7 +77,6 @@ const UserInterface = () => {
         }
 
         try {
-
             // Get coordinates for source address
             let sourceCoords = null;
             console.log('source: ', source);
@@ -186,6 +185,32 @@ const UserInterface = () => {
 
     console.log('destination: ', destination);
 
+    const handleMoveToCurrentLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        const newLocation = {
+                            lat: lat,
+                            lng: lng,
+                        };
+                        setSource(newLocation);
+                    } else {
+                        console.error("Invalid coordinates received");
+                    }
+                },
+                (error) => {
+                    console.error("Error getting current position:", error);
+                }
+            );
+        } else {
+            console.error("Geolocation not supported");
+        }
+    };
+
+
     return (
         <div>
             <MapComponent
@@ -224,6 +249,7 @@ const UserInterface = () => {
 
             <button onClick={orderTaxi}>Order Taxi</button>
             <button onClick={handleLogout}>Log out</button>
+            <button onClick={handleMoveToCurrentLocation}>Move to Current Location</button>
 
             {lookingForDriver && <p>We are looking for a driver...</p>}
         </div>

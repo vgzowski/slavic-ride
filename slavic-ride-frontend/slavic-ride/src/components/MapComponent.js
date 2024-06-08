@@ -88,6 +88,8 @@ class MapComponent extends Component {
         }
     }
 
+    
+
     handleMarkerDestinationDragEnd = (event) => {
         const { latLng } = event;
         const newLocation = {
