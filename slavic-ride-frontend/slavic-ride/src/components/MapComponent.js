@@ -88,7 +88,7 @@ class MapComponent extends Component {
         }
     }
 
-    
+
 
     handleMarkerDestinationDragEnd = (event) => {
         const { latLng } = event;
@@ -132,7 +132,7 @@ class MapComponent extends Component {
                         {userLocationButton && (
                             <Marker
                                 position={userLocationButton}
-                                draggable={true}
+                                draggable={this.props.draggable}
                                 onDragEnd={this.handleMarkerDragEnd}
                                 icon={blueCircleWithBorderIcon}
                             />
@@ -141,7 +141,7 @@ class MapComponent extends Component {
                         {this.state.userDestination && (
                             <Marker
                                 position={this.state.userDestination}
-                                draggable={true}
+                                draggable={this.props.draggable}
                                 onDragEnd={this.handleMarkerDestinationDragEnd}
                             />
                         )}

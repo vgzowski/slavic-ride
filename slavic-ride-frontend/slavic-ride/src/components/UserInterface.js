@@ -218,6 +218,7 @@ const UserInterface = () => {
                 userDestination={destination}
                 onCurrentLocationReceived={handleCurrentLocationReceived}
                 onCurrentLocationReceivedDestination={handleCurrentLocationReceivedDestination}
+                draggable={!lookingForDriver}
             />
             <h1>
                 Enter Source and Destination
