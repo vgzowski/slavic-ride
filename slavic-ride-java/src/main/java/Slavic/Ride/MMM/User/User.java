@@ -33,10 +33,8 @@ abstract public class User {
     @Column(nullable = false, columnDefinition = "integer default 0")
     protected int activeSessions = 0;
 
-//    @Embedded
-//    protected Location location = new Location();
-//    abstract public Location getLocation();
-//    abstract public void setLocation(Location location);
+    @Embedded
+    protected Location location = new Location();
 
     abstract public void addRating(Float rating);
 }

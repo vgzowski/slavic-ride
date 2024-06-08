@@ -26,15 +26,6 @@ public class Passenger extends User {
         this.id = "";
     }
 
-//    @Embedded
-    public Location getLocation() {
-        return new Location();
-        //        return this.location;
-    }
-    public void setLocation(Location location) {
-//        this.location = location;
-    }
-
     public Float getRating() {
         return this.totalRating / this.numberOfRatings;
     }

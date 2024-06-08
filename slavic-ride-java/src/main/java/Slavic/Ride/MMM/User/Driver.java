@@ -32,18 +32,6 @@ public class Driver extends User {
         return this.totalRating / this.numberOfRatings;
     }
 
-//    @Embedded
-//    public Location getLocation() { return this.location; }
-//    public void setLocation(Location location) { this.location = location; }
-
-    public Location getLocation() {
-        return new Location();
-        //        return this.location;
-    }
-    public void setLocation(Location location) {
-//        this.location = location;
-    }
-
     public void addRating(Float rating) {
         if (rating == 0) {
             return;
