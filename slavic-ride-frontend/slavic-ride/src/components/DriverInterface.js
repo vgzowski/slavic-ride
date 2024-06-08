@@ -230,7 +230,6 @@ const DriverInterface = () => {
                 />
             )}
             <button onClick={handleLogout}>Log out</button>
-            <button onClick={fetchOrder}>Update</button>
             {(hasOrderState === true) && (passengerTaken === false) && <button onClick={handleTakePassenger}>Passenger taken</button>}
             {(hasOrderState === true) && (passengerTaken === true) && <button onClick={handleFinishOrder}>Finish order</button>}
         </div>
