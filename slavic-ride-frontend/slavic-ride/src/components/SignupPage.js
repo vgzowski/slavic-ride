@@ -102,8 +102,11 @@ const SignupPage = () => {
 
             {role && (
                 <>
-                    <label>Car:</label>
-                    <input type="text" name="car" value={car} onChange={(e) => setCar(e.target.value)} />
+                    <label htmlFor="car">Car:</label>
+                    <select id="car" name="car" value={car} onChange={(e) => setCar(e.target.value)}>
+                        <option value="usual">Usual</option>
+                        <option value="premium">Premium</option>
+                    </select>
                     <br />
                 </>
             )}

@@ -16,14 +16,14 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Driver extends User {
-    private String carName;
+    private String carType;
 
-    public Driver(String name, String email, String phone, String id, String carName) {
+    public Driver(String name, String email, String phone, String id, String carType) {
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.id = id;
-        this.carName = carName;
+        this.carType = carType;
     }
 
     public Float getRating() {
