@@ -90,16 +90,31 @@ public class PassengerService {
         for (Driver driver : driversList) {
             log.info(driver.getId() + " " + driverService.isDriverAvailable(driver.getId()));
         }
+
+        int sizeDrivers = driversList.size();
+        int available = sizeDrivers;
+
+        boolean[] haveAlreadySent = new boolean[sizeDrivers];
+        for (int i = 0; i < sizeDrivers; ++i) {
+            haveAlreadySent[i] = false;
+        }
+
         int ptr = 0;
         while (true) {
-            if (ptr == driversList.size()) {
+            if (available == 0) {
                 return ResponseEntity.ok("No drivers available");
             }
 
-            Driver chosenDriver = driversList.get(ptr);
-            if (chosenDriver == null) {
-                return ResponseEntity.ok("No drivers available");
+            if (ptr == driversList.size()) {
+                ptr = 0;
             }
+
+            if (haveAlreadySent[ptr]) {
+                ++ptr;
+                continue;
+            }
+
+            Driver chosenDriver = driversList.get(ptr);
 
             String driverId = chosenDriver.getId();
 
@@ -113,6 +128,9 @@ public class PassengerService {
 
             // Mark the driver as taken and deciding
             driverService.setDriverStatus(driverId, false);
+
+            haveAlreadySent[ptr] = true;
+            --available;
 
             boolean driverAccepted = notificationResource.requestDriverConfirmation(driverId, pickUpPoint, dropOffPoint);
 
