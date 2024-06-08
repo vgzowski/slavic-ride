@@ -3,6 +3,7 @@ package Slavic.Ride.MMM.Resource;
 import Slavic.Ride.MMM.Location;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.*;
 
@@ -20,9 +21,10 @@ public class DistanceResource {
   @GetMapping("/distance/{apiKey}")
   public ResponseEntity < DistanceResult > obtainDistanceAndDuration(
     @PathVariable String apiKey,
-    Location origin,
-    Location destination
+    @RequestBody Map < String, Map <String, Object> > requestBody
   ) {
+    Location origin = new Location((Double)requestBody.get("origin").get("lat"), (Double)requestBody.get("origin").get("lng"));
+    Location destination = new Location((Double)requestBody.get("destination").get("lat"), (Double)requestBody.get("destination").get("lng"));
     try {
       DistanceResult result = Utils.getDistanceAndDuration(origin, destination, apiKey);
       return ResponseEntity.ok(result);
