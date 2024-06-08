@@ -18,7 +18,7 @@ import java.util.Map;
 @RequestMapping("/distance")
 @RequiredArgsConstructor
 public class DistanceResource {
-  @GetMapping("/distance/{apiKey}")
+  @PostMapping("/distance/{apiKey}")
   public ResponseEntity < DistanceResult > obtainDistanceAndDuration(
     @PathVariable String apiKey,
     @RequestBody Map < String, Map <String, Object> > requestBody

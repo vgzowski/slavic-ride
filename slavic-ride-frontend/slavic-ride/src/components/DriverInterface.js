@@ -11,21 +11,23 @@ const DriverInterface = () => {
 
     const [source, setSource] = useState(null);
     const [destination, setDestination] = useState(null);
-    const [showMenu, setShowMenu] = useState(false); // State to control menu visibility
-    const [route, setRoute] = useState(null); // State to hold the route information
+    const [showMenu, setShowMenu] = useState(false);
+    const [route, setRoute] = useState(null);
     const [passengerTaken, setPassengerTaken] = useState(false);
     const [hasOrderState, setHasOrderState] = useState(false);
 
     const navigate = useNavigate();
+    const [rideRequestDetails, setRideRequestDetails] = useState(null);
 
-    // Use ref to ensure WebSocket connection is managed properly
+    // Use ref to ensure WebSocket connection and interval are managed properly
     const stompClientRef = useRef(null);
+    const intervalRef = useRef(null);
 
     useEffect(() => {
         sendLocation();
         return () => {
-            clearInterval(interval);
-        }
+            clearInterval(intervalRef.current);
+        };
     }, []);
 
     const getLocation = () => {
@@ -51,32 +53,26 @@ const DriverInterface = () => {
         });
     }
 
-    let interval;
-
     const sendLocation = async () => {
-        interval = setInterval(async () => {
+        intervalRef.current = setInterval(async () => {
             try {
                 const location = await getLocation();
-                if (location && location_properties && location_properties.state && location_properties.state.driverId) {
+                if (location && location_properties?.state?.driverId) {
                     const requestBody = {
-                        "location": {
-                            "lat": location.lat,
-                            "lng": location.lng
+                        location: {
+                            lat: location.lat,
+                            lng: location.lng
                         },
-                        "id": {
-                            "id": location_properties.state.driverId
+                        id: {
+                            id: location_properties.state.driverId
                         }
                     };
                     setSource(location);
                     await axios.put(`http://localhost:8080/drivers/${location_properties.state.driverId}/location`, requestBody);
                     console.log(`Location successfully sent to server: ${location}, ${location_properties.state.driverId}`);
                 } else {
-                    if (!location) {
-                        console.log('No location');
-                    }
-                    if (!location_properties || !location_properties.state || !location_properties.state.driverId) {
-                        console.log('No driver id');
-                    }
+                    if (!location) console.log('No location');
+                    if (!location_properties?.state?.driverId) console.log('No driver id');
                 }
             } catch (error) {
                 console.log('Something went wrong in sending location...', error);
@@ -86,21 +82,23 @@ const DriverInterface = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (location_properties && location_properties.state && location_properties.state.driverId) {
+            if (location_properties?.state?.driverId) {
                 if (!stompClientRef.current) {
                     const locationD = await getLocation();
                     stompClientRef.current = connect(
                         location_properties.state.driverId,
                         (location_lat, location_lng, destination_lat, destination_lng) => {
-                            setShowMenu(true); // Show the menu when ride is requested
+                            setShowMenu(true);
+                            const calc_source = { lat: location_lat, lng: location_lng };
+                            const calc_destination = { lat: destination_lat, lng: destination_lng };
+                            setRideRequestDetails({
+                                source: calc_source,
+                                destination: calc_destination,
+                            });
                         },
                         (location_lat, location_lng, destination_lat, destination_lng) => {
                             setSource(locationD);
-                            setDestination({lat: location_lat, lng: location_lng});
-                            // setRoute({
-                            //     source: { lat: parseFloat(location_lat), lng: parseFloat(location_lng) },
-                            //     destination: { lat: parseFloat(destination_lat), lng: parseFloat(destination_lng) }
-                            // });
+                            setDestination({ lat: location_lat, lng: location_lng });
                         },
                         () => {
                             setShowMenu(false);
@@ -112,87 +110,67 @@ const DriverInterface = () => {
 
         fetchData();
 
-        // Cleanup function to disconnect the WebSocket when the component unmounts
         return () => {
             if (stompClientRef.current) {
                 stompClientRef.current.disconnect();
                 stompClientRef.current = null;
             }
         };
-
     }, [location_properties.state.driverId]);
 
     const handleLogout = async () => {
-        // Clear any stored state related to the driver
-        localStorage.removeItem('driverId'); // Clear driverId from localStorage, if used
-        navigate("/"); // Navigate to the login page
+        localStorage.removeItem('driverId');
+        navigate("/");
         await axios.put(`http://localhost:8080/auth/deactivate`, {
-            "id": location_properties.state.driverId,
-            "username": location_properties.state.username
+            id: location_properties.state.driverId,
+            username: location_properties.state.username
         });
     }
 
     const handleTakePassenger = async () => {
         const response = await axios.get(`http://localhost:8080/drivers/${location_properties.state.driverId}/order`);
-
         const cur_location = await getLocation();
         setSource(cur_location);
         setDestination(response.data.destination);
         setPassengerTaken(true);
-
-        await fetchOrder(); // Ensure fetchOrder is awaited
+        await fetchOrder();
     }
 
     const handleFinishOrder = async () => {
-        const response = await axios.get(`http://localhost:8080/drivers/${location_properties.state.driverId}/order`);
-
+        await axios.put(`http://localhost:8080/drivers/${location_properties.state.driverId}/finish-order`);
         setSource(null);
         setDestination(null);
         setPassengerTaken(false);
-
-        await axios.put(`http://localhost:8080/drivers/${location_properties.state.driverId}/finish-order`);
-
         sendLocation();
-
-        await fetchOrder(); // Ensure fetchOrder is awaited
-
+        await fetchOrder();
     }
 
     const handleAcceptRide = async () => {
         try {
-            setShowMenu(false); // Hide the menu after accepting the ride
-            const response = await axios.post(`http://localhost:8080/notifications/driver-response`, {
+            setShowMenu(false);
+            await axios.post(`http://localhost:8080/notifications/driver-response`, {
                 driverId: location_properties.state.driverId,
                 accepted: true
             });
-            console.log('The driver accepted the ride:', response);
         } catch (error) {
             console.error('Error accepting ride:', error);
         } finally {
-            try {
-                await fetchOrder(); // Ensure fetchOrder is awaited
-                console.log('Order status updated.');
-            } catch (error) {
-                console.error('Error fetching order status:', error);
-            }
+            await fetchOrder();
         }
     };    
 
     const handleRejectRide = async () => {
-        setShowMenu(false); // Hide the menu after rejecting the ride
+        setShowMenu(false);
         await axios.post(`http://localhost:8080/notifications/driver-response`, {
             driverId: location_properties.state.driverId,
             accepted: false
         });
-        await fetchOrder(); // Ensure fetchOrder is awaited
-        console.log('The driver rejected the ride.')
+        await fetchOrder();
     }
 
     const hasOrder = async () => {
-        console.log("Passenger taken for ", location_properties.state.driverId, ": ", passengerTaken);
         try {
             const response = await axios.get(`http://localhost:8080/drivers/${location_properties.state.driverId}/get-order`);
-            console.log(response, response.data);
             return response.data;
         } catch (error) {
             console.error("Error fetching order:", error);
@@ -204,15 +182,15 @@ const DriverInterface = () => {
 
     const fetchOrder = async () => {
         let orderStatus = await hasOrder();
-        let retries = 5; // Number of retries
-        const delayTime = 50; // Delay time in milliseconds
-    
+        let retries = 5;
+        const delayTime = 50;
+
         while (!orderStatus && retries > 0) {
             await delay(delayTime);
             orderStatus = await hasOrder();
             retries--;
         }
-    
+
         setHasOrderState(orderStatus);
     };
 
@@ -221,21 +199,28 @@ const DriverInterface = () => {
     }, [location_properties.state.driverId]);
 
     useEffect(() => {
-        console.log("hasOrderState changed:", hasOrderState); // Debug log
+        console.log("hasOrderState changed:", hasOrderState);
     }, [hasOrderState]);
 
     return (
         <div>
-            <MapComponent userLocation={source} userDestination={destination} route={route} />
+            <MapComponent
+                userLocation={source}
+                userDestination={destination}
+                route={route}
+            />
+
             {showMenu && (
                 <RideRequestMenu
                     onAccept={handleAcceptRide}
                     onReject={handleRejectRide}
+                    source={rideRequestDetails?.source}
+                    destination={rideRequestDetails?.destination}
                 />
             )}
             <button onClick={handleLogout}>Log out</button>
-            {(hasOrderState === true) && (passengerTaken === false) && <button onClick={handleTakePassenger}>Passenger taken</button>}
-            {(hasOrderState === true) && (passengerTaken === true) && <button onClick={handleFinishOrder}>Finish order</button>}
+            {(hasOrderState && !passengerTaken) && <button onClick={handleTakePassenger}>Passenger taken</button>}
+            {(hasOrderState && passengerTaken) && <button onClick={handleFinishOrder}>Finish order</button>}
         </div>
     );
 }

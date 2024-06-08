@@ -53,7 +53,7 @@ public class NotificationResource {
                         "}");
 
         try {
-            if (latch.await(30, TimeUnit.SECONDS)) {
+            if (latch.await(7, TimeUnit.SECONDS)) {
                 return driverResponses.remove(driverId);
             } else {
                 driverLatches.remove(driverId);
