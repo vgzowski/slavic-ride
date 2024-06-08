@@ -6,6 +6,7 @@ import DriverInterface from './components/DriverInterface';
 import FirstLoginPage from './components/FirstLoginPage';
 import LoginPage from "./components/LoginPage";
 import SignupPage from "./components/SignupPage";
+import Sidebar from "./components/Sidebar";
 
 class InsideApp extends Component {
     render() {
@@ -19,6 +20,7 @@ class InsideApp extends Component {
                     <Route path="/onlyMap" element={<MapComponent />} />
                     <Route path="/passenger" element={<UserInterface />} />
                     <Route path="/driver" element={<DriverInterface />} />
+                    <Route path="/sidebar" element={<Sidebar />} />
                 </Routes>
             </Router>
         );

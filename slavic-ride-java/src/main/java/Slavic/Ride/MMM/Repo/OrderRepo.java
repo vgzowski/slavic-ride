@@ -7,11 +7,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface OrderRepo extends JpaRepository<Order, String> {
-    Optional<Order> findOrderByOrderId(String orderId); // Rename the method
+    Optional<Order> findOrderByOrderId(String orderId);
+
+    List<Optional <Order>> findOrderByPassengerId(String passengerId);
+    List<Optional <Order>> findOrderByDriverId(String driverId);
 
     @Modifying
     @Transactional

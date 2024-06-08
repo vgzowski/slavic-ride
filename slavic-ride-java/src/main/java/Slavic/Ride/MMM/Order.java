@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDate;
+
 @Table(name = "orders")
 @Entity
 @AllArgsConstructor
@@ -35,4 +37,7 @@ public class Order {
     String passengerId;
     String driverId;
     Boolean isFinished = false;
+    Integer ratingDriver;
+    Integer ratingPassenger;
+    LocalDate date;
 }

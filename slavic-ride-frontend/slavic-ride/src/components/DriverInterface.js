@@ -202,6 +202,10 @@ const DriverInterface = () => {
         console.log("hasOrderState changed:", hasOrderState);
     }, [hasOrderState]);
 
+    const handleSidebar = () => {
+        navigate("/sidebar", { state: { who: 'driver', id: location_properties.state.driverId } });
+    }
+
     return (
         <div>
             <MapComponent
@@ -221,6 +225,7 @@ const DriverInterface = () => {
             <button onClick={handleLogout}>Log out</button>
             {(hasOrderState && !passengerTaken) && <button onClick={handleTakePassenger}>Passenger taken</button>}
             {(hasOrderState && passengerTaken) && <button onClick={handleFinishOrder}>Finish order</button>}
+            <button onClick={handleSidebar}>Sidebar</button>
         </div>
     );
 }

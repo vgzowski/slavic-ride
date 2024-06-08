@@ -210,6 +210,9 @@ const UserInterface = () => {
         }
     };
 
+    const handleSidebar = () => {
+        navigate("/sidebar", { state: { who: 'passenger', id: location.state.passengerId } });
+    }
 
     return (
         <div>
@@ -253,6 +256,7 @@ const UserInterface = () => {
             <button onClick={handleMoveToCurrentLocation}>Move to Current Location</button>
 
             {lookingForDriver && <p>We are looking for a driver...</p>}
+            <button onClick={handleSidebar}>Sidebar</button>
         </div>
     );
 }

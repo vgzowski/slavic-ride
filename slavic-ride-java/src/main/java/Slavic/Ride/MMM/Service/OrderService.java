@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 
 @Service
 @Slf4j
@@ -34,6 +37,14 @@ public class OrderService {
         orderRepo.save(order);
         log.info("Creating order, orderId: {}", order.getOrderId());
         return order;
+    }
+
+    public List<Optional <Order>> findOrderByPassengerId(String passengerId) {
+        return orderRepo.findOrderByPassengerId(passengerId);
+    }
+
+    public List<Optional <Order>> findOrderByDriverId(String driverId) {
+        return orderRepo.findOrderByDriverId(driverId);
     }
 
     public void finishOrder(String orderId) {
