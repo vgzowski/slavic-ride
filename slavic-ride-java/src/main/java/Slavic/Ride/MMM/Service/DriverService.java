@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Service
 @Slf4j
@@ -18,6 +20,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DriverService {
     private final DriverRepo driverRepo;
+    private ConcurrentMap<String, Boolean> driverStatus = new ConcurrentHashMap<>();
+
+    public boolean isDriverAvailable(String driverId) {
+        return driverStatus.getOrDefault(driverId, true);
+    }
+
+    public void setDriverStatus(String driverId, boolean isTaken) {
+        driverStatus.put(driverId, isTaken);
+    }
 
     public Driver findDriverById(String id) {
 //        log.info("Finding driver by ID: {}", id);
@@ -46,18 +57,13 @@ public class DriverService {
     }
 
     public List<Driver> getAllDrivers() {
-        log.info("Getting all drivers");
+//        log.info("Getting all drivers");
         return driverRepo.findAll();
     }
 
-    public List<Driver> getAllNotTakenDrivers() {
-        log.info("Getting all free drivers");
-        return driverRepo.findAllNotTaken();
-    }
-
     public Driver findClosestDriverByLocation(Location location) {
-        log.info("Finding the closest driver to the location");
-        List<Driver> drivers = driverRepo.findAllNotTaken();
+//        log.info("Finding the closest driver to the location");
+        List<Driver> drivers = driverRepo.findAll();
         Driver closestDriver = null;
         double closestDistance = Double.MAX_VALUE;
 
@@ -72,32 +78,9 @@ public class DriverService {
         return closestDriver;
     }
 
-    public void setIsTaken(String driverId, boolean isTaken) {
-        log.info("Setting driver taken status for driver ID: {}", driverId);
-        Driver driver = findDriverById(driverId);
-        driver.setIsTaken(isTaken);
-        driverRepo.save(driver);
-    }
-
-    public boolean getIsTaken(String driverId) {
-        log.info("Checking if driver is taken for driver ID: {}", driverId);
-        return findDriverById(driverId).getIsTaken();
-    }
-
-    public void setIsDeciding(String driverId, boolean isDeciding) {
-        log.info("Updating driver deciding status for driver ID: {}", driverId);
-        Driver driver = findDriverById(driverId);
-        driver.setIsDeciding(isDeciding);
-        driverRepo.save(driver);
-    }
-
-    public boolean getIsDeciding(String driverId) {
-        log.info("Checking if driver is deciding for driver ID: {}", driverId);
-        return findDriverById(driverId).getIsDeciding();
-    }
 
     public void setOrderId(String driverId, String orderId) {
-        log.info("Setting order ID for driver ID: {}", driverId);
+//        log.info("Setting order ID for driver ID: {}", driverId);
         Driver driver = driverRepo.findDriverById(driverId)
                 .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
         driver.setOrderId(orderId);
@@ -109,7 +92,7 @@ public class DriverService {
     }
 
     public Optional<Driver> findByUsername(String username) {
-        log.info("Finding driver by username: {}", username);
+//        log.info("Finding driver by username: {}", username);
         return driverRepo.findByUsername(username);
     }
 

@@ -46,7 +46,7 @@ public class PassengerService {
     }
 
     public Driver findClosestDriver(String id) {
-        log.info("Finding the closest driver to the passenger");
+//        log.info("Finding the closest driver to the passenger");
         Passenger passenger = passengerRepo.findPassengerById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Passenger not found"));
 
@@ -54,7 +54,7 @@ public class PassengerService {
     }
 
     public void setOrderId(String passengerId, String orderId) {
-        log.info("Setting order ID for passenger ID: {}", passengerId);
+//        log.info("Setting order ID for passenger ID: {}", passengerId);
         Passenger passenger = getPassenger(passengerId);
         passenger.setOrderId(orderId);
         passengerRepo.save(passenger);
@@ -65,7 +65,7 @@ public class PassengerService {
     }
 
     public Optional<Passenger> findByUsername(String username) {
-        log.info("Finding passenger by username: {}", username);
+//        log.info("Finding passenger by username: {}", username);
         return passengerRepo.findByUsername(username);
     }
 
@@ -86,9 +86,9 @@ public class PassengerService {
     public ResponseEntity<String> assignDriverToPassenger(Location pickUpPoint, Location dropOffPoint, String passengerId) throws InterruptedException {
         log.info("Assigning driver to passenger");
 
-        List<Driver> driversList = driverService.getAllNotTakenDrivers();
+        List<Driver> driversList = driverService.getAllDrivers();
         for (Driver driver : driversList) {
-            log.info(driver.getId() + " " + driver.getIsTaken() + " " + driver.getIsDeciding());
+            log.info(driver.getId() + " " + driverService.isDriverAvailable(driver.getId()));
         }
         int ptr = 0;
         while (true) {
@@ -101,40 +101,37 @@ public class PassengerService {
                 return ResponseEntity.ok("No drivers available");
             }
 
-            log.info("Driver is found with ID: {}", chosenDriver.getId());
             String driverId = chosenDriver.getId();
-            boolean driverAccepted = false;
 
-            // Check if the driver is still available and not deciding
-            if (driverService.getIsTaken(driverId) || driverService.getIsDeciding(driverId)) {
-                ptr++;
-                continue;
+            synchronized (driverId.intern()) {
+                // Check if the driver is still available
+                if (!driverService.isDriverAvailable(driverId)) {
+                    ptr++;
+                    continue;
+                }
             }
 
-            // Mark the driver as deciding
-            driverService.setIsDeciding(driverId, true);
+            // Mark the driver as taken and deciding
+            driverService.setDriverStatus(driverId, false);
 
-            driverAccepted = notificationResource.requestDriverConfirmation(driverId, pickUpPoint, dropOffPoint);
-
-            driverService.setIsDeciding(driverId, false);
+            boolean driverAccepted = notificationResource.requestDriverConfirmation(driverId, pickUpPoint, dropOffPoint);
 
             if (driverAccepted) {
                 log.info("Driver with ID: {} accepted the ride", driverId);
 
-                //Creating order
-                {
-                    Order order = orderService.createOrder(pickUpPoint, dropOffPoint, passengerId, driverId);
-                    driverService.setIsTaken(driverId, true);
-                    driverService.setOrderId(driverId, order.getOrderId());
-                    setOrderId(passengerId, order.getOrderId());
-                }
+                // Creating order
+                Order order = orderService.createOrder(pickUpPoint, dropOffPoint, passengerId, driverId);
+                driverService.setOrderId(driverId, order.getOrderId());
+                setOrderId(passengerId, order.getOrderId());
 
                 notificationResource.notifyDriverOfRoute(driverId, pickUpPoint, dropOffPoint);
                 return ResponseEntity.ok(driverId);
             } else {
+                driverService.setDriverStatus(driverId, true);
                 log.info("Driver with ID: {} rejected the ride", driverId);
                 ptr++;
             }
+
         }
     }
 }

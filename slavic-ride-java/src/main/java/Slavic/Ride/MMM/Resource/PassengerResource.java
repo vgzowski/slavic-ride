@@ -73,13 +73,13 @@ public class PassengerResource {
         String passengerId = (String) requestBody.get("id").get("id");
 
         try {
-            lock.lock();
+//            lock.lock();
             return passengerService.assignDriverToPassenger(new Location(sourcelat, sourcelng), new Location(destinationlat, destinationlng), passengerId);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Interrupted while assigning driver");
         } finally {
-            lock.unlock();
+//            lock.unlock();
         }
     }
 }

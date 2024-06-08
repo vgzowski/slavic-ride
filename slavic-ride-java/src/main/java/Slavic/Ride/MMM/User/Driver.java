@@ -17,8 +17,6 @@ import lombok.Setter;
 @Getter
 public class Driver extends User {
     private String carName;
-    Boolean isTaken = false;
-    Boolean isDeciding = false;
 
     public Driver(String name, String email, String phone, String id, String carName) {
         this.name = name;

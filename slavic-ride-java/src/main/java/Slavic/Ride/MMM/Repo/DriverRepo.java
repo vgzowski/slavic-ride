@@ -20,10 +20,6 @@ public interface DriverRepo extends JpaRepository<Driver, String> {
     @Query("DELETE FROM Driver")
     void deleteAll();
 
-
-    @Query("SELECT d FROM Driver d WHERE COALESCE(d.isTaken, false) = false")
-    List<Driver> findAllNotTaken();
-
     boolean existsByEmail(String email);
     boolean existsByPhone(String phone);
     boolean existsByUsername(String username);
