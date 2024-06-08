@@ -24,9 +24,7 @@ public class Utils {
         return distance;
     }
 
-    private static final String API_KEY = "AIzaSyA7m1gPyySkRNZWzJgn7q1cPcEQF_OXC0c";
-
-    public static DistanceResult getDistanceAndDuration(Location originL, Location destinationL) throws ApiException, InterruptedException, IOException {
+    public static DistanceResult getDistanceAndDuration(Location originL, Location destinationL, String API_KEY) throws ApiException, InterruptedException, IOException {
         String origin = String.valueOf(originL.getLat()) + "," + String.valueOf(originL.getLng());
         String destination = String.valueOf(destinationL.getLat()) + "," + String.valueOf(destinationL.getLng());
         GeoApiContext context = new GeoApiContext.Builder()

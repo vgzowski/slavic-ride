@@ -24,7 +24,7 @@ public class DistanceResource {
     Location destination
   ) {
     try {
-      DistanceResult result = Utils.getDistanceAndDuration(origin, destination);
+      DistanceResult result = Utils.getDistanceAndDuration(origin, destination, apiKey);
       return ResponseEntity.ok(result);
     } catch (Exception e) {
       log.warn("Error while obtaining distance: " + e.getMessage());
