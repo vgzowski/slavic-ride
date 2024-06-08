@@ -67,6 +67,7 @@ const DriverInterface = () => {
                             "id": location_properties.state.driverId
                         }
                     };
+                    setSource(location);
                     await axios.put(`http://localhost:8080/drivers/${location_properties.state.driverId}/location`, requestBody);
                     console.log(`Location successfully sent to server: ${location}, ${location_properties.state.driverId}`);
                 } else {
@@ -151,7 +152,10 @@ const DriverInterface = () => {
 
         await axios.put(`http://localhost:8080/drivers/${location_properties.state.driverId}/finish-order`);
 
+        sendLocation();
+
         await fetchOrder(); // Ensure fetchOrder is awaited
+
     }
 
     const handleAcceptRide = async () => {
