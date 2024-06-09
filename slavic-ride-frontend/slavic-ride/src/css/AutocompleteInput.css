@@ -1,0 +1,6 @@
+.mama {
+    width: 20px;
+    padding: 10px;
+    font-size: 16px;
+    box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+}

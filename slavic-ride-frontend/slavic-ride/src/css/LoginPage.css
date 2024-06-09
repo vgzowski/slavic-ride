@@ -1,0 +1,29 @@
+/* ../css/LoginPage.css */
+.login-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.login-label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+.login-input {
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 80%;
+    max-width: 300px;
+    font-size: 16px;
+}
+
+.login-button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background-color: #ddd;
+}

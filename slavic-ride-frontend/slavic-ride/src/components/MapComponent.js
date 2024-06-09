@@ -129,43 +129,45 @@ class MapComponent extends Component {
         }
 
         return (
-            <div>
+            <div className="map-component">
                 <APIProvider apiKey={this.apiKey}>
-                    {center && (<Map
-                        key={reloadMap}
-                        style={{ width: '100vw', height: '60vh' }}
-                        defaultCenter={(this.props.userLocation ? this.props.userLocation : userLocationButton) ? (this.props.userLocation ? this.props.userLocation : userLocationButton) : { lat: 0, lng: 0 }}
-                        defaultZoom={15}
-                        mapTypeControl={false}
-                        streetViewControl={false}
-                        options={{
-                            mapTypeId: 'blank',
-                            mapTypeControl: false,
-                            streetViewControl: false,
-                        }}
-                    >
-                        {userLocationButton && (
-                            <Marker
-                                position={userLocationButton}
-                                draggable={this.props.draggable}
-                                onDragEnd={this.handleMarkerDragEnd}
-                                icon={blueCircleWithBorderIcon}
-                            />
-                        )}
+                    {center && (
+                        <Map
+                            key={reloadMap}
+                            style={{ width: '100%', height: '100%' }}
+                            defaultCenter={center}
+                            defaultZoom={15}
+                            mapTypeControl={false}
+                            streetViewControl={false}
+                            options={{
+                                mapTypeId: 'blank',
+                                mapTypeControl: false,
+                                streetViewControl: false,
+                            }}
+                        >
+                            {userLocationButton && (
+                                <Marker
+                                    position={userLocationButton}
+                                    draggable={this.props.draggable}
+                                    onDragEnd={this.handleMarkerDragEnd}
+                                    icon={blueCircleWithBorderIcon}
+                                />
+                            )}
 
-                        {this.state.userDestination && (
-                            <Marker
-                                position={this.state.userDestination}
-                                draggable={this.props.draggable}
-                                onDragEnd={this.handleMarkerDestinationDragEnd}
-                            />
-                        )}
+                            {this.state.userDestination && (
+                                <Marker
+                                    position={this.state.userDestination}
+                                    draggable={this.props.draggable}
+                                    onDragEnd={this.handleMarkerDestinationDragEnd}
+                                />
+                            )}
 
-                        <Directions
-                            userLocation={this.props.userLocation ? this.props.userLocation : userLocationButton}
-                            userDestination={this.props.userDestination}
-                        />
-                    </Map>)}
+                            <Directions
+                                userLocation={this.props.userLocation ? this.props.userLocation : userLocationButton}
+                                userDestination={this.props.userDestination}
+                            />
+                        </Map>
+                    )}
                 </APIProvider>
 
                 {error && <p>{error}</p>}

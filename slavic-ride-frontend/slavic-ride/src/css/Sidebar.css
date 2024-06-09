@@ -1,0 +1,67 @@
+/* ../css/Sidebar.css */
+
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: #f3f3eb;
+    padding: 20px;
+}
+
+.sidebar-title {
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+.sidebar-content {
+    margin-bottom: 20px;
+}
+
+.sidebar-content p {
+    margin: 10px 0;
+}
+
+.label {
+    font-weight: bold;
+}
+
+.orders-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.order-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+.order-item p {
+    margin: 5px 0;
+}
+
+.user-info {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    width: 100%; /* Adjust width as needed */
+    max-width: 500px; /* Adjust max-width as needed */
+}
+
+.sidebar-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.sidebar-button:hover {
+    background-color: #ddd;
+}

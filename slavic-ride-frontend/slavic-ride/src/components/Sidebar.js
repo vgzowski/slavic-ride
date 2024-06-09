@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import RideRequestNotification from './RideRequestNotification';
+import '../css/Sidebar.css'; // Import the CSS file
 
 const Sidebar = () => {
     const location = useLocation();
@@ -84,15 +85,24 @@ const Sidebar = () => {
         getInfo();
     }, []);
 
+    const handleGoBackClick = () => {
+        if (who === 'driver') {
+            navigate('/driver', { state: { driverId: id,
+                    destination: null} });
+        }
+        else {
+            navigate('/passenger', { state: { passengerId: id,
+                    destination: null} });
+        }
+    }
+
     return (
         <div className="sidebar">
-            <RideRequestNotification driverId={id} />
+            <RideRequestNotification driverId={id}/>
             <h1 className="sidebar-title">User Info</h1>
-            <div className="sidebar-content">
+            <div className="sidebar-content user-info">
                 <p><span className="label">Name:</span> {name}</p>
-                <p><span className="label">Username:</span> {username}</p>
                 <p><span className="label">Email:</span> {email}</p>
-                <p><span className="label">Phone:</span> {phone}</p>
                 <p><span className="label">Rating:</span> {rating}</p>
             </div>
             <h2 className="sidebar-title">Orders</h2>
@@ -101,13 +111,12 @@ const Sidebar = () => {
                     <li key={order.orderId} className="order-item">
                         <p><span className="label">Driver:</span> {order.driverId}</p>
                         <p><span className="label">Date:</span> {order.date}</p>
-                        <p><span className="label">From:</span> { order.source.address } </p>
-                        <p><span className="label">To:</span> { order.destination.address } </p>
+                        <p><span className="label">From:</span> {order.source.address} </p>
+                        <p><span className="label">To:</span> {order.destination.address} </p>
                     </li>
                 ))}
             </ul>
-            <button onClick={() => navigate('/driver', { state: { driverId: id,
-                    destination: null} })}>Go back</button>
+            <button className="sidebar-button" onClick={handleGoBackClick}>Go back</button>
         </div>
     );
 }

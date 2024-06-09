@@ -15,35 +15,43 @@ const RatingComponent = ({ onRate, orderId }) => {
     };
 
     return (
-        <div style={{
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            backgroundColor: 'white',
-            padding: '20px',
-            borderRadius: '8px',
-            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-            zIndex: '100',
-            textAlign: 'center'
-        }}
-             className="rating">
-            <p>Please rate the drive:</p>
+        <div className="rating">
+            <p style={{ fontSize: '1.5em', fontWeight: 'bold' }}>Please rate the drive:</p> {/* Adjust font size and weight */}
             <div>
                 {[1, 2, 3, 4, 5].map((star) => (
                     <span
                         key={star}
                         className={star <= rating ? 'star-filled' : 'star'}
                         onClick={() => handleRate(star)}
-                        style={{ color: star <= rating ? 'yellow' : 'gray', cursor: 'pointer' }}
+                        style={{ fontSize: '4em', color: star <= rating ? '#FFD700' : '#808080', cursor: 'pointer' }}
                     >
-                        &#9733;
-                    </span>
+                    &#9733;
+                </span>
                 ))}
             </div>
-            <button onClick={handleSubmit}>Rate</button>
+            <button
+                onClick={handleSubmit}
+                style={{
+                    width: '80%', /* Set width to 80% of the container */
+                    display: 'block', /* Ensure it takes full width */
+                    margin: '20px auto', /* Center horizontally with 20px top and bottom margin */
+                    padding: '15px', /* Add padding for better appearance */
+                    fontSize: '1.2em', /* Adjust font size */
+                    cursor: 'pointer',
+                    backgroundColor: '#6c6aae',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    transition: 'background-color 0.3s'
+                }}
+            >
+                Rate
+            </button>
         </div>
     );
+
+
+
 };
 
 export default RatingComponent;

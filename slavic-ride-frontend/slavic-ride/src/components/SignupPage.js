@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import bcrypt from 'bcryptjs';
 import { useNavigate } from 'react-router-dom';
+import '../css/SignupPage.css'; // Import the CSS file
 
 const SignupPage = () => {
     const [name, setName] = useState('');
@@ -71,47 +72,31 @@ const SignupPage = () => {
     }, [id, role, navigate]);
 
     return (
-        <div>
-            {/*<label>Name:</label>*/}
-            {/*<input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} />*/}
-            {/*<br />*/}
-
-            {/*<label>Email:</label>*/}
-            {/*<input type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} />*/}
-            {/*<br />*/}
-
-            {/*<label>Phone Number:</label>*/}
-            {/*<input type="tel" name="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />*/}
-            {/*<br />*/}
-
-            <label>Username:</label>
-            <input type="text" name="username" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <div className="signup-container">
+            <label className="signup-label">Username:</label>
+            <input className="signup-input" type="text" name="username" value={username} onChange={(e) => setUsername(e.target.value)} />
             <br />
-
-            <label>Password:</label>
-            <input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <label className="signup-label">Password:</label>
+            <input className="signup-input" type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             <br />
-
-            <label>You really want to drive?</label>
+            <label className="signup-label">You really want to drive?</label>
             <input
                 type="checkbox"
                 checked={role}
                 onChange={(e) => setRole(e.target.checked)}
             />
             <br />
-
             {role && (
                 <>
-                    <label htmlFor="car">Car:</label>
-                    <select id="car" name="car" value={car} onChange={(e) => setCar(e.target.value)}>
+                    <label className="signup-label" htmlFor="car">Car:</label>
+                    <select className="signup-input" id="car" name="car" value={car} onChange={(e) => setCar(e.target.value)}>
                         <option value="usual">Usual</option>
                         <option value="premium">Premium</option>
                     </select>
                     <br />
                 </>
             )}
-
-            <button onClick={handleSubmit}>Sign Up</button>
+            <button className="signup-button" onClick={handleSubmit}>Sign Up</button>
         </div>
     );
 };

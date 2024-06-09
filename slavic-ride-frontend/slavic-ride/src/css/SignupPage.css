@@ -1,0 +1,29 @@
+/* ../css/SignupPage.css */
+.signup-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.signup-label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+.signup-input {
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 80%;
+    max-width: 300px;
+    font-size: 16px;
+}
+
+.signup-button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.signup-button:hover {
+    background-color: #ddd;
+}

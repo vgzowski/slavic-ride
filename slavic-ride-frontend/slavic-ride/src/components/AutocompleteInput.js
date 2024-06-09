@@ -1,6 +1,7 @@
 /* global google */
 
 import React, { useEffect, useRef } from 'react';
+import "../css/AutocompleteInput.css";
 
 const AutocompleteInput = ({ id, value, onChange, onSelect, userLocation, Status }) => {
     const inputRef = useRef(null);
@@ -25,7 +26,7 @@ const AutocompleteInput = ({ id, value, onChange, onSelect, userLocation, Status
     }, [onSelect, userLocation]);
 
     return (
-        <input
+        <input className="mama"
             id={id}
             ref={inputRef}
             value={value}
@@ -33,7 +34,7 @@ const AutocompleteInput = ({ id, value, onChange, onSelect, userLocation, Status
             placeholder="Enter address"
             type="text"
             tabIndex="1"
-            width={300}
+            width={250}
             disabled={Status}
         />
     );
