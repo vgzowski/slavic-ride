@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
 
 
 @Service
@@ -34,6 +35,7 @@ public class OrderService {
         order.setPassengerId(passengerId);
         order.setDriverId(driverId);
         order.setIsFinished(false);
+        order.setDate(LocalDate.now());
         orderRepo.save(order);
         log.info("Creating order, orderId: {}", order.getOrderId());
         return order;

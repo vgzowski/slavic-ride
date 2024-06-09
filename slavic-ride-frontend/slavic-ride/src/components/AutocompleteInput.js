@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 
-const AutocompleteInput = ({ id, value, onChange, onSelect, userLocation }) => {
+const AutocompleteInput = ({ id, value, onChange, onSelect, userLocation, Status }) => {
     const inputRef = useRef(null);
 
     useEffect(() => {
@@ -34,6 +34,7 @@ const AutocompleteInput = ({ id, value, onChange, onSelect, userLocation }) => {
             type="text"
             tabIndex="1"
             width={300}
+            disabled={Status}
         />
     );
 };

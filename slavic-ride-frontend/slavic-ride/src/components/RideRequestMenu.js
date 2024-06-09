@@ -38,6 +38,35 @@ const RideRequestMenu = ({ onAccept, onReject, source, destination }) => {
         return undefined;
     }, [source, destination]);
 
+    const [sourceAddress, setSourceAddress] = useState('In process...');
+    const [destinationAddress, setDestinationAddress] = useState('In process...');
+
+    const fetchAddress = async (coords) => {
+        try {
+            const response = await fetch(
+                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.lat},${coords.lng}&key=AIzaSyCcGid1vTF4zEMmDMWgS5sX3fOxrAtGhDs`
+            );
+            const data = await response.json();
+            return data.results[0].formatted_address;
+        } catch (error) {
+            console.error('Error fetching address:', error);
+            return null;
+        }
+    }
+
+    useEffect(() => {
+        const fetchAdresses = async () => {
+            const sourcea = await fetchAddress(source);
+            const destinationa = await fetchAddress(destination);
+
+            setSourceAddress(sourcea);
+            setDestinationAddress(destinationa);
+        }
+
+        fetchAdresses();
+
+    }, [source, destination]);
+
     return (
         <div style={{
             position: 'fixed',
@@ -52,8 +81,8 @@ const RideRequestMenu = ({ onAccept, onReject, source, destination }) => {
             textAlign: 'center'
         }}>
             <h3>You have a new ride request.</h3>
-            <p>Source: {source?.lat}, {source?.lng}</p>
-            <p>Destination: {destination?.lat}, {destination?.lng}</p>
+            <p>Source: {sourceAddress}</p>
+            <p>Destination: {destinationAddress}</p>
             <p>Duration: {duration}</p>
             <p>Distance: {distance}</p>
             <button onClick={onAccept} style={{ margin: '10px' }}>Accept</button>

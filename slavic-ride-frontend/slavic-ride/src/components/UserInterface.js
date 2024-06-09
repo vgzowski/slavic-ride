@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import AutocompleteInput from "./AutocompleteInput";
 import { connectPassenger } from '../services/webSocketService';
 import RatingComponent from './RatingComponent';
+import RideRequestMenu from './RideRequestMenu';
 
 const UserInterface = () => {
     const location = useLocation();
@@ -374,7 +375,7 @@ const UserInterface = () => {
                 userDestination={destination}
                 onCurrentLocationReceived={handleCurrentLocationReceived}
                 onCurrentLocationReceivedDestination={handleCurrentLocationReceivedDestination}
-                draggable={!lookingForDriver && (RideStatus === 0)}
+                draggable={!lookingForDriver && (RideStatus === 0) && (ratingMenuActive === false)}
             />
             <h1>
                 Enter Source and Destination
@@ -390,6 +391,7 @@ const UserInterface = () => {
                     onChange={handleSourceChange}
                     onSelect={handleSourceSelect}
                     userLocation={source}
+                    Status={ratingMenuActive || lookingForDriver || (driverChosen !== null)}
                 />
             </div>
 
@@ -403,18 +405,19 @@ const UserInterface = () => {
                     onChange={handleDestinationChange}
                     onSelect={handleDestinationSelect}
                     userLocation={source}
+                    Status={ratingMenuActive || lookingForDriver || (driverChosen !== null)}
                 />
             </div>
 
             <div>
                 {/* Apply different styles based on the chosen ride type */}
-                <button
+                <button disabled={ratingMenuActive}
                     onClick={() => handleRideTypeSelect('usual')}
                     style={{ marginRight: '10px', backgroundColor: rideType === 'usual' ? 'lightblue' : 'white' }}
                 >
                     Usual
                 </button>
-                <button
+                <button disabled={ratingMenuActive}
                     onClick={() => handleRideTypeSelect('premium')}
                     style={{ backgroundColor: rideType === 'premium' ? 'lightblue' : 'white' }}
                 >
@@ -422,27 +425,28 @@ const UserInterface = () => {
                 </button>
             </div>
 
-            <button onClick={orderTaxi}>Order Taxi</button>
-            <button onClick={handleLogout}>Log out</button>
-            <button onClick={handleMoveToCurrentLocation}>Move to Current Location</button>
+            <button disabled={ratingMenuActive || lookingForDriver || (driverChosen !== null)} onClick={orderTaxi}>Order Taxi</button>
+            <button disabled={ratingMenuActive || lookingForDriver || (driverChosen !== null)} onClick={handleLogout}>Log out</button>
+
+            <button disabled={ratingMenuActive || lookingForDriver || (driverChosen !== null)} onClick={handleMoveToCurrentLocation}>Move to Current Location</button>
+
+            <button disabled={ratingMenuActive || lookingForDriver || (driverChosen !== null)} onClick={handleSidebar}>Sidebar</button>
 
             {lookingForDriver && <p>We are looking for a driver...</p>}
 
-            {driverChosen !== null && <p>You driver is: {driverChosen.username}</p>}
-
-            {ratingMenuActive && (
-                <div className="rating-menu">
-                    <h3>Please rate the drive:</h3>
-                    <RatingComponent onRate={handleRate} orderId={orderId} />
-                </div>
-            )}
+            {driverChosen !== null && <p>You driver is: {driverChosen.name}</p>}
 
             {(RideStatus !== 0) && (
                 <p>
-                    Remaining distance to {RideStatus === 1 ? "A" : "B"}: {distanceShown}
+                    {RideStatus === 1 ? "Your driver is " : "You are "} {distanceShown} away from {RideStatus === 1 ? "you" : "your destination"}
                 </p>
             )}
-            <button onClick={handleSidebar}>Sidebar</button>
+
+            {ratingMenuActive && (
+                <div className="rating-menu">
+                    <RatingComponent onRate={handleRate} orderId={orderId} />
+                </div>
+            )}
         </div>
     );
 }

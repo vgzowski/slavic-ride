@@ -54,27 +54,29 @@ const Sidebar = () => {
     }
 
     useEffect(() => {
-        // Check if the session is already activated
-        const sessionActivated = sessionStorage.getItem('driverSessionActivated' + id);
-        if (!sessionActivated) {
-            // Increment active session count if the session is not already activated
-            axios.post(`http://localhost:8080/drivers/${id}/activate`);
-            console.log('Session activated')
-            // Set flag to indicate session activation
-            sessionStorage.setItem('driverSessionActivated'+ id, 'true');
-        }
-
-        return () => {
-            // Decrement active session count on page close
-            const nextPage = window.location.pathname;
-            if (nextPage !== '/driver') {
-                // Decrement active session count on page close
-                axios.post(`http://localhost:8080/drivers/${id}/deactivate`);
-                console.log('Session deactivated')
-                // Remove flag indicating session activation
-                sessionStorage.removeItem('driverSessionActivated' + id);
+        if (who === 'driver') {
+            // Check if the session is already activated
+            const sessionActivated = sessionStorage.getItem('driverSessionActivated' + id);
+            if (!sessionActivated) {
+                // Increment active session count if the session is not already activated
+                axios.post(`http://localhost:8080/drivers/${id}/activate`);
+                console.log('Session activated')
+                // Set flag to indicate session activation
+                sessionStorage.setItem('driverSessionActivated'+ id, 'true');
             }
-        };
+
+            return () => {
+                // Decrement active session count on page close
+                const nextPage = window.location.pathname;
+                if (nextPage !== '/driver') {
+                    // Decrement active session count on page close
+                    axios.post(`http://localhost:8080/drivers/${id}/deactivate`);
+                    console.log('Session deactivated')
+                    // Remove flag indicating session activation
+                    sessionStorage.removeItem('driverSessionActivated' + id);
+                }
+            };
+        }
     }, [])
 
 

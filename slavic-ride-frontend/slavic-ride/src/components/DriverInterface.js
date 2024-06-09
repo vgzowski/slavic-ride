@@ -108,6 +108,7 @@ const DriverInterface = () => {
                             setDestination({ lat: location_lat, lng: location_lng });
                             console.log("Starting order: ", orderId);
                             setOrderId(order_id);
+                            sessionStorage.setItem('lol', true);
                         },
                         () => {
                             // setShowMenu(false);
@@ -152,12 +153,13 @@ const DriverInterface = () => {
         console.log("Response for finishing order and rating obtaining: ", response);
 
         await axios.post(`http://localhost:8080/notifications/finish-order-passenger`, response.data);
-        setSource(null);
-        setDestination(null);
+        setSource('');
+        setDestination('');
         setPassengerTaken(false);
         setRatingMenuActive(true);
         sendLocation();
         await fetchOrder();
+        sessionStorage.setItem('lol', false);
     }
 
     /*
@@ -247,6 +249,10 @@ const DriverInterface = () => {
     }, [hasOrderState]);
 
     const handleSidebar = () => {
+        if (hasOrderState !== false) {
+            alert("Look at the road! Behave yourself!");
+            return;
+        }
         navigate("/sidebar", { state: { who: 'driver', id: location_properties.state.driverId } });
     }
 
@@ -256,36 +262,28 @@ const DriverInterface = () => {
         setRatingMenuActive(false);
     };
 
+
+    
     return (
         <div>
             <RideRequestNotification driverId={location_properties.state.driverId} />
 
             <MapComponent
                 userLocation={source}
-                userDestination={destination}
+                userDestination={hasOrderState ? destination : ""}
                 route={route}
             />
-
-            {/*{showMenu && (*/}
-            {/*    <RideRequestMenu*/}
-            {/*        onAccept={handleAcceptRide}*/}
-            {/*        onReject={handleRejectRide}*/}
-            {/*        source={rideRequestDetails?.source}*/}
-            {/*        destination={rideRequestDetails?.destination}*/}
-            {/*    />*/}
-            {/*)}*/}
-
-            {ratingMenuActive && (
-                <div className="rating-menu">
-                    <h3>Please rate the drive:</h3>
-                    <RatingComponent onRate={handleRate} orderId={orderId} />
-                </div>
-            )}
 
             <button onClick={handleLogout}>Log out</button>
             {(hasOrderState && !passengerTaken) && <button onClick={handleTakePassenger}>Passenger taken</button>}
             {(hasOrderState && passengerTaken) && <button onClick={handleFinishOrder}>Finish order</button>}
             <button onClick={handleSidebar}>Sidebar</button>
+
+            {ratingMenuActive && (
+                <div className="rating-menu">
+                    <RatingComponent onRate={handleRate} orderId={orderId} />
+                </div>
+            )}
         </div>
     );
 }

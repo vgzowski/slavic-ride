@@ -113,10 +113,25 @@ class MapComponent extends Component {
             anchor: new google.maps.Point(12, 12)
         };
 
+        let center;
+
+        if (this.props.userLocation) {
+            center = {
+                lat: this.props.userLocation.lat,
+                lng: this.props.userLocation.lng
+            };
+        }
+        else if (userLocationButton) {
+            center = {
+                lat: userLocationButton.lat,
+                lng: userLocationButton.lng
+            };
+        }
+
         return (
             <div>
                 <APIProvider apiKey={this.apiKey}>
-                    <Map
+                    {center && (<Map
                         key={reloadMap}
                         style={{ width: '100vw', height: '60vh' }}
                         defaultCenter={(this.props.userLocation ? this.props.userLocation : userLocationButton) ? (this.props.userLocation ? this.props.userLocation : userLocationButton) : { lat: 0, lng: 0 }}
@@ -150,7 +165,7 @@ class MapComponent extends Component {
                             userLocation={this.props.userLocation ? this.props.userLocation : userLocationButton}
                             userDestination={this.props.userDestination}
                         />
-                    </Map>
+                    </Map>)}
                 </APIProvider>
 
                 {error && <p>{error}</p>}
