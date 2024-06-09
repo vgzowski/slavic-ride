@@ -310,6 +310,7 @@ const UserInterface = () => {
                     value={(typeof source === 'object') ? source.address : source}
                     onChange={handleSourceChange}
                     onSelect={handleSourceSelect}
+                    userLocation={source}
                 />
             </div>
 
@@ -322,6 +323,7 @@ const UserInterface = () => {
                     value={(typeof destination === 'object') ? destination.address : destination}
                     onChange={handleDestinationChange}
                     onSelect={handleDestinationSelect}
+                    userLocation={source}
                 />
             </div>
 

@@ -1,12 +1,15 @@
 /* global google */
+
 import React, { useEffect, useRef } from 'react';
 
-const AutocompleteInput = ({ id, value, onChange, onSelect }) => {
+const AutocompleteInput = ({ id, value, onChange, onSelect, userLocation }) => {
     const inputRef = useRef(null);
 
     useEffect(() => {
         const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
             types: ['geocode'],
+            componentRestrictions: { country: 'pl' }, // Change 'us' to your desired country code
+            fields: ['formatted_address', 'geometry'],
         });
 
         autocomplete.addListener('place_changed', () => {
@@ -15,7 +18,11 @@ const AutocompleteInput = ({ id, value, onChange, onSelect }) => {
                 onSelect(place);
             }
         });
-    }, [onSelect]);
+
+        // Update the bounds of the autocomplete when user location changes
+        autocomplete.setBounds(new google.maps.LatLngBounds(userLocation));
+
+    }, [onSelect, userLocation]);
 
     return (
         <input
@@ -25,7 +32,7 @@ const AutocompleteInput = ({ id, value, onChange, onSelect }) => {
             onChange={onChange}
             placeholder="Enter address"
             type="text"
-            tabindex="1"
+            tabIndex="1"
             width={300}
         />
     );
