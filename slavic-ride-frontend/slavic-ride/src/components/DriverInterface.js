@@ -11,8 +11,8 @@ const DriverInterface = () => {
     const location_properties = useLocation();
     // console.log('location_properties:', location_properties);
 
-    const [source, setSource] = useState(location_properties.state.source || null);
-    const [destination, setDestination] = useState(location_properties.state.destination || null);
+    const [source, setSource] = useState(null);
+    const [destination, setDestination] = useState(null);
     const [showMenu, setShowMenu] = useState(false);
     const [route, setRoute] = useState(null);
     const [passengerTaken, setPassengerTaken] = useState(false);
@@ -20,9 +20,6 @@ const DriverInterface = () => {
     const [orderId, setOrderId] = useState(null);
     const [ratingMenuActive, setRatingMenuActive] = useState(false);
 
-    console.log("---------!");
-    console.log("source ", source);
-    console.log("destination ", destination);
     const navigate = useNavigate();
     const [rideRequestDetails, setRideRequestDetails] = useState(null);
 
@@ -63,29 +60,39 @@ const DriverInterface = () => {
     const sendLocation = async () => {
         intervalRef.current = setInterval(async () => {
             try {
-                const location = await getLocation();
-                if (location && location_properties?.state?.driverId) {
-                    const requestBody = {
-                        location: {
-                            lat: location.lat,
-                            lng: location.lng
-                        },
-                        id: {
-                            id: location_properties.state.driverId
-                        }
-                    };
-                    setSource(location);
-                    await axios.put(`http://localhost:8080/drivers/${location_properties.state.driverId}/location`, requestBody);
-                    console.log(`Location successfully sent to server: ${location}, ${location_properties.state.driverId}`);
-                } else {
-                    if (!location) console.log('No location');
-                    if (!location_properties?.state?.driverId) console.log('No driver id');
-                }
+                // const location = await getLocation();
+                // if (location && location_properties?.state?.driverId) {
+                //     const requestBody = {
+                //         location: {
+                //             lat: location.lat,
+                //             lng: location.lng
+                //         },
+                //         id: {
+                //             id: location_properties.state.driverId
+                //         }
+                //     };
+                //     await axios.put(`http://localhost:8080/drivers/${location_properties.state.driverId}/location`, requestBody);
+                //     console.log(`Location successfully sent to server: ${location}, ${location_properties.state.driverId}`);
+                // } else {
+                //     if (!location) console.log('No location');
+                //     if (!location_properties?.state?.driverId) console.log('No driver id');
+                // }
             } catch (error) {
                 console.log('Something went wrong in sending location...', error);
             }
         }, 1000);
     }
+
+    const fetchLocationFromDatabase = async () => {
+        const response = await axios.get(`http://localhost:8080/drivers/${location_properties.state.driverId}/get-location`);
+        setSource(response.data);
+        console.log("Obtained location for driver ", location_properties.state.driverId, " from database: ", response.data);
+    }
+
+    useEffect(() => {
+        let intervalIdd = setInterval(fetchLocationFromDatabase, 1000);
+        return () => clearInterval(intervalIdd);
+    }, [])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -95,23 +102,14 @@ const DriverInterface = () => {
                     stompClientRef.current = connect(
                         location_properties.state.driverId,
                         (location_lat, location_lng, destination_lat, destination_lng) => {
-                            // setShowMenu(true);
-                            // const calc_source = { lat: location_lat, lng: location_lng };
-                            // const calc_destination = { lat: destination_lat, lng: destination_lng };
-                            // setRideRequestDetails({
-                            //     source: calc_source,
-                            //     destination: calc_destination,
-                            // });
                         },
                         (location_lat, location_lng, destination_lat, destination_lng, order_id) => {
                             setSource(locationD);
                             setDestination({ lat: location_lat, lng: location_lng });
                             console.log("Starting order: ", orderId);
                             setOrderId(order_id);
-                            sessionStorage.setItem('lol', true);
                         },
                         () => {
-                            // setShowMenu(false);
                         }
                     );
                 }
@@ -159,34 +157,7 @@ const DriverInterface = () => {
         setRatingMenuActive(true);
         sendLocation();
         await fetchOrder();
-        sessionStorage.setItem('lol', false);
     }
-
-    /*
-    const handleAcceptRide = async () => {
-        try {
-            setShowMenu(false);
-            await axios.post(`http://localhost:8080/notifications/driver-response`, {
-                driverId: location_properties.state.driverId,
-                accepted: true
-            });
-        } catch (error) {
-            console.error('Error accepting ride:', error);
-        } finally {
-            await fetchOrder();
-        }
-    };
-
-    const handleRejectRide = async () => {
-        setShowMenu(false);
-        await axios.post(`http://localhost:8080/notifications/driver-response`, {
-            driverId: location_properties.state.driverId,
-            accepted: false
-        });
-        await fetchOrder();
-    }
-    */
-
 
     const hasOrder = async () => {
         console.log("Checking for order...")

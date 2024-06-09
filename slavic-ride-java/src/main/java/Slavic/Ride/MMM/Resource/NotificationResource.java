@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import Slavic.Ride.MMM.Service.Utils;
 
 @Slf4j
 @RestController
@@ -35,8 +38,15 @@ public class NotificationResource {
 
         messagingTemplate.convertAndSend(
             "/topic/passenger/" + passengerId,
-            "{" + "\"order_id\":" + "\"" + orderId + "\"" + "}"
+            Utils.stringifyMapToJSON(new LinkedHashMap<>(Map.of(
+                "order_id", orderId
+            )))
         );
+
+        // messagingTemplate.convertAndSend(
+        //     "/topic/passenger/" + passengerId,
+        //     "{" + "\"order_id\":" + "\"" + orderId + "\"" + "}"
+        // );
     }
 
     @PostMapping("/take-passenger")
@@ -67,14 +77,25 @@ public class NotificationResource {
         CountDownLatch latch = new CountDownLatch(1);
         driverLatches.put(driverId, latch);
         log.info("Sending request to driver {}", driverId);
-        messagingTemplate.convertAndSend("/topic/driver/" + driverId,
-                "{" +
-                        "\"name\":\"Ride request\"," +
-                        "\"location_lat\":\"" + location.getLat() + "\"," +
-                        "\"location_lng\":\"" + location.getLng() + "\"," +
-                        "\"destination_lat\":\"" + destination.getLat() + "\"," +
-                        "\"destination_lng\":\"" + destination.getLng() + "\"" +
-                        "}");
+
+        messagingTemplate.convertAndSend(
+            "/topic/driver/" + driverId,
+            Utils.stringifyMapToJSON(new LinkedHashMap<>(Map.of(
+                "name", "Ride request",
+                "location_lat", location.getLat(),
+                "location_lng", location.getLng(),
+                "destination_lat", destination.getLat(),
+                "destination_lng", destination.getLng()
+            )))
+        );
+        // messagingTemplate.convertAndSend("/topic/driver/" + driverId,
+        //         "{" +
+        //                 "\"name\":\"Ride request\"," +
+        //                 "\"location_lat\":\"" + location.getLat() + "\"," +
+        //                 "\"location_lng\":\"" + location.getLng() + "\"," +
+        //                 "\"destination_lat\":\"" + destination.getLat() + "\"," +
+        //                 "\"destination_lng\":\"" + destination.getLng() + "\"" +
+        //                 "}");
 
         try {
             if (latch.await(7, TimeUnit.SECONDS)) {
@@ -83,8 +104,15 @@ public class NotificationResource {
                 driverLatches.remove(driverId);
                 messagingTemplate.convertAndSend(
                     "/topic/driver/time-exceed/" + driverId,
-                    "{" + "\"name\": " + "\"time-exceeded\"" + "}"
+                    Utils.stringifyMapToJSON(new LinkedHashMap<>(Map.of(
+                        "name", "time-exceeded"
+                    )))
                 );
+
+                // messagingTemplate.convertAndSend(
+                //     "/topic/driver/time-exceed/" + driverId,
+                //     "{" + "\"name\": " + "\"time-exceeded\"" + "}"
+                // );
                 return false;  // Timeout, driver didn't respond
             }
         } catch (InterruptedException e) {
@@ -95,16 +123,28 @@ public class NotificationResource {
 
 
     public void notifyDriverOfRoute(String driverId, Location location, Location destination, String orderId) {
-        log.info("Notifying driver {} of route", driverId);
-        messagingTemplate.convertAndSend("/topic/driver-route/" + driverId,  // Change the topic address
-                "{" +
-                        "\"name\":\"New order\"," +
-                        "\"location_lat\":\"" + location.getLat() + "\"," +
-                        "\"location_lng\":\"" + location.getLng() + "\"," +
-                        "\"destination_lat\":\"" + destination.getLat() + "\"," +
-                        "\"destination_lng\":\"" + destination.getLng() + "\"," +
-                        "\"orderId\":\"" + orderId + "\"" +
-                        "}");
+        log.info("Notifying driver {} of route with order ID {}", driverId, orderId);
+
+        messagingTemplate.convertAndSend(
+            "/topic/driver-route/" + driverId,
+            Utils.stringifyMapToJSON(new LinkedHashMap<>(Map.of(
+                "name", "New order",
+                "location_lat", location.getLat(),
+                "location_lng", location.getLng(),
+                "destination_lat", destination.getLat(),
+                "destination_lng", destination.getLng(),
+                "orderId", orderId
+        ))));
+
+        // messagingTemplate.convertAndSend("/topic/driver-route/" + driverId,
+        //         "{" +
+        //                 "\"name\":\"New order\"," +
+        //                 "\"location_lat\":\"" + location.getLat() + "\"," +
+        //                 "\"location_lng\":\"" + location.getLng() + "\"," +
+        //                 "\"destination_lat\":\"" + destination.getLat() + "\"," +
+        //                 "\"destination_lng\":\"" + destination.getLng() + "\"," +
+        //                 "\"orderId\":\"" + orderId + "\"" +
+        //                 "}");
     }
 
 }
