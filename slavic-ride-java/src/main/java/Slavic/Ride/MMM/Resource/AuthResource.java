@@ -119,7 +119,7 @@ public class AuthResource {
         Optional <Passenger> passengerOpt = passengerService.findByUsername(username);
         if (driverOpt.isPresent()) {
             if (driverOpt.get().getActiveSessions() > 0) {
-                driverOpt.get().setActiveSessions(driverOpt.get().getActiveSessions() - 1);
+//                driverOpt.get().setActiveSessions(driverOpt.get().getActiveSessions() - 1);
                 driverService.saveDriver(driverOpt.get());
                 return ResponseEntity.ok(Map.of("success", true,
                                                 "numberOfSessions", driverOpt.get().getActiveSessions()));
