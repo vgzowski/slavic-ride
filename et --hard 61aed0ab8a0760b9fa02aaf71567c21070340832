@@ -1,0 +1,29 @@
+[33mcommit 2d5e2e5e35ef8e3301ed3f61cc05f9462b86e6ac[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m
+Author: Ihar Maroz <119732036+Bliznetc@users.noreply.github.com>
+Date:   Sun Jun 9 15:50:14 2024 +0200
+
+    merged
+
+[33mcommit d4036f43a0b03c4cbd4e26aa90ff6d0d0bd63618[m[33m ([m[1;32mnew[m[33m)[m
+Author: Ihar Maroz <119732036+Bliznetc@users.noreply.github.com>
+Date:   Sun Jun 9 16:16:12 2024 +0200
+
+    minor fix
+
+[33mcommit 06cc428f92d72bc06b76046f052112b7e5757179[m
+Author: Ihar Maroz <119732036+Bliznetc@users.noreply.github.com>
+Date:   Sun Jun 9 16:02:34 2024 +0200
+
+    rollbacked to the working commit, merged manually with kirek's fix, forced push
+
+[33mcommit 61aed0ab8a0760b9fa02aaf71567c21070340832[m
+Author: Ihar Maroz <119732036+Bliznetc@users.noreply.github.com>
+Date:   Sun Jun 9 15:47:10 2024 +0200
+
+    added active sessions for drivers, now inactive driver can't get a request for a drive
+
+[33mcommit 1e4d821ab407ad6e4f79ea73b39a68544114e9fb[m
+Author: Ihar Maroz <119732036+Bliznetc@users.noreply.github.com>
+Date:   Sun Jun 9 14:37:05 2024 +0200
+
+    made possible accepting the ride from any page, removed deleting the order
