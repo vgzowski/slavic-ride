@@ -34,7 +34,7 @@ const RideRequestMenu = ({ onAccept, onReject, source, destination }) => {
             fetchDistanceAndDuration();
         }
 
-        // No cleanup function needed here as there are no subscriptions or side-effects to clean up
+        // No cleanup function needed here as there are no subscriptions or side effects to clean up
         return undefined;
     }, [source, destination]);
 

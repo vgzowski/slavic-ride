@@ -4,18 +4,22 @@ import axios from "axios";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { connect } from './../services/webSocketService.js';
 import RideRequestMenu from './RideRequestMenu';
+import RideRequestNotification from "./RideRequestNotification";
 
 const DriverInterface = () => {
     const location_properties = useLocation();
     // console.log('location_properties:', location_properties);
 
-    const [source, setSource] = useState(null);
-    const [destination, setDestination] = useState(null);
+    const [source, setSource] = useState(location_properties.state.source || null);
+    const [destination, setDestination] = useState(location_properties.state.destination || null);
     const [showMenu, setShowMenu] = useState(false);
     const [route, setRoute] = useState(null);
     const [passengerTaken, setPassengerTaken] = useState(false);
     const [hasOrderState, setHasOrderState] = useState(false);
 
+    console.log("---------!");
+    console.log("source ", source);
+    console.log("destination ", destination);
     const navigate = useNavigate();
     const [rideRequestDetails, setRideRequestDetails] = useState(null);
 
@@ -88,20 +92,20 @@ const DriverInterface = () => {
                     stompClientRef.current = connect(
                         location_properties.state.driverId,
                         (location_lat, location_lng, destination_lat, destination_lng) => {
-                            setShowMenu(true);
-                            const calc_source = { lat: location_lat, lng: location_lng };
-                            const calc_destination = { lat: destination_lat, lng: destination_lng };
-                            setRideRequestDetails({
-                                source: calc_source,
-                                destination: calc_destination,
-                            });
+                            // setShowMenu(true);
+                            // const calc_source = { lat: location_lat, lng: location_lng };
+                            // const calc_destination = { lat: destination_lat, lng: destination_lng };
+                            // setRideRequestDetails({
+                            //     source: calc_source,
+                            //     destination: calc_destination,
+                            // });
                         },
                         (location_lat, location_lng, destination_lat, destination_lng) => {
                             setSource(locationD);
                             setDestination({ lat: location_lat, lng: location_lng });
                         },
                         () => {
-                            setShowMenu(false);
+                            // setShowMenu(false);
                         }
                     );
                 }
@@ -150,6 +154,7 @@ const DriverInterface = () => {
         await fetchOrder();
     }
 
+    /*
     const handleAcceptRide = async () => {
         try {
             setShowMenu(false);
@@ -162,7 +167,7 @@ const DriverInterface = () => {
         } finally {
             await fetchOrder();
         }
-    };    
+    };
 
     const handleRejectRide = async () => {
         setShowMenu(false);
@@ -172,8 +177,11 @@ const DriverInterface = () => {
         });
         await fetchOrder();
     }
+    */
+
 
     const hasOrder = async () => {
+        console.log("Checking for order...")
         try {
             const response = await axios.get(`http://localhost:8080/drivers/${location_properties.state.driverId}/get-order`);
             return response.data;
@@ -201,7 +209,7 @@ const DriverInterface = () => {
 
     useEffect(() => {
         fetchOrder();
-    }, [location_properties.state.driverId]);
+    }, [location_properties.state.driverId, location_properties.state.source, location_properties.state.destination]);
 
     useEffect(() => {
         console.log("hasOrderState changed:", hasOrderState);
@@ -213,20 +221,23 @@ const DriverInterface = () => {
 
     return (
         <div>
+            <RideRequestNotification driverId={location_properties.state.driverId} />
+
             <MapComponent
                 userLocation={source}
                 userDestination={destination}
                 route={route}
             />
 
-            {showMenu && (
-                <RideRequestMenu
-                    onAccept={handleAcceptRide}
-                    onReject={handleRejectRide}
-                    source={rideRequestDetails?.source}
-                    destination={rideRequestDetails?.destination}
-                />
-            )}
+            {/*{showMenu && (*/}
+            {/*    <RideRequestMenu*/}
+            {/*        onAccept={handleAcceptRide}*/}
+            {/*        onReject={handleRejectRide}*/}
+            {/*        source={rideRequestDetails?.source}*/}
+            {/*        destination={rideRequestDetails?.destination}*/}
+            {/*    />*/}
+            {/*)}*/}
+
             <button onClick={handleLogout}>Log out</button>
             {(hasOrderState && !passengerTaken) && <button onClick={handleTakePassenger}>Passenger taken</button>}
             {(hasOrderState && passengerTaken) && <button onClick={handleFinishOrder}>Finish order</button>}

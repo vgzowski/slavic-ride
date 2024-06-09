@@ -51,6 +51,6 @@ public class OrderService {
         log.info("Finishing order, orderId: {}", orderId);
         Order order = orderRepo.findOrderByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
-        orderRepo.delete(order);
+//        orderRepo.delete(order);
     }
 }

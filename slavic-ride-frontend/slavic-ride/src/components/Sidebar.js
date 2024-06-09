@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from 'axios';
-// import './Sidebar.css';
+import RideRequestNotification from './RideRequestNotification';
 
 const Sidebar = () => {
     const location = useLocation();
@@ -59,6 +59,7 @@ const Sidebar = () => {
 
     return (
         <div className="sidebar">
+            <RideRequestNotification driverId={id} />
             <h1 className="sidebar-title">User Info</h1>
             <div className="sidebar-content">
                 <p><span className="label">Name:</span> {name}</p>
