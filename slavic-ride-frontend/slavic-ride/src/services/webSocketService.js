@@ -1,7 +1,7 @@
 import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
-const connect = (driverId, onMessageReceived, onRouteNotification, onTimeExceeding) => {
+export function connect(driverId, onMessageReceived, onRouteNotification, onTimeExceeding) {
     const socket = new SockJS('http://localhost:8080/ws');
     const stompClient = Stomp.over(socket);
 
@@ -80,4 +80,25 @@ const connect = (driverId, onMessageReceived, onRouteNotification, onTimeExceedi
     return stompClient;
 };
 
-export default connect;
+export function connectPassenger(passengerId, onOrderFinished, onPassengerTaken) {
+    const socket = new SockJS('http://localhost:8080/ws');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, () => {
+        stompClient.subscribe(`/topic/passenger/${passengerId}`, (message) => {
+            console.log("Finishing order", message.body);
+
+            const {
+                order_id
+            } = JSON.parse(message.body);
+
+            onOrderFinished(order_id);
+        });
+
+        stompClient.subscribe(`/topic/passenger-taken/${passengerId}`, (message) => {
+            console.log("Passenger was taken", message.body);
+            onPassengerTaken();
+        });
+    });
+    return stompClient;
+}

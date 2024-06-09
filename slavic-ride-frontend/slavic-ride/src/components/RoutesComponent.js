@@ -11,9 +11,9 @@ function Directions({ userLocation, userDestination }) {
     const selected = routes[routeIndex];
     const leg = selected?.legs[0];
 
-    console.log('IAM ALIVE I CAN SEE');
-    console.log('userLocation:', userLocation);
-    console.log('userDestination:', userDestination);
+    // console.log('IAM ALIVE I CAN SEE');
+    // console.log('userLocation:', userLocation);
+    // console.log('userDestination:', userDestination);
 
     useEffect(() => {
         if (!routesLibrary || !map) return;

@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MapComponent from './MapComponent';
 import axios from 'axios';
 import { useLocation } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import AutocompleteInput from "./AutocompleteInput";
+import { connectPassenger } from '../services/webSocketService';
+import RatingComponent from './RatingComponent';
 
 const UserInterface = () => {
     const location = useLocation();
@@ -11,7 +13,15 @@ const UserInterface = () => {
     const [destination, setDestination] = useState('');
     const [lookingForDriver, setLookingForDriver] = useState(false);
     const [rideType, setRideType] = useState('usual'); // State to store the user's chosen ride type
+    const [RideStatus, setRideStatus] = useState(0);
+    // 0 - no ride
+    // 1 - waiting for driver
+    // 2 - in a car
+
     const navigate = useNavigate();
+
+    const stompClientRef = useRef(null);
+    const intervalRef = useRef(null);
 
     useEffect(() => {
         if (!location.state || location.state.passengerId == null) {
@@ -67,6 +77,30 @@ const UserInterface = () => {
         } catch (error) {
             console.error('Error fetching coordinates for address:', error);
             throw new Error('Error fetching coordinates for address');
+        }
+    };
+
+    const handleMoveToCurrentLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    // console.log(position);
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
+                        const newLocation = { lat: lat, lng: lng };
+                        const address = await fetchAddress(newLocation);
+                        setSource({ lat: lat, lng: lng, address: address });
+                    } else {
+                        console.error("Invalid coordinates received");
+                    }
+                },
+                (error) => {
+                    console.error("Error getting current position:", error);
+                }
+            );
+        } else {
+            console.error("Geolocation not supported");
         }
     };
 
@@ -142,12 +176,31 @@ const UserInterface = () => {
             const response = await axios.post('http://localhost:8080/passengers/order-taxi', requestBody);
             console.log('Assigned driver ID:', response.data);
 
-            setLookingForDriver(false); // Hide the "looking for driver" message when the driver is assigned
+            setLookingForDriver(false);
+
+            if (response.data !== "No drivers available") {
+                setRideStatus(1);
+            }
+            else {
+                handleMoveToCurrentLocation();
+                setDestination("");
+                setRideStatus(0);
+            }
         } catch (error) {
             console.error('Error ordering taxi:', error);
             setLookingForDriver(false); // Hide the "looking for driver" message in case of an error
         }
     };
+
+    useEffect(() => {
+        if (RideStatus !== 0) {
+            handleMoveToCurrentLocation();
+            const intervalId = setInterval(() => {
+                // handleMoveToCurrentLocation();
+            }, 5000);
+            return () => clearInterval(intervalId);
+        }
+    }, [RideStatus, handleMoveToCurrentLocation]);
 
     const fetchAddress = async (coords) => {
         try {
@@ -191,33 +244,46 @@ const UserInterface = () => {
         });
     };
 
-    console.log('destination: ', destination);
+    const [ratingMenuActive, setRatingMenuActive] = useState(false);
+    const [orderId, setOrderId] = useState(null);
 
-    const handleMoveToCurrentLocation = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    if (!isNaN(lat) && !isNaN(lng)) {
-                        const newLocation = {
-                            lat: lat,
-                            lng: lng,
-                        };
-                        setSource(newLocation);
-                    } else {
-                        console.error("Invalid coordinates received");
-                    }
-                },
-                (error) => {
-                    console.error("Error getting current position:", error);
+    useEffect(() => {
+        const fetchData = async () => {
+            if (location?.state?.passengerId) {
+                if (!stompClientRef.current) {
+                    stompClientRef.current = connectPassenger(
+                        location.state.passengerId,
+                        (order_id) => { // onFinishOrder
+                            setRideStatus(0);
+                            setDestination("");
+                            handleMoveToCurrentLocation();
+                            setOrderId(order_id);
+                            setRatingMenuActive(true);
+                        },
+                        () => { // onPassengerTaken
+                            setRideStatus(2);
+                        }
+                    );
                 }
-            );
-        } else {
-            console.error("Geolocation not supported");
+            }
         }
+
+        fetchData();
+
+        return () => {
+            if (stompClientRef.current) {
+                stompClientRef.current.disconnect();
+                stompClientRef.current = null;
+            }
+        };
+    }, [location.state.passengerId]);
+
+    const handleRate = (rating) => {
+        console.log("Order ", orderId, " rated with ", rating);
+        setRatingMenuActive(false);
     };
 
+    console.log(RideStatus);
     const handleSidebar = () => {
         navigate("/sidebar", { state: { who: 'passenger', id: location.state.passengerId } });
     }
@@ -229,7 +295,7 @@ const UserInterface = () => {
                 userDestination={destination}
                 onCurrentLocationReceived={handleCurrentLocationReceived}
                 onCurrentLocationReceivedDestination={handleCurrentLocationReceivedDestination}
-                draggable={!lookingForDriver}
+                draggable={!lookingForDriver && (RideStatus === 0)}
             />
             <h1>
                 Enter Source and Destination
@@ -280,6 +346,17 @@ const UserInterface = () => {
             <button onClick={handleMoveToCurrentLocation}>Move to Current Location</button>
 
             {lookingForDriver && <p>We are looking for a driver...</p>}
+
+            {ratingMenuActive && (
+                <div className="rating-menu">
+                    <h3>Please rate the drive:</h3>
+                    <RatingComponent onRate={handleRate} />
+                </div>
+            )}
+
+            {(RideStatus !== 0) && (
+                <p>Remaining time: {RideStatus}</p>
+            )}
             <button onClick={handleSidebar}>Sidebar</button>
         </div>
     );

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from "axios";
 
 const RideRequestMenu = ({ onAccept, onReject, source, destination }) => {
-    const [duration, setDuration] = useState('');
-    const [distance, setDistance] = useState('');
+    const [duration, setDuration] = useState('Calculating');
+    const [distance, setDistance] = useState('Calculating');
 
     useEffect(() => {
         const fetchDistanceAndDuration = async () => {
@@ -23,7 +23,6 @@ const RideRequestMenu = ({ onAccept, onReject, source, destination }) => {
 
                 console.log('Response for duration :', response);
 
-                const { duration: durationInSeconds, distance: distanceInMeters } = response.data;
                 setDuration(response.data.duration);
                 setDistance(response.data.distance);
             } catch (error) {

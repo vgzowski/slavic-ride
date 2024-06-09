@@ -104,8 +104,8 @@ class MapComponent extends Component {
 
     render() {
         const { userLocationButton, error, reloadMap } = this.state;
-        console.log("user location:", this.props.userLocation);
-        console.log("default center:", (this.props.userLocation ? this.props.userLocation : userLocationButton) ? (this.props.userLocation ? this.props.userLocation : userLocationButton) : { lat: 0, lng: 0 })
+        // console.log("user location:", this.props.userLocation);
+        // console.log("default center:", (this.props.userLocation ? this.props.userLocation : userLocationButton) ? (this.props.userLocation ? this.props.userLocation : userLocationButton) : { lat: 0, lng: 0 })
 
         const blueCircleWithBorderIcon = {
             url: 'data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="blue" stroke="white" stroke-width="2"/></svg>',

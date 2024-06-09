@@ -26,6 +26,30 @@ public class NotificationResource {
         this.messagingTemplate = messagingTemplate;
     }
 
+    @PostMapping("/finish-order-passenger")
+    public void handleFinishOrderForPassenger(@RequestBody Map <String, Object> requestBody) {
+        String passengerId = (String)requestBody.get("passenger_id");
+        String orderId = (String)requestBody.get("order_id");
+
+        log.info("Sending to web socket finising order: Order {} Passenger {}", orderId, passengerId);
+
+        messagingTemplate.convertAndSend(
+            "/topic/passenger/" + passengerId,
+            "{" + "\"order_id\":" + "\"" + orderId + "\"" + "}"
+        );
+    }
+
+    @PostMapping("/take-passenger")
+    public void handlePassengerTaken(@RequestBody Map <String, Object> requestBody) {
+        String passengerId = (String)requestBody.get("passenger_id");
+
+        log.info("Sending to web socket changing state to [in a drive]: Passenger {}", passengerId);
+
+        messagingTemplate.convertAndSend(
+            "/topic/passenger-taken/" + passengerId,
+            "Successfuly took passenger with ID: " + passengerId
+        );
+    }
 
     @PostMapping("/driver-response")
     public void handleDriverResponse(@RequestBody Map<String, Object> response) {

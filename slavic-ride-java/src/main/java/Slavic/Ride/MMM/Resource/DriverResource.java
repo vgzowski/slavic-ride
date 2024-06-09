@@ -80,20 +80,22 @@ public class DriverResource {
     }
 
     @PutMapping("/{id}/finish-order")
-    public ResponseEntity<Void> finishOrder(@PathVariable String id) {
+    public ResponseEntity < Map <String, String> > finishOrder(@PathVariable String id) {
         log.info("Finishing order for driver ID: {}", id);
-        String orderId = driverService.getDriver(id).getOrderId();
+        String orderId = driverService.getDriver(id).getOrderId(), passengerId;
 
         try {
             //Finishing the order
             {
                 Order order = orderService.findOrderById(orderId);
+                passengerId = order.getPassengerId();
                 orderService.finishOrder(orderId);
                 driverService.setOrderId(order.getDriverId(), "");
                 passengerService.setOrderId(order.getPassengerId(), "");
                 driverService.setDriverStatus(id, true);
             }
-            return ResponseEntity.ok().build();
+            log.info("Returning a nice response in finish-order: Order: {} Passenger: {}", orderId, passengerId);
+            return ResponseEntity.ok(Map.of("order_id", orderId, "passenger_id", passengerId));
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.notFound().build();
         }

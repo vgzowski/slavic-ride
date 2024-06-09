@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import MapComponent from './MapComponent';
 import axios from "axios";
 import { useLocation, useNavigate } from 'react-router-dom';
-import connect from './../services/webSocketService.js';
+import { connect } from './../services/webSocketService.js';
 import RideRequestMenu from './RideRequestMenu';
 
 const DriverInterface = () => {
     const location_properties = useLocation();
-    console.log('location_properties:', location_properties);
+    // console.log('location_properties:', location_properties);
 
     const [source, setSource] = useState(null);
     const [destination, setDestination] = useState(null);
@@ -129,6 +129,7 @@ const DriverInterface = () => {
 
     const handleTakePassenger = async () => {
         const response = await axios.get(`http://localhost:8080/drivers/${location_properties.state.driverId}/order`);
+        await axios.post(`http://localhost:8080/notifications/take-passenger`, { passenger_id: response.data.passengerId });
         const cur_location = await getLocation();
         setSource(cur_location);
         setDestination(response.data.destination);
@@ -137,7 +138,11 @@ const DriverInterface = () => {
     }
 
     const handleFinishOrder = async () => {
-        await axios.put(`http://localhost:8080/drivers/${location_properties.state.driverId}/finish-order`);
+        const response = await axios.put(`http://localhost:8080/drivers/${location_properties.state.driverId}/finish-order`);
+
+        console.log("Response for finishing order and rating obtaining: ", response);
+
+        await axios.post(`http://localhost:8080/notifications/finish-order-passenger`, response.data);
         setSource(null);
         setDestination(null);
         setPassengerTaken(false);
