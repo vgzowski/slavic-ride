@@ -37,17 +37,10 @@ public class NotificationResource {
         log.info("Sending to web socket finising order: Order {} Passenger {}", orderId, passengerId);
 
         messagingTemplate.convertAndSend(
-<<<<<<< Updated upstream
             "/topic/passenger/" + passengerId,
             Utils.stringifyMapToJSON(new LinkedHashMap<>(Map.of(
                 "order_id", orderId
             )))
-=======
-            "topic/passenger/" + passengerId,
-            Utils.stringifyMapToJSON(Map.of(
-                "order_id", orderId
-            ))
->>>>>>> Stashed changes
         );
 
         // messagingTemplate.convertAndSend(
@@ -87,21 +80,13 @@ public class NotificationResource {
 
         messagingTemplate.convertAndSend(
             "/topic/driver/" + driverId,
-<<<<<<< Updated upstream
             Utils.stringifyMapToJSON(new LinkedHashMap<>(Map.of(
-=======
-            Utils.stringifyMapToJSON(Map.of(
->>>>>>> Stashed changes
                 "name", "Ride request",
                 "location_lat", location.getLat(),
                 "location_lng", location.getLng(),
                 "destination_lat", destination.getLat(),
                 "destination_lng", destination.getLng()
-<<<<<<< Updated upstream
             )))
-=======
-            ))
->>>>>>> Stashed changes
         );
         // messagingTemplate.convertAndSend("/topic/driver/" + driverId,
         //         "{" +
@@ -119,15 +104,9 @@ public class NotificationResource {
                 driverLatches.remove(driverId);
                 messagingTemplate.convertAndSend(
                     "/topic/driver/time-exceed/" + driverId,
-<<<<<<< Updated upstream
                     Utils.stringifyMapToJSON(new LinkedHashMap<>(Map.of(
                         "name", "time-exceeded"
                     )))
-=======
-                    Utils.stringifyMapToJSON(Map.of(
-                        "name", "time-exceeded"
-                    ))
->>>>>>> Stashed changes
                 );
 
                 // messagingTemplate.convertAndSend(
@@ -144,30 +123,18 @@ public class NotificationResource {
 
 
     public void notifyDriverOfRoute(String driverId, Location location, Location destination, String orderId) {
-<<<<<<< Updated upstream
         log.info("Notifying driver {} of route with order ID {}", driverId, orderId);
 
         messagingTemplate.convertAndSend(
             "/topic/driver-route/" + driverId,
             Utils.stringifyMapToJSON(new LinkedHashMap<>(Map.of(
-=======
-        log.info("Notifying driver {} of route", driverId);
-
-        messagingTemplate.convertAndSend(
-            "/topic/driver-route" + driverId,
-            Utils.stringifyMapToJSON(Map.of(
->>>>>>> Stashed changes
                 "name", "New order",
                 "location_lat", location.getLat(),
                 "location_lng", location.getLng(),
                 "destination_lat", destination.getLat(),
                 "destination_lng", destination.getLng(),
                 "orderId", orderId
-<<<<<<< Updated upstream
         ))));
-=======
-        )));
->>>>>>> Stashed changes
 
         // messagingTemplate.convertAndSend("/topic/driver-route/" + driverId,
         //         "{" +
@@ -179,5 +146,4 @@ public class NotificationResource {
         //                 "\"orderId\":\"" + orderId + "\"" +
         //                 "}");
     }
-
 }

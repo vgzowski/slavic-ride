@@ -72,17 +72,17 @@ const SignupPage = () => {
 
     return (
         <div>
-            {/*<label>Name:</label>*/}
-            {/*<input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} />*/}
-            {/*<br />*/}
+            <label>Name:</label>
+            <input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} />
+            <br />
 
-            {/*<label>Email:</label>*/}
-            {/*<input type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} />*/}
-            {/*<br />*/}
+            <label>Email:</label>
+            <input type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <br />
 
-            {/*<label>Phone Number:</label>*/}
-            {/*<input type="tel" name="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />*/}
-            {/*<br />*/}
+            <label>Phone Number:</label>
+            <input type="tel" name="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <br />
 
             <label>Username:</label>
             <input type="text" name="username" value={username} onChange={(e) => setUsername(e.target.value)} />
