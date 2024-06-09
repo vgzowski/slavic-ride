@@ -22,7 +22,7 @@ public interface DriverRepo extends JpaRepository<Driver, String> {
     void deleteAll();
 
 
-    @Query("SELECT d FROM Driver d WHERE d.carType = :rideType")
+    @Query("SELECT d FROM Driver d WHERE d.carType = :rideType and d.activeSessions > 0")
     List<Driver> findAllWithType(@Param("rideType") String rideType);
 
 

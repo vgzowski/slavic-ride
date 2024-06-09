@@ -100,4 +100,17 @@ public class DriverResource {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PostMapping("/{id}/activate")
+    public ResponseEntity<Void> activateDriver(@PathVariable String id) {
+        log.info("Adding active session for driver ID: {}", id);
+        driverService.updActiveSessions(id, 1);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/deactivate")
+    public ResponseEntity<Void> deactivateDriver(@PathVariable String id) {
+        driverService.updActiveSessions(id, -1);
+        return ResponseEntity.ok().build();
+    }
 }

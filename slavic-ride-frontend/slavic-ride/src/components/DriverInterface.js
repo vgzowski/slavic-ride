@@ -208,6 +208,31 @@ const DriverInterface = () => {
     };
 
     useEffect(() => {
+        // Check if the session is already activated
+        const sessionActivated = sessionStorage.getItem('driverSessionActivated' + location_properties.state.driverId);
+
+        if (!sessionActivated) {
+            // Increment active session count if the session is not already activated
+            axios.post(`http://localhost:8080/drivers/${location_properties.state.driverId}/activate`);
+            console.log('Session activated');
+            // Set flag to indicate session activation
+            sessionStorage.setItem('driverSessionActivated' + location_properties.state.driverId, 'true');
+        }
+
+        return () => {
+            // Only deactivate the session when leaving the DriverInterface page if not navigating to the Sidebar
+            const nextPage = window.location.pathname;
+            if (nextPage !== '/sidebar') {
+                // Decrement active session count on logout or page close
+                axios.post(`http://localhost:8080/drivers/${location_properties.state.driverId}/deactivate`);
+                console.log('Session deactivated');
+                // Remove flag indicating session activation
+                sessionStorage.removeItem('driverSessionActivated' + location_properties.state.driverId);
+            }
+        };
+    }, []);
+
+    useEffect(() => {
         fetchOrder();
     }, [location_properties.state.driverId, location_properties.state.source, location_properties.state.destination]);
 

@@ -103,7 +103,7 @@ public class DriverService {
     public boolean addActive (String username) {
         Driver driver = driverRepo.findByUsername(username).orElse(null);
         if (driver != null) {
-            driver.setActiveSessions(driver.getActiveSessions() + 1);
+//            driver.setActiveSessions(driver.getActiveSessions() + 1);
             driverRepo.save(driver);
             return true;
         }
@@ -111,6 +111,13 @@ public class DriverService {
     }
 
     public void saveDriver(Driver driver) {
+        driverRepo.save(driver);
+    }
+
+    public void updActiveSessions(String driverId, int activeSessions) {
+        Driver driver = driverRepo.findDriverById(driverId)
+                .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
+        driver.setActiveSessions(driver.getActiveSessions() + activeSessions);
         driverRepo.save(driver);
     }
 
