@@ -49,6 +49,12 @@ public class DriverResource {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/{id}/get-location")
+    public ResponseEntity <Location> getDriverLocationById(@PathVariable String id) {
+        Driver driver = driverService.getDriver(id);
+        return ResponseEntity.ok(driver.getLocation());
+    }
+
     @GetMapping("/{id}/order")
     public ResponseEntity<Order> getOrderRealOrder(@PathVariable String id) {
         Driver driver = driverService.getDriver(id);

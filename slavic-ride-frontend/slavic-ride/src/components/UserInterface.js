@@ -18,6 +18,8 @@ const UserInterface = () => {
     // 1 - waiting for driver
     // 2 - in a car
 
+    const [driverChosen, setDriverChosen] = useState(null);
+
     const navigate = useNavigate();
 
     const stompClientRef = useRef(null);
@@ -80,7 +82,39 @@ const UserInterface = () => {
         }
     };
 
-    const handleMoveToCurrentLocation = () => {
+    const [locationUser, setLocationUser] = useState({ lat: null, lng: null });
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchLocation = async () => {
+            try {
+                const apiKey = 'AIzaSyCcGid1vTF4zEMmDMWgS5sX3fOxrAtGhDs';
+                const response = await axios.post(`https://www.googleapis.com/geolocation/v1/geolocate?key=${apiKey}`);
+                console.log(response);
+                setLocationUser({
+                    lat: response.data.location.lat,
+                    lng: response.data.location.lng,
+                });
+            } catch (error) {
+                setError(error.message);
+            }
+        };
+
+        let intervalId;
+    
+        if (RideStatus !== 0) {
+            fetchLocation();
+            intervalId = setInterval(fetchLocation, 1000);
+        }
+    
+        return () => {
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+        };
+    }, [RideStatus]);
+
+    const handleMoveToCurrentLocation = async () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
@@ -174,17 +208,20 @@ const UserInterface = () => {
             console.log('Request body:', requestBody);
             // Send POST request to order taxi
             const response = await axios.post('http://localhost:8080/passengers/order-taxi', requestBody);
+
             console.log('Assigned driver ID:', response.data);
 
             setLookingForDriver(false);
 
-            if (response.data !== "No drivers available") {
+            if (response.data !== "") {
                 setRideStatus(1);
+                setDriverChosen(response.data);
             }
             else {
                 handleMoveToCurrentLocation();
                 setDestination("");
                 setRideStatus(0);
+                setDriverChosen(null);
             }
         } catch (error) {
             console.error('Error ordering taxi:', error);
@@ -196,11 +233,11 @@ const UserInterface = () => {
         if (RideStatus !== 0) {
             handleMoveToCurrentLocation();
             const intervalId = setInterval(() => {
-                // handleMoveToCurrentLocation();
+                handleMoveToCurrentLocation();
             }, 5000);
             return () => clearInterval(intervalId);
         }
-    }, [RideStatus, handleMoveToCurrentLocation]);
+    }, [RideStatus]);
 
     const fetchAddress = async (coords) => {
         try {
@@ -254,6 +291,7 @@ const UserInterface = () => {
                     stompClientRef.current = connectPassenger(
                         location.state.passengerId,
                         (order_id) => { // onFinishOrder
+                            setDriverChosen(null);
                             setRideStatus(0);
                             setDestination("");
                             handleMoveToCurrentLocation();
@@ -278,15 +316,56 @@ const UserInterface = () => {
         };
     }, [location.state.passengerId]);
 
-    const handleRate = (rating) => {
+    const handleRate = async (rating) => {
         console.log("Order ", orderId, " rated with ", rating);
+        await axios.post('http://localhost:8080/rating/rateDriver', { orderId: orderId, rating: rating });
         setRatingMenuActive(false);
     };
 
-    console.log(RideStatus);
+    // console.log(RideStatus);
+
     const handleSidebar = () => {
         navigate("/sidebar", { state: { who: 'passenger', id: location.state.passengerId } });
     }
+
+    const [distanceShown, setDistanceShown] = useState('');
+
+    const calculateDistance = async () => {
+        const apiKey = 'AIzaSyCcGid1vTF4zEMmDMWgS5sX3fOxrAtGhDs';
+        if (RideStatus === 1) {
+            const responseDriver = await axios.get(`http://localhost:8080/drivers/${driverChosen.id}/get-location`);
+
+            const requestBody = {
+                origin: source,
+                destination: responseDriver.data
+            }
+
+            console.log(source);
+            console.log(responseDriver.data);
+
+            const respone = await axios.post(`http://localhost:8080/distance/distance/${apiKey}`, requestBody);
+            console.log("Current distance (to driver) is: ", respone.data);
+            setDistanceShown(respone.data.duration);
+        }
+        else if (RideStatus === 2) {
+            const requestBody = {
+                origin: source,
+                destination: destination
+            }
+            const respone = await axios.post(`http://localhost:8080/distance/distance/${apiKey}`, requestBody);
+            console.log("Current distance (to destinaiition) is: ", respone.data);
+            setDistanceShown(respone.data.duration);
+        }
+        else {
+            setDistanceShown(null);
+        }
+    }
+
+    useEffect(() => {
+        calculateDistance();
+        const intervalId = setInterval(calculateDistance, 2000);
+        return () => clearInterval(intervalId);
+    }, [source, RideStatus])
 
     return (
         <div>
@@ -347,15 +426,19 @@ const UserInterface = () => {
 
             {lookingForDriver && <p>We are looking for a driver...</p>}
 
+            {driverChosen !== null && <p>You driver is: {driverChosen.username}</p>}
+
             {ratingMenuActive && (
                 <div className="rating-menu">
                     <h3>Please rate the drive:</h3>
-                    <RatingComponent onRate={handleRate} />
+                    <RatingComponent onRate={handleRate} orderId={orderId} />
                 </div>
             )}
 
             {(RideStatus !== 0) && (
-                <p>Remaining time: {RideStatus}</p>
+                <p>
+                    Remaining distance to {RideStatus === 1 ? "A" : "B"}: {distanceShown}
+                </p>
             )}
             <button onClick={handleSidebar}>Sidebar</button>
         </div>

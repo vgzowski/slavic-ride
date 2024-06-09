@@ -83,7 +83,7 @@ public class PassengerService {
         passengerRepo.save(passenger);
     }
 
-    public ResponseEntity<String> assignDriverToPassenger(Location pickUpPoint, Location dropOffPoint,
+    public ResponseEntity<Driver> assignDriverToPassenger(Location pickUpPoint, Location dropOffPoint,
                                                           String passengerId, String rideType) throws InterruptedException {
         log.info("Assigning driver to passenger");
 
@@ -103,7 +103,7 @@ public class PassengerService {
         int ptr = 0;
         while (true) {
             if (available == 0) {
-                return ResponseEntity.ok("No drivers available");
+                return ResponseEntity.ok(null);
             }
 
             if (ptr == driversList.size()) {
@@ -143,8 +143,8 @@ public class PassengerService {
                 driverService.setOrderId(driverId, order.getOrderId());
                 setOrderId(passengerId, order.getOrderId());
 
-                notificationResource.notifyDriverOfRoute(driverId, pickUpPoint, dropOffPoint);
-                return ResponseEntity.ok(driverId);
+                notificationResource.notifyDriverOfRoute(driverId, pickUpPoint, dropOffPoint, order.getOrderId());
+                return ResponseEntity.ok(chosenDriver);
             } else {
                 driverService.setDriverStatus(driverId, true);
                 log.info("Driver with ID: {} rejected the ride", driverId);

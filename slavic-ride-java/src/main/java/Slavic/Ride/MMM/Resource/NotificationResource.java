@@ -94,7 +94,7 @@ public class NotificationResource {
     }
 
 
-    public void notifyDriverOfRoute(String driverId, Location location, Location destination) {
+    public void notifyDriverOfRoute(String driverId, Location location, Location destination, String orderId) {
         log.info("Notifying driver {} of route", driverId);
         messagingTemplate.convertAndSend("/topic/driver-route/" + driverId,  // Change the topic address
                 "{" +
@@ -102,7 +102,8 @@ public class NotificationResource {
                         "\"location_lat\":\"" + location.getLat() + "\"," +
                         "\"location_lng\":\"" + location.getLng() + "\"," +
                         "\"destination_lat\":\"" + destination.getLat() + "\"," +
-                        "\"destination_lng\":\"" + destination.getLng() + "\"" +
+                        "\"destination_lng\":\"" + destination.getLng() + "\"," +
+                        "\"orderId\":\"" + orderId + "\"" +
                         "}");
     }
 
