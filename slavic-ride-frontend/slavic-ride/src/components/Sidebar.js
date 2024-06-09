@@ -104,6 +104,8 @@ const Sidebar = () => {
                     </li>
                 ))}
             </ul>
+            <button onClick={() => navigate('/driver', { state: { driverId: id,
+                    destination: null} })}>Go back</button>
         </div>
     );
 }
