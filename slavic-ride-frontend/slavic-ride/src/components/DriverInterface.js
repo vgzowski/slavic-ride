@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { connect } from './../services/webSocketService.js';
 import RideRequestMenu from './RideRequestMenu';
 import RideRequestNotification from "./RideRequestNotification";
+import RatingComponent from './RatingComponent.js';
 
 const DriverInterface = () => {
     const location_properties = useLocation();
@@ -16,6 +17,8 @@ const DriverInterface = () => {
     const [route, setRoute] = useState(null);
     const [passengerTaken, setPassengerTaken] = useState(false);
     const [hasOrderState, setHasOrderState] = useState(false);
+    const [orderId, setOrderId] = useState(null);
+    const [ratingMenuActive, setRatingMenuActive] = useState(false);
 
     console.log("---------!");
     console.log("source ", source);
@@ -81,7 +84,7 @@ const DriverInterface = () => {
             } catch (error) {
                 console.log('Something went wrong in sending location...', error);
             }
-        }, 5000);
+        }, 1000);
     }
 
     useEffect(() => {
@@ -100,9 +103,11 @@ const DriverInterface = () => {
                             //     destination: calc_destination,
                             // });
                         },
-                        (location_lat, location_lng, destination_lat, destination_lng) => {
+                        (location_lat, location_lng, destination_lat, destination_lng, order_id) => {
                             setSource(locationD);
                             setDestination({ lat: location_lat, lng: location_lng });
+                            console.log("Starting order: ", orderId);
+                            setOrderId(order_id);
                         },
                         () => {
                             // setShowMenu(false);
@@ -150,6 +155,7 @@ const DriverInterface = () => {
         setSource(null);
         setDestination(null);
         setPassengerTaken(false);
+        setRatingMenuActive(true);
         sendLocation();
         await fetchOrder();
     }
@@ -244,6 +250,12 @@ const DriverInterface = () => {
         navigate("/sidebar", { state: { who: 'driver', id: location_properties.state.driverId } });
     }
 
+    const handleRate = async (rating) => {
+        console.log("Order ", orderId, " rated with ", rating);
+        await axios.post('http://localhost:8080/rating/ratePassenger', { orderId: orderId, rating: rating });
+        setRatingMenuActive(false);
+    };
+
     return (
         <div>
             <RideRequestNotification driverId={location_properties.state.driverId} />
@@ -262,6 +274,13 @@ const DriverInterface = () => {
             {/*        destination={rideRequestDetails?.destination}*/}
             {/*    />*/}
             {/*)}*/}
+
+            {ratingMenuActive && (
+                <div className="rating-menu">
+                    <h3>Please rate the drive:</h3>
+                    <RatingComponent onRate={handleRate} orderId={orderId} />
+                </div>
+            )}
 
             <button onClick={handleLogout}>Log out</button>
             {(hasOrderState && !passengerTaken) && <button onClick={handleTakePassenger}>Passenger taken</button>}

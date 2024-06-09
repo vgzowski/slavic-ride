@@ -60,7 +60,8 @@ export function connect(driverId, onMessageReceived, onRouteNotification, onTime
                 location_lat,
                 location_lng,
                 destination_lat,
-                destination_lng
+                destination_lng,
+                orderId
             } = JSON.parse(message.body);
 
             console.log(location_lat);
@@ -72,7 +73,8 @@ export function connect(driverId, onMessageReceived, onRouteNotification, onTime
                 parseFloat(location_lat),
                 parseFloat(location_lng),
                 parseFloat(destination_lat),
-                parseFloat(destination_lng)
+                parseFloat(destination_lng),
+                orderId
             );
         });
     });

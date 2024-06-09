@@ -51,6 +51,22 @@ public class OrderService {
         log.info("Finishing order, orderId: {}", orderId);
         Order order = orderRepo.findOrderByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
-//        orderRepo.delete(order);
+        // orderRepo.delete(order);
+    }
+
+    public void rateDriver(String orderId, Integer rating) {
+        log.info("Rating driver, orderId: {}, rating: {}", orderId, rating);
+        Order order = orderRepo.findOrderByOrderId(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+        order.setRatingDriver(rating);
+        orderRepo.save(order);
+    }
+
+    public void ratePassenger(String orderId, Integer rating) {
+        log.info("Rating passenger, orderId: {}, rating: {}", orderId, rating);
+        Order order = orderRepo.findOrderByOrderId(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+        order.setRatingPassenger(rating);
+        orderRepo.save(order);
     }
 }

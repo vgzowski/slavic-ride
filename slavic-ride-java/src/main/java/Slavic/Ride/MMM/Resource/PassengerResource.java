@@ -60,7 +60,7 @@ public class PassengerResource {
     }
 
     @PostMapping("/order-taxi")
-    public ResponseEntity<String> orderTaxi(@RequestBody Map<String, Map<String, Object>> requestBody) {
+    public ResponseEntity<Driver> orderTaxi(@RequestBody Map<String, Map<String, Object>> requestBody) {
         Map<String, Object> source = requestBody.get("source");
         Map<String, Object> destination = requestBody.get("destination");
 
@@ -78,7 +78,7 @@ public class PassengerResource {
             return passengerService.assignDriverToPassenger(new Location(sourcelat, sourcelng), new Location(destinationlat, destinationlng), passengerId, rideType);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Interrupted while assigning driver");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         } finally {
 //            lock.unlock();
         }
