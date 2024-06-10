@@ -405,6 +405,7 @@ const UserInterface = () => {
                     onCurrentLocationReceivedDestination={handleCurrentLocationReceivedDestination}
                     //draggable={!lookingForDriver && RideStatus === 0 && !ratingMenuActive}
                     draggable={false}
+                    draggableDestination={!lookingForDriver && RideStatus === 0 && !ratingMenuActive}
                 />
             </div>
             <div className="user-page-controls-container">

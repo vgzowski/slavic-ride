@@ -157,7 +157,7 @@ class MapComponent extends Component {
                             {this.state.userDestination && (
                                 <Marker
                                     position={this.state.userDestination}
-                                    draggable={this.props.draggable}
+                                    draggable={this.props.draggableDestination}
                                     onDragEnd={this.handleMarkerDestinationDragEnd}
                                 />
                             )}
