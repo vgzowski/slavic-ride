@@ -7,6 +7,9 @@ import Slavic.Ride.MMM.Location;
 import Slavic.Ride.MMM.Service.Utils;
 import Slavic.Ride.MMM.DistanceResult;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @SpringBootTest
 class MmmApplicationTests {
 
@@ -22,4 +25,27 @@ class MmmApplicationTests {
 		}
 	}
 
+	@Test
+	void testStringifyMapToJSON() {
+		String res = "{" +
+				"\"name\":\"Ride request\"," +
+				"\"location_lat\":\"" + 51. + "\"," +
+				"\"location_lng\":\"" + 19 + "\"," +
+				"\"destination_lat\":\"" + 1 + "\"," +
+				"\"destination_lng\":\"" + 2 + "\"" +
+				"}";
+		Map <String, Object> map = new HashMap<>();
+		map.put("name", "Ride request");
+		map.put("location_lat", 51.);
+		map.put("location_lng", 19);
+		map.put("destination_lat", 1);
+		map.put("destination_lng", 2);
+		try {
+			String x = Utils.stringifyMapToJSON(map);
+			System.out.println(x);
+			System.out.println(res);
+		} catch (Exception e) {
+			System.out.println("EXCEPTION: " + e.getMessage());
+		}
+	}
 }

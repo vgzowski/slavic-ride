@@ -59,6 +59,18 @@ public class PassengerResource {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/{id}/get-location")
+    public ResponseEntity<Location> getPassengerLocation(@PathVariable String id) {
+        Location location = passengerService.getPassengerLocation(id);
+        return ResponseEntity.ok(location);
+    }
+
+    @PutMapping("/{id}/set-location")
+    public ResponseEntity<Void> setPassengerLocation(@PathVariable String id, @RequestBody Location newLocation) {
+        passengerService.setPassengerLocation(id, newLocation);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/order-taxi")
     public ResponseEntity<Driver> orderTaxi(@RequestBody Map<String, Map<String, Object>> requestBody) {
         Map<String, Object> source = requestBody.get("source");

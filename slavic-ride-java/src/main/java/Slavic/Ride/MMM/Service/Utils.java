@@ -10,6 +10,7 @@ import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.DistanceMatrixElement;
 import com.google.maps.model.DistanceMatrixRow;
 import java.io.IOException;
+import java.util.Map;
 
 public class Utils {
     private static double rEarth = 6371;
@@ -44,5 +45,18 @@ public class Utils {
         long durationInSeconds = elements[0].duration.inSeconds;
 
         return new DistanceResult(distanceInMeters, durationInSeconds);
+    }
+
+    public static <T, V> String stringifyMapToJSON (Map<T, V> map) {
+        StringBuilder res = new StringBuilder();
+        res.append("{");
+        for (Map.Entry<T, V> entry : map.entrySet()) {
+            res.append("\"").append(entry.getKey().toString()).append("\":");
+            res.append("\"").append(entry.getValue().toString()).append("\",");
+        }
+
+        res.delete(res.length() - 1, res.length());
+        res.append("}");
+        return res.toString();
     }
 }

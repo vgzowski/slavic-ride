@@ -10,7 +10,7 @@ import "../css/UserInterface.css"
 
 const UserInterface = () => {
     const location = useLocation();
-    const [source, setSource] = useState('');
+    const [source, setSource] = useState(sessionStorage.getItem('location') ? JSON.parse(sessionStorage.getItem('location')) : '');
     const [destination, setDestination] = useState('');
     const [lookingForDriver, setLookingForDriver] = useState(false);
     const [rideType, setRideType] = useState('usual'); // State to store the user's chosen ride type
@@ -30,10 +30,30 @@ const UserInterface = () => {
         if (!location.state || location.state.passengerId == null) {
             navigate("/");
         }
+        const getLocationFromDB = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/passengers/${location.state.passengerId}/get-location`);
+                console.log(response);
+                setSource({
+                    lat: response.data.lat,
+                    lng: response.data.lng,
+                });
+                console.log('mama');
+                sessionStorage.setItem('location', JSON.stringify({
+                    lat: response.data.lat,
+                    lng: response.data.lng,
+                }));
+            } catch (error) {
+                console.error('Error fetching location:', error);
+            }
+        }
+
+        console.log('mama');
+        getLocationFromDB();
     }, [location, navigate]);
 
     const handleSourceChange = (e) => {
-        setSource(e.target.value);
+        // setSource(e.target.value);
     };
 
     const handleDestinationChange = (e) => {
@@ -41,11 +61,11 @@ const UserInterface = () => {
     };
 
     const handleSourceSelect = (place) => {
-        setSource({
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng(),
-            address: place.formatted_address,
-        });
+        // setSource({
+        //     lat: place.geometry.location.lat(),
+        //     lng: place.geometry.location.lng(),
+        //     address: place.formatted_address,
+        // });
     };
 
     const handleDestinationSelect = (place) => {
@@ -92,10 +112,16 @@ const UserInterface = () => {
                 const apiKey = 'AIzaSyCcGid1vTF4zEMmDMWgS5sX3fOxrAtGhDs';
                 const response = await axios.post(`https://www.googleapis.com/geolocation/v1/geolocate?key=${apiKey}`);
                 console.log(response);
-                setLocationUser({
-                    lat: response.data.location.lat,
-                    lng: response.data.location.lng,
-                });
+                // setLocationUser({
+                //     lat: response.data.location.lat,
+                //     lng: response.data.location.lng,
+                // });
+
+                // const responseSecond = await axios.put(`http://localhost:8080/passengers/${location.state.passengerId}/set-location`, {
+                //     lat: response.data.location.lat,
+                //     lng: response.data.location.lng
+                // });
+
             } catch (error) {
                 setError(error.message);
             }
@@ -125,7 +151,7 @@ const UserInterface = () => {
                     if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
                         const newLocation = { lat: lat, lng: lng };
                         const address = await fetchAddress(newLocation);
-                        setSource({ lat: lat, lng: lng, address: address });
+                        // setSource({ lat: lat, lng: lng, address: address });
                     } else {
                         console.error("Invalid coordinates received");
                     }
@@ -256,11 +282,11 @@ const UserInterface = () => {
     const handleCurrentLocationReceived = async (currentLocation) => {
         const fetched = await fetchAddress(currentLocation);
 
-        setSource({
-            lat: currentLocation.lat,
-            lng: currentLocation.lng,
-            address: fetched
-        });
+        // setSource({
+        //     lat: currentLocation.lat,
+        //     lng: currentLocation.lng,
+        //     address: fetched
+        // });
     };
 
     const handleCurrentLocationReceivedDestination = async (currentLocation) => {
@@ -280,6 +306,7 @@ const UserInterface = () => {
             id: location.state.passengerId,
             username: location.state.username
         });
+        sessionStorage.removeItem('location');
     };
 
     const [ratingMenuActive, setRatingMenuActive] = useState(false);
@@ -376,7 +403,8 @@ const UserInterface = () => {
                     userDestination={destination}
                     onCurrentLocationReceived={handleCurrentLocationReceived}
                     onCurrentLocationReceivedDestination={handleCurrentLocationReceivedDestination}
-                    draggable={!lookingForDriver && RideStatus === 0 && !ratingMenuActive}
+                    //draggable={!lookingForDriver && RideStatus === 0 && !ratingMenuActive}
+                    draggable={false}
                 />
             </div>
             <div className="user-page-controls-container">
@@ -392,7 +420,7 @@ const UserInterface = () => {
                         Status={ratingMenuActive || lookingForDriver || driverChosen !== null}
                     />
                 </div>
-                <div>
+                 <div>
                     <label htmlFor="destination">Destination Address:</label>
                     <AutocompleteInput
                         id="destination"

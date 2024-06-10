@@ -79,6 +79,17 @@ public class PassengerService {
         return false;
     }
 
+    public void setPassengerLocation(String id, Location newLocation) {
+        Passenger passenger = getPassenger(id);
+        passenger.setLocation(newLocation);
+        passengerRepo.save(passenger);
+    }
+
+    public Location getPassengerLocation(String id) {
+        Passenger passenger = getPassenger(id);
+        return passenger.getLocation();
+    }
+
     public void savePassenger(Passenger passenger) {
         passengerRepo.save(passenger);
     }

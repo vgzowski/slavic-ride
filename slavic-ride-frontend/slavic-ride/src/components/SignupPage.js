@@ -75,17 +75,33 @@ const SignupPage = () => {
         <div className="signup-container">
             <label className="signup-label">Username:</label>
             <input className="signup-input" type="text" name="username" value={username} onChange={(e) => setUsername(e.target.value)} />
+            <label className="signup-label">Name:</label>
+            <input className="signup-input" type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} />
             <br />
+
+            <label className="signup-label">Email:</label>
+            <input className="signup-input" type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <br />
+
+            <label className="signup-label">Phone Number:</label>
+            <input className="signup-input" type="tel" name="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <br />
+
+            <label className="signup-label">Username:</label>
+            <input className="signup-input" type="text" name="username" value={username} onChange={(e) => setUsername(e.target.value)} />
+            <br />
+
             <label className="signup-label">Password:</label>
             <input className="signup-input" type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             <br />
             <label className="signup-label">You really want to drive?</label>
-            <input
+            <input className="signup-input"
                 type="checkbox"
                 checked={role}
                 onChange={(e) => setRole(e.target.checked)}
             />
             <br />
+
             {role && (
                 <>
                     <label className="signup-label" htmlFor="car">Car:</label>
