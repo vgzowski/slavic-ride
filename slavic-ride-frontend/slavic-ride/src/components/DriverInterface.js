@@ -6,6 +6,7 @@ import { connect } from './../services/webSocketService.js';
 import RideRequestMenu from './RideRequestMenu';
 import RideRequestNotification from "./RideRequestNotification";
 import RatingComponent from './RatingComponent.js';
+import "../css/DriverInterface.css";
 
 const DriverInterface = () => {
     const location_properties = useLocation();
@@ -238,30 +239,38 @@ const DriverInterface = () => {
     };
 
 
-    
+
     return (
-        <div>
+        <div className="driver-interface">
             <RideRequestNotification driverId={location_properties.state.driverId} />
 
-            <MapComponent
-                userLocation={source}
-                userDestination={hasOrderState ? destination : ""}
-                route={route}
-                fetchable={false}
+            <div className="driver-map-container">
+                <MapComponent
+                    userLocation={source}
+                    userDestination={hasOrderState ? destination : ""}
+                    route={route}
+                    fetchable={false}
             />
+                <div className="driver-ride-info">
+                    {/* The ride information will be placed here */}
+                </div>
+            </div>
 
-            <button onClick={handleLogout}>Log out</button>
-            {(hasOrderState && !passengerTaken) && <button onClick={handleTakePassenger}>Passenger taken</button>}
-            {(hasOrderState && passengerTaken) && <button onClick={handleFinishOrder}>Finish order</button>}
-            <button onClick={handleSidebar}>Sidebar</button>
+            <div className="driver-buttons-container">
+                {(hasOrderState && !passengerTaken) && <button onClick={handleTakePassenger}>Passenger taken</button>}
+                {(hasOrderState && passengerTaken) && <button onClick={handleFinishOrder}>Finish order</button>}
+                <button onClick={handleSidebar}>Sidebar</button>
+                <button onClick={handleLogout}>Log out</button>
+            </div>
 
             {ratingMenuActive && (
-                <div className="rating-menu">
+                <div className="driver-rating-menu">
                     <RatingComponent onRate={handleRate} orderId={orderId} />
                 </div>
             )}
         </div>
     );
+
 }
 
 export default DriverInterface;

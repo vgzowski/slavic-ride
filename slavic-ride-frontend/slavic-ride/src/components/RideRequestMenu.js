@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
+import '../css/RideRequestMenu.css'; // Import the CSS file
 
 const RideRequestMenu = ({ onAccept, onReject, source, destination }) => {
     const [duration, setDuration] = useState('Calculating');
@@ -68,25 +69,14 @@ const RideRequestMenu = ({ onAccept, onReject, source, destination }) => {
     }, [source, destination]);
 
     return (
-        <div style={{
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            backgroundColor: 'white',
-            padding: '20px',
-            borderRadius: '8px',
-            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-            zIndex: '100',
-            textAlign: 'center'
-        }}>
-            <h3>You have a new ride request.</h3>
-            <p>Source: {sourceAddress}</p>
-            <p>Destination: {destinationAddress}</p>
-            <p>Duration: {duration}</p>
-            <p>Distance: {distance}</p>
-            <button onClick={onAccept} style={{ margin: '10px' }}>Accept</button>
-            <button onClick={onReject} style={{ margin: '10px' }}>Reject</button>
+        <div className="ride-request-menu">
+            <h3 className="ride-request-title">You have a new ride request.</h3>
+            <p className="ride-request-info">Source: {sourceAddress}</p>
+            <p className="ride-request-info">Destination: {destinationAddress}</p>
+            <p className="ride-request-info">Duration: {duration}</p>
+            <p className="ride-request-info">Distance: {distance}</p>
+            <button className="ride-request-button" onClick={onAccept}>Accept</button>
+            <button className="ride-request-button" onClick={onReject}>Reject</button>
         </div>
     );
 };

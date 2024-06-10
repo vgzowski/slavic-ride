@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import AutocompleteInput from "./AutocompleteInput";
 import { connectPassenger } from '../services/webSocketService';
 import RatingComponent from './RatingComponent';
-import RideRequestMenu from './RideRequestMenu';
+import "../css/UserInterface.css"
 
 const UserInterface = () => {
     const location = useLocation();
@@ -397,87 +397,84 @@ const UserInterface = () => {
     }, [source, RideStatus])
 
     return (
-        <div>
-            <MapComponent
-                userLocation={source}
-                userDestination={destination}
-                onCurrentLocationReceived={handleCurrentLocationReceived}
-                onCurrentLocationReceivedDestination={handleCurrentLocationReceivedDestination}
-                // draggable={!lookingForDriver && (RideStatus === 0) && (ratingMenuActive === false)}
-                draggable={false}
-            />
-            <h1>
-                Enter Source and Destination
-            </h1>
-
-            <div>
-                <label htmlFor="source">
-                    Source Address:
-                </label>
-                <AutocompleteInput
-                    id="source"
-                    value={(typeof source === 'object') ? source.address : source}
-                    onChange={handleSourceChange}
-                    onSelect={handleSourceSelect}
+        <div className="user-page-container">
+            <div className="user-page-map-container">
+                <MapComponent
                     userLocation={source}
-                    Status={ratingMenuActive || lookingForDriver || (driverChosen !== null)}
+                    userDestination={destination}
+                    onCurrentLocationReceived={handleCurrentLocationReceived}
+                    onCurrentLocationReceivedDestination={handleCurrentLocationReceivedDestination}
+                    //draggable={!lookingForDriver && RideStatus === 0 && !ratingMenuActive}
+                    draggable={false}
+                    draggableDestination={!lookingForDriver && RideStatus === 0 && !ratingMenuActive}
                 />
             </div>
-
-            <div>
-                <label htmlFor="destination">
-                    Destination Address:
-                </label>
-                <AutocompleteInput
-                    id="destination"
-                    value={(typeof destination === 'object') ? destination.address : destination}
-                    onChange={handleDestinationChange}
-                    onSelect={handleDestinationSelect}
-                    userLocation={source}
-                    Status={ratingMenuActive || lookingForDriver || (driverChosen !== null)}
-                />
-            </div>
-
-            <div>
-                {/* Apply different styles based on the chosen ride type */}
-                <button disabled={ratingMenuActive}
-                    onClick={() => handleRideTypeSelect('usual')}
-                    style={{ marginRight: '10px', backgroundColor: rideType === 'usual' ? 'lightblue' : 'white' }}
-                >
-                    Usual
-                </button>
-                <button disabled={ratingMenuActive}
-                    onClick={() => handleRideTypeSelect('premium')}
-                    style={{ backgroundColor: rideType === 'premium' ? 'lightblue' : 'white' }}
-                >
-                    Premium
-                </button>
-            </div>
-
-            <button disabled={ratingMenuActive || lookingForDriver || (driverChosen !== null)} onClick={orderTaxi}>Order Taxi</button>
-            <button disabled={ratingMenuActive || lookingForDriver || (driverChosen !== null)} onClick={handleLogout}>Log out</button>
-
-            <button disabled={ratingMenuActive || lookingForDriver || (driverChosen !== null)} onClick={handleMoveToCurrentLocation}>Move to Current Location</button>
-
-            <button disabled={ratingMenuActive || lookingForDriver || (driverChosen !== null)} onClick={handleSidebar}>Sidebar</button>
-
-            {lookingForDriver && <p>We are looking for a driver...</p>}
-
-            {driverChosen !== null && <p>You driver is: {driverChosen.name}</p>}
-
-            {(RideStatus !== 0) && (
-                <p>
-                    {RideStatus === 1 ? "Your driver is " : "You are "} {distanceShown} away from {RideStatus === 1 ? "you" : "your destination"}
-                </p>
-            )}
-
-            {ratingMenuActive && (
-                <div className="rating-menu">
-                    <RatingComponent onRate={handleRate} orderId={orderId} />
+            <div className="user-page-controls-container">
+                <h1>Enter Source and Destination</h1>
+                <div>
+                    <label htmlFor="source">Source Address:</label>
+                    <AutocompleteInput
+                        id="source"
+                        value={typeof source === 'object' ? source.address : source}
+                        onChange={handleSourceChange}
+                        onSelect={handleSourceSelect}
+                        userLocation={source}
+                        Status={ratingMenuActive || lookingForDriver || driverChosen !== null}
+                    />
                 </div>
-            )}
+                 <div>
+                    <label htmlFor="destination">Destination Address:</label>
+                    <AutocompleteInput
+                        id="destination"
+                        value={typeof destination === 'object' ? destination.address : destination}
+                        onChange={handleDestinationChange}
+                        onSelect={handleDestinationSelect}
+                        userLocation={source}
+                        Status={ratingMenuActive || lookingForDriver || driverChosen !== null}
+                    />
+                </div>
+                <div className="ride-type-buttons">
+                    <button
+                        disabled={ratingMenuActive}
+                        onClick={() => handleRideTypeSelect('usual')}
+                        style={{ backgroundColor: rideType === 'usual' ? 'lightblue' : 'white' }}
+                    >
+                        Usual
+                    </button>
+                    <button
+                        disabled={ratingMenuActive}
+                        onClick={() => handleRideTypeSelect('premium')}
+                        style={{ backgroundColor: rideType === 'premium' ? 'lightblue' : 'white' }}
+                    >
+                        Premium
+                    </button>
+                </div>
+                <button className="order-button" disabled={ratingMenuActive || lookingForDriver || driverChosen !== null} onClick={orderTaxi}>
+                    Order Taxi
+                </button>
+                <div className="user-page-ride-info">
+                    {RideStatus !== 0 && (
+                        <p>
+                            {RideStatus === 1 ? 'Your driver is ' : 'You are '} {distanceShown} away from {RideStatus === 1 ? 'you' : 'your destination'}
+                            {driverChosen !== null && <p>Your driver is: {driverChosen.name}</p>}
+                        </p>
+                    )}
+                </div>
+                <div className="bottom-buttons">
+                    <button disabled={ratingMenuActive || lookingForDriver || driverChosen !== null} onClick={handleMoveToCurrentLocation}>Move to Current Location</button>
+                    <button disabled={ratingMenuActive || lookingForDriver || driverChosen !== null} onClick={handleSidebar}>Sidebar</button>
+                    <button disabled={ratingMenuActive || lookingForDriver || driverChosen !== null} onClick={handleLogout}>Log out</button>
+                </div>
+                {lookingForDriver && <p>We are looking for a driver...</p>}
+                {ratingMenuActive && (
+                    <div className="user-page-rating-menu">
+                        <RatingComponent onRate={handleRate} orderId={orderId} />
+                    </div>
+                )}
+            </div>
         </div>
     );
+
 }
 
 export default UserInterface;

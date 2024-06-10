@@ -1,0 +1,100 @@
+.user-page-container {
+    display: flex;
+    height: 100vh;
+}
+
+.user-page-map-container {
+    width: 70%;
+    position: relative;
+}
+
+.user-page-map-container > div {
+    height: 100%;
+    width: 100%;
+}
+
+.user-page-controls-container {
+    width: 30%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative; /* Add position relative */
+}
+
+.user-page-ride-info {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.user-page-controls-container h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.user-page-controls-container div {
+    margin-bottom: 10px;
+}
+
+.user-page-controls-container label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.user-page-controls-container input,
+.user-page-controls-container button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.user-page-controls-container button {
+    cursor: pointer;
+}
+
+.ride-type-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.ride-type-buttons button {
+    width: 48%;
+}
+
+.order-button {
+    margin-bottom: 20px;
+}
+
+.bottom-buttons {
+    margin-top: auto;
+}
+
+.bottom-buttons button {
+    margin-bottom: 10px;
+}
+
+.user-page-rating-menu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 30px; /* Increased padding */
+    border-radius: 12px; /* Increased border radius */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Increased box shadow */
+    z-index: 100;
+    text-align: center;
+}
+
+.AutocompleteInput {
+    width: 20px;
+    padding: 10px;
+    font-size: 16px;
+    /*box-sizing: border-box; !* Ensure padding and border are included in the element's total width and height *!*/
+}

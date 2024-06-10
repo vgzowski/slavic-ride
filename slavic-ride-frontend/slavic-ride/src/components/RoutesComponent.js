@@ -60,26 +60,13 @@ function Directions({ userLocation, userDestination }) {
     if (!leg) return null;
 
     return (
-        <div className="directions">
+        <div className="ride-info">
             <h2>{selected.summary}</h2>
             <p>
                 {leg.start_address?.split(",")[0]} to {leg.end_address?.split(",")[0]}
             </p>
             <p>Distance: {leg.distance?.text}</p>
             <p>Duration: {leg.duration?.text}</p>
-
-            <h2>Other routes</h2>
-            <ul>
-                {
-                    routes.map((route, index) => (
-                        <li key={route.summary}>
-                            <button onClick={() => setRouteIndex(index)}>
-                                {route.summary}
-                            </button>
-                        </li>
-                    ))
-                }
-            </ul>
         </div>
     );
 }

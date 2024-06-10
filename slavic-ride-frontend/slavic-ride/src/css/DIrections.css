@@ -1,0 +1,54 @@
+/* Directions.css */
+
+.directions {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 300px;
+    margin: 20px;
+    font-family: Arial, sans-serif;
+    font-size: 1.1em; /* Increased font size */
+}
+
+.directions h2 {
+    font-size: 1.4em; /* Increased font size */
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.directions p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 1.2em; /* Increased font size */
+}
+
+.directions ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+}
+
+.directions li {
+    margin-bottom: 10px;
+}
+
+.directions button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+    font-size: 1.2em; /* Increased font size */
+}
+
+.directions button:hover {
+    background-color: #45a049;
+}
+
+.directions button:focus {
+    outline: none;
+}
