@@ -22,9 +22,9 @@ function FirstLoginPage () {
             <button className="first-login-button" onClick={handleClickLogin}>Login</button>
             <button className="first-login-button" onClick={handleClickSignUp}>Sign Up</button>
             </div>
-            <div>
-                <img src="https://drive.google.com/file/d/17VP_i43q87wPtLAzt-G7eSGXV7HbkxR0/view?usp=drive_link" alt="Slavic Ride Logo" className="first-login-logo" /> {/* Add the image */}
-            </div>
+            {/*<div>*/}
+            {/*    <img src="https://drive.google.com/file/d/17VP_i43q87wPtLAzt-G7eSGXV7HbkxR0/view?usp=drive_link" alt="Slavic Ride Logo" className="first-login-logo" /> /!* Add the image *!/*/}
+            {/*</div>*/}
         </div>
     );
 }

@@ -88,11 +88,11 @@ const Sidebar = () => {
     const handleGoBackClick = () => {
         if (who === 'driver') {
             navigate('/driver', { state: { driverId: id,
-                    destination: null} });
+                    destination: null, username: username } });
         }
         else {
             navigate('/passenger', { state: { passengerId: id,
-                    destination: null} });
+                    destination: null, username: username } });
         }
     }
 

@@ -113,7 +113,7 @@ public class AuthResource {
 
     @PutMapping("/deactivate")
     public ResponseEntity <Map <String, Object>> deactivator (@RequestBody Map <String, Object> body) {
-        log.info("Deactivating user with id " + body.get("id"));
+        log.info("Deactivating user with id " + body);
         String username = body.get("username").toString();
         Optional <Driver> driverOpt = driverService.findByUsername(username);
         Optional <Passenger> passengerOpt = passengerService.findByUsername(username);
