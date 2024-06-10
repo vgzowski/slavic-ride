@@ -18,7 +18,7 @@ function FirstLoginPage () {
             <div>
             <h1 className="first-login-title">Welcome to Slavic Ride</h1>
             <p className="first-login-description">Slavic Ride is a ride-sharing service that connects passengers with drivers in real-time.</p>
-            <p className="first-login-description">Get started by entering your role in our eco-system</p>
+            <p className="first-login-description">Let's get started</p>
             <button className="first-login-button" onClick={handleClickLogin}>Login</button>
             <button className="first-login-button" onClick={handleClickSignUp}>Sign Up</button>
             </div>
