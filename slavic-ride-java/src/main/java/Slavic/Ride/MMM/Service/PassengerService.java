@@ -12,10 +12,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+
 import Slavic.Ride.MMM.Location;
+import Slavic.Ride.MMM.DistanceResult;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Comparator;
+
+import Slavic.Ride.MMM.Service.Utils;
 
 @Service
 @Slf4j
@@ -99,8 +104,39 @@ public class PassengerService {
         log.info("Assigning driver to passenger");
 
         List<Driver> driversList = driverService.getAllDrivers(rideType);
+
+        final String API_KEY = "AIzaSyCcGid1vTF4zEMmDMWgS5sX3fOxrAtGhDs";
+
+        driversList.sort(
+            Comparator.comparingLong(
+                driver -> {
+                    try {
+                        DistanceResult curDistance = Utils.getDistanceAndDuration(pickUpPoint, driver.getLocation(), API_KEY);
+                        String distance = curDistance.distance;
+                        if (distance.endsWith(" meters")) {
+                            return Integer.parseInt(distance.split(" ")[0]);
+                        }
+                        else if (distance.endsWith(" kilometers")) {
+                            double km = Double.parseDouble(distance.split(" ")[0]);
+                            return (int)(km * 1000);
+                        }
+                        else {
+                            throw new IllegalArgumentException("Unknown distance format: " + distance);
+                        }
+                    } catch (Exception e) {
+                        return 0;
+                    }
+                }
+            )
+        );
+
         for (Driver driver : driversList) {
-            log.info(driver.getId() + " " + driverService.isDriverAvailable(driver.getId()));
+            try {
+                DistanceResult distance = Utils.getDistanceAndDuration(pickUpPoint, driver.getLocation(), API_KEY);
+                log.warn("Driver is {} {}", driver.getId(), distance.distance);
+            } catch (Exception e) {
+                log.warn("Could not fetch for {}", driver.getId());
+            }
         }
 
         int sizeDrivers = driversList.size();
