@@ -1,0 +1,8 @@
+{"username": "parzysty", "lat": "50.03959709999999", "lng": "19.9407929"}
+{"username": "iwwi", "lat": "50.0305235", "lng": "19.9071518"}
+{"username": "k1r1t0", "lat": "50.04269", "lng": "19.945286"}
+{"username": "garik", "lat": "50.0603044", "lng": "19.9219834"}
+{"username": "parzystik", "lat": "49.617826", "lng": "20.6938704"}
+{"username": "saczsaczsacz", "lat": "49.61534409999999", "lng": "20.6948834"}
+{"username": "pankin610", "lat": "50.0291289", "lng": "19.9098604"}
+{"username": "burger", "lat": "49.868683", "lng": "21.0106918"}

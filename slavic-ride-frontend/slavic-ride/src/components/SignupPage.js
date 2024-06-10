@@ -96,7 +96,15 @@ const SignupPage = () => {
             <input
                 type="checkbox"
                 checked={role}
-                onChange={(e) => setRole(e.target.checked)}
+                onChange={(e) => {
+                    setRole(e.target.checked);
+                    if (e.target.checked === true) {
+                        setCar('usual');
+                    }
+                    else {
+                        setCar('');
+                    }
+                }}
             />
             <br />
 

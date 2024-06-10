@@ -20,6 +20,8 @@ const DriverInterface = () => {
     const [orderId, setOrderId] = useState(null);
     const [ratingMenuActive, setRatingMenuActive] = useState(false);
 
+    console.log(source);
+
     const navigate = useNavigate();
     const [rideRequestDetails, setRideRequestDetails] = useState(null);
 
@@ -94,17 +96,18 @@ const DriverInterface = () => {
         return () => clearInterval(intervalIdd);
     }, [])
 
+
     useEffect(() => {
         const fetchData = async () => {
             if (location_properties?.state?.driverId) {
                 if (!stompClientRef.current) {
-                    const locationD = await getLocation();
+                    // const locationD = await getLocation();
                     stompClientRef.current = connect(
                         location_properties.state.driverId,
                         (location_lat, location_lng, destination_lat, destination_lng) => {
                         },
                         (location_lat, location_lng, destination_lat, destination_lng, order_id) => {
-                            setSource(locationD);
+                            setSource(source);
                             setDestination({ lat: location_lat, lng: location_lng });
                             console.log("Starting order: ", orderId);
                             setOrderId(order_id);
@@ -198,6 +201,7 @@ const DriverInterface = () => {
             sessionStorage.setItem('driverSessionActivated' + location_properties.state.driverId, 'true');
         }
 
+
         return () => {
             // Only deactivate the session when leaving the DriverInterface page if not navigating to the Sidebar
             const nextPage = window.location.pathname;
@@ -243,6 +247,7 @@ const DriverInterface = () => {
                 userLocation={source}
                 userDestination={hasOrderState ? destination : ""}
                 route={route}
+                fetchable={false}
             />
 
             <button onClick={handleLogout}>Log out</button>

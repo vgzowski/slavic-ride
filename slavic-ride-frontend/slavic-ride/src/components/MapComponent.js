@@ -54,6 +54,7 @@ class MapComponent extends Component {
     }
 
     success = (position) => {
+        if (!this.props.fetchable) return;
         console.log("success")
         console.log(position);
         const lat = position.coords.latitude;

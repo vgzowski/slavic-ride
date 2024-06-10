@@ -38,7 +38,6 @@ const UserInterface = () => {
                     lat: response.data.lat,
                     lng: response.data.lng,
                 });
-                console.log('zalupa');
                 sessionStorage.setItem('location', JSON.stringify({
                     lat: response.data.lat,
                     lng: response.data.lng,
@@ -48,8 +47,10 @@ const UserInterface = () => {
             }
         }
 
-        console.log('zalupa');
         getLocationFromDB();
+
+        let intervalId = setInterval(getLocationFromDB, 500);
+        return () => clearInterval(intervalId);
     }, [location, navigate]);
 
     const handleSourceChange = (e) => {
@@ -142,27 +143,27 @@ const UserInterface = () => {
     }, [RideStatus]);
 
     const handleMoveToCurrentLocation = async () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                    // console.log(position);
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
-                        const newLocation = { lat: lat, lng: lng };
-                        const address = await fetchAddress(newLocation);
-                        // setSource({ lat: lat, lng: lng, address: address });
-                    } else {
-                        console.error("Invalid coordinates received");
-                    }
-                },
-                (error) => {
-                    console.error("Error getting current position:", error);
-                }
-            );
-        } else {
-            console.error("Geolocation not supported");
-        }
+        // if (navigator.geolocation) {
+        //     navigator.geolocation.getCurrentPosition(
+        //         async (position) => {
+        //             // console.log(position);
+        //             // const lat = position.coords.latitude;
+        //             // const lng = position.coords.longitude;
+        //             if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
+        //                 // const newLocation = { lat: lat, lng: lng };
+        //                 const address = await fetchAddress(newLocation);
+        //                 // setSource({ lat: lat, lng: lng, address: address });
+        //             } else {
+        //                 console.error("Invalid coordinates received");
+        //             }
+        //         },
+        //         (error) => {
+        //             console.error("Error getting current position:", error);
+        //         }
+        //     );
+        // } else {
+        //     console.error("Geolocation not supported");
+        // }
     };
 
     const orderTaxi = async () => {
