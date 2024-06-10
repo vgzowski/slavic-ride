@@ -2,6 +2,7 @@ package Slavic.Ride.MMM.Resource;
 
 import Slavic.Ride.MMM.Service.DriverService;
 import Slavic.Ride.MMM.Service.PassengerService;
+import Slavic.Ride.MMM.Service.Utils;
 import Slavic.Ride.MMM.User.Driver;
 import Slavic.Ride.MMM.User.Passenger;
 import Slavic.Ride.MMM.User.User;
@@ -45,7 +46,16 @@ public class AuthResource {
             ));
             driver.setUsername((String) user.get("username"));
             driver.setPassword((String) user.get("password"));
-            return ResponseEntity.ok(driverService.createDriver(driver));
+            if (Utils.isValidEmail(driver.getEmail()) && Utils.isValidPhone(driver.getPhone())) {
+                return ResponseEntity.ok(driverService.createDriver(driver));
+            } else {
+                if (!Utils.isValidEmail(driver.getEmail())) {
+                    return ResponseEntity.badRequest().body("Invalid email format");
+                }
+                if (!Utils.isValidPhone(driver.getPhone())) {
+                    return ResponseEntity.badRequest().body("Invalid phone number");
+                }
+            }
         } else {
             Passenger passenger = passengerService.createPassenger(new Passenger(
                     (String) user.get("name"),
@@ -55,9 +65,20 @@ public class AuthResource {
             ));
             passenger.setUsername((String) user.get("username"));
             passenger.setPassword((String) user.get("password"));
-            return ResponseEntity.ok(passengerService.createPassenger(passenger));
+            if (Utils.isValidEmail(passenger.getEmail()) && Utils.isValidPhone(passenger.getPhone())) {
+                return ResponseEntity.ok(passengerService.createPassenger(passenger));
+            } else {
+                if (!Utils.isValidEmail(passenger.getEmail())) {
+                    return ResponseEntity.badRequest().body("Invalid email format");
+                }
+                if (!Utils.isValidPhone(passenger.getPhone())) {
+                    return ResponseEntity.badRequest().body("Invalid phone number");
+                }
+            }
         }
+        return ResponseEntity.badRequest().body("Unknown error");
     }
+
 
     @PostMapping("/checkUserExists")
     public ResponseEntity<Map<String, Boolean>> checkUserExists(@RequestBody Map<String, String> user) {

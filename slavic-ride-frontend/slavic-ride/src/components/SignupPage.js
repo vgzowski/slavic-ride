@@ -13,6 +13,7 @@ const SignupPage = () => {
     const [password, setPassword] = useState('');
     const [id, setId] = useState('');
     const [role, setRole] = useState(false);
+    const [error, setError] = useState(''); // State to hold error message
     const navigate = useNavigate();
 
     const checkUserExists = async () => {
@@ -29,9 +30,10 @@ const SignupPage = () => {
     };
 
     const handleSubmit = async () => {
+        setError(''); // Clear previous error message
         const userExists = await checkUserExists();
         if (userExists) {
-            alert('User with this username, email, or phone number already exists');
+            setError('User with this username, email, or phone number already exists');
             return;
         }
 
@@ -55,7 +57,11 @@ const SignupPage = () => {
             setId(response.data.id);
         } catch (error) {
             console.error('Error signing up:', error);
-            alert('Error signing up');
+            if (error.response && error.response.data) {
+                setError(error.response.data);
+            } else {
+                setError('Error signing up');
+            }
         }
     };
 
@@ -96,17 +102,17 @@ const SignupPage = () => {
             <br />
             <label className="signup-label">You really want to drive?</label>
             <input className="signup-input"
-                type="checkbox"
-                checked={role}
-                onChange={(e) => {
-                    setRole(e.target.checked);
-                    if (e.target.checked === true) {
-                        setCar('usual');
-                    }
-                    else {
-                        setCar('');
-                    }
-                }}
+                   type="checkbox"
+                   checked={role}
+                   onChange={(e) => {
+                       setRole(e.target.checked);
+                       if (e.target.checked === true) {
+                           setCar('usual');
+                       }
+                       else {
+                           setCar('');
+                       }
+                   }}
             />
             <br />
 
@@ -120,6 +126,7 @@ const SignupPage = () => {
                     <br />
                 </>
             )}
+            {error && <p className="signup-error">{error}</p>}
             <button className="signup-button" onClick={handleSubmit}>Sign Up</button>
         </div>
     );
