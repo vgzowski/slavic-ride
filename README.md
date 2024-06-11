@@ -6,33 +6,33 @@ OOP Project - UBER-like app
 2. `npm install` in folder `slavic-ride-frontend/slavic-ride/src`
 3. fill .env and properties files in `scripts`, `slavic-ride-java/src/main/resources` and `slavic-ride-frontend` with your credentials
 
-`scripts` .env format:
-DB_NAME=slavic_ride
-DB_USER=your_name
-DB_PASSWORD=your_password
-DB_HOST=localhost
-DB_PORT=5432
+# `scripts` .env format:
+DB_NAME=slavic_ride<br/>
+DB_USER=your_name<br/>
+DB_PASSWORD=your_password<br/>
+DB_HOST=localhost<br/>
+DB_PORT=5432<br/>
 
-`slavic-ride-java/src/main/resources` .env format:
-DB_USERNAME=your_name
-DB_PASSWORD=your_password
+# `slavic-ride-java/src/main/resources` .env format:
+DB_USERNAME=your_name<br/>
+DB_PASSWORD=your_password<br/>
 
-`slavic-ride-java/src/main/resources` application.properties format:
-spring.application.name=MMM
+# `slavic-ride-java/src/main/resources` application.properties format:
+spring.application.name=MMM<br/>
 
-spring.datasource.url=jdbc:postgresql://localhost:5432/slavic_ride
-spring.datasource.username=${DB_USERNAME}
-spring.datasource.password=${DB_PASSWORD}
-spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.url=jdbc:postgresql://localhost:5432/slavic_ride<br/>
+spring.datasource.username=${DB_USERNAME}<br/>
+spring.datasource.password=${DB_PASSWORD}<br/>
+spring.datasource.driver-class-name=org.postgresql.Driver<br/>
 
-logging.level.org.hibernate.SQL=ERROR
-logging.level.org.hibernate.type.descriptor.sql.BasicBinder=ERROR
-spring.jpa.show-sql=false
+logging.level.org.hibernate.SQL=ERROR<br/>
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=ERROR<br/>
+spring.jpa.show-sql=false<br/>
 
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
-#spring.jpa.show-sql=true
-spring.jpa.hibernate.ddl-auto=update
-# logging.level.root=WARN
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect<br/>
+#spring.jpa.show-sql=true<br/>
+spring.jpa.hibernate.ddl-auto=update<br/>
+
 
 ## How to run the project
 1. Run drop script `python3 drop.py`.
