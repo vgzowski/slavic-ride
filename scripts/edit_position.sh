@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [ -f .env ]; then
+    export $(grep -v '^#' .env | xargs)
+else
+    echo ".env file not found"
+    exit 1
+fi
+
 # Check if the correct number of arguments is provided
 if [ "$#" -ne 6 ]; then
     echo "Usage: $0 <Driver/Passenger> <origin_lat,origin_lng> <dest_lat,dest_lng> <id> <steps> <delay>"
@@ -15,13 +22,6 @@ dest_lng=$(echo $3 | cut -d',' -f2)
 id=$4
 steps=$5
 delay=$6
-
-# Database credentials
-DB_NAME="slavic_ride"
-DB_USER="postgres"
-DB_PASSWORD="abcd1234"
-DB_HOST="localhost"
-DB_PORT="5432"
 
 # Calculate the step increments
 lat_increment=$(echo "($dest_lat - $origin_lat) / $steps" | bc -l)

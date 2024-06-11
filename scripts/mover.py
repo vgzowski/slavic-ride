@@ -2,6 +2,8 @@ import sys
 import time
 import psycopg2
 from decimal import Decimal
+from dotenv import load_dotenv
+import os
 
 def update_location(origin, destination, user_id, steps, delay, db_credentials):
     # Parse the origin and destination coordinates
@@ -44,6 +46,8 @@ def update_location(origin, destination, user_id, steps, delay, db_credentials):
     conn.close()
 
 if __name__ == "__main__":
+    load_dotenv()
+
     if len(sys.argv) != 6:
         print("Usage: python update_location.py <origin_lat,origin_lng> <dest_lat,dest_lng> <id> <steps> <delay>")
         sys.exit(1)
@@ -55,11 +59,11 @@ if __name__ == "__main__":
     delay = int(sys.argv[5])
 
     db_credentials = {
-        'DB_NAME': 'slavic_ride',
-        'DB_USER': 'postgres',
-        'DB_PASSWORD': 'abcd1234',
-        'DB_HOST': 'localhost',  # Replace with your actual database host
-        'DB_PORT': '5432'       # Default PostgreSQL port
+        'DB_NAME': os.getenv('DB_NAME'),
+        'DB_USER': os.getenv('DB_USER'),
+        'DB_PASSWORD': os.getenv('DB_PASSWORD'),
+        'DB_HOST': os.getenv('DB_HOST'),
+        'DB_PORT': os.getenv('DB_PORT')
     }
 
     update_location(origin, destination, user_id, steps, delay, db_credentials)

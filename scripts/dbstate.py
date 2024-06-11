@@ -1,5 +1,7 @@
 import psycopg2
 import json
+from dotenv import load_dotenv
+import os
 
 def fetch_all_users(db_credentials):
     conn = psycopg2.connect(
@@ -27,12 +29,14 @@ def write_to_file(users, file_path):
             f.write(json.dumps(data) + '\n')
 
 if __name__ == "__main__":
+    load_dotenv()
+
     db_credentials = {
-        'DB_NAME': 'slavic_ride',
-        'DB_USER': 'postgres',
-        'DB_PASSWORD': 'abcd1234',
-        'DB_HOST': 'localhost',  # Replace with your actual database host
-        'DB_PORT': '5432'        # Default PostgreSQL port
+        'DB_NAME': os.getenv('DB_NAME'),
+        'DB_USER': os.getenv('DB_USER'),
+        'DB_PASSWORD': os.getenv('DB_PASSWORD'),
+        'DB_HOST': os.getenv('DB_HOST'),
+        'DB_PORT': os.getenv('DB_PORT')
     }
 
     users = fetch_all_users(db_credentials)

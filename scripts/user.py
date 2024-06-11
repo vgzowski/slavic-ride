@@ -1,6 +1,8 @@
 import sys
 import psycopg2
 import json
+from dotenv import load_dotenv
+import os
 
 def get_user_location(username, db_credentials):
     conn = psycopg2.connect(
@@ -32,6 +34,8 @@ def get_user_location(username, db_credentials):
         return None
 
 if __name__ == "__main__":
+    load_dotenv()
+
     if len(sys.argv) != 2:
         print("Usage: python user.py <username>")
         sys.exit(1)
@@ -39,11 +43,11 @@ if __name__ == "__main__":
     username = sys.argv[1]
 
     db_credentials = {
-        'DB_NAME': 'slavic_ride',
-        'DB_USER': 'postgres',
-        'DB_PASSWORD': 'abcd1234',
-        'DB_HOST': 'localhost',
-        'DB_PORT': '5432'
+        'DB_NAME': os.getenv('DB_NAME'),
+        'DB_USER': os.getenv('DB_USER'),
+        'DB_PASSWORD': os.getenv('DB_PASSWORD'),
+        'DB_HOST': os.getenv('DB_HOST'),
+        'DB_PORT': os.getenv('DB_PORT')
     }
 
     location = get_user_location(username, db_credentials)
