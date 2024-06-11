@@ -6,6 +6,34 @@ OOP Project - UBER-like app
 2. `npm install` in folder `slavic-ride-frontend/slavic-ride/src`
 3. fill .env and properties files in `scripts`, `slavic-ride-java/src/main/resources` and `slavic-ride-frontend` with your credentials
 
+`scripts` .env format:
+DB_NAME=slavic_ride
+DB_USER=your_name
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+
+`slavic-ride-java/src/main/resources` .env format:
+DB_USERNAME=your_name
+DB_PASSWORD=your_password
+
+`slavic-ride-java/src/main/resources` application.properties format:
+spring.application.name=MMM
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/slavic_ride
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+logging.level.org.hibernate.SQL=ERROR
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=ERROR
+spring.jpa.show-sql=false
+
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+#spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=update
+# logging.level.root=WARN
+
 ## How to run the project
 1. Run drop script `python3 drop.py`.
 2. Run Spring boot: `mvn spring-boot:run` in folder `slavic-ride-java`.
